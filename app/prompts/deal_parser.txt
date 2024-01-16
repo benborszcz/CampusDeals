@@ -1,0 +1,102 @@
+Given a bar deal submission, parse it into structured JSON data.
+
+Deal Submission Structure:
+{
+  "title": "Quick Deal Title",
+  "description": "Description of the deal that people can tell everything from",
+  "establishment": {
+    "name": "Name",
+    "type": "Type",
+  },
+  "deal_details": {
+    "deal_type": "Type",
+    "deal_items": [
+        {
+            "item": "Item Name",
+            "item_type": "Type of Item",
+            "pricing": {"price": "# if price deal like $1 wells else N/A", "discout": "# if deal like 50% off or $2 off else N/A"}
+        },
+    ],
+    "start_time": "HH:MM:SS" or "Open",
+    "end_time": "HH:MM:SS" or "Close",
+    "days_active": ["Weekday 1", "Weekday 2", "etc"],
+    "exclusions": "any exclusions, if none put N/A",
+  },
+  "tags": ["tag1", "tag2", "etc"],
+}
+
+Example bar deal submission 1:
+{'establishment_name': 'Joe's', 'establishment_type': 'bar', 'deal_name': '50% off Friday', 'deal_description': 'All drinks 50% off on friday all night', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['fri'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
+
+Expected parsed deal submission 1:
+{
+  "title": "Joe's Bar, 50% off Friday",
+  "description": "50% off all drinks at Joe's Bar this Friday night!",
+  "establishment": {
+    "name": "Joe's Bar",
+    "type": "Bar"
+  },
+  "deal_details": {
+    "deal_type": "Percentage Off",
+    "deal_items": [
+      {
+        "item": "All drinks",
+        "item_type": "Alcohol",
+        "pricing": {
+          "price": "N/A",
+          "discount": "50%"
+        }
+      }
+    ],
+    "start_time": "Open",
+    "end_time": "Close",
+    "days_active": [
+      "Friday"
+    ],
+    "exclusions": "N/A",
+  },
+  "tags": ["Drinks", "Bar", "Friday Night"]
+}
+
+Example bar deal submission 2:
+{'establishment_name': 'Midway', 'establishment_type': 'bar', 'deal_name': 'Wednesday Madness', 'deal_description': '$1 Wells and Bombs all night', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['wed'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
+
+Expected parsed deal submission 2:
+{
+  "title": "Midway Madness, Wednesday",
+  "description": "Madness at Midway on Wednesday, $1 wells and bombs from 2pm-6pm",
+  "establishment": {
+    "name": "Midway",
+    "type": "Bar"
+  },
+  "deal_details": {
+    "deal_type": "Type",
+    "deal_items": [
+      {
+        "item": "wells",
+        "item_type": "Alcohol"
+        "pricing": {
+          "price": "$1",
+          "discout": "N/A"
+        }
+      },
+      {
+        "item": "bombs",
+        "item_type": "Alcohol"
+        "pricing": {
+          "price": "$1",
+          "discout": "N/A"
+        }
+      }
+    ],
+    "start_time": "14:00:00",
+    "end_time": "18:00:00",
+    "days_active": [
+      "Wednesday"
+    ],
+    "exclusions": "N/A",
+  },
+  "tags": ["Madness", "Wednesday Afternoon", "Bar", "Wells", "Bombs"]
+}
+
+Remember to include relevant tags, those are very important.

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title">{{ deal.title }}</h2>
+        </div>
+        <div class="card-body">
+            <h5 class="card-subtitle mb-2 text-muted">Establishment: {{ deal.establishment.name }}</h5>
+            <p class="card-text">{{ deal.description }}</p>
+            <div class="deal-details">
+                <h5>Deal Details:</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Type: {{ deal.deal_details.deal_type }}</li>
+                    <li class="list-group-item">Start Time: {{ deal.deal_details.start_time }}</li>
+                    <li class="list-group-item">End Time: {{ deal.deal_details.end_time }}</li>
+                    <li class="list-group-item">Days Active: {{ deal.deal_details.days_active | join(", ") }}</li>
+                    <li class="list-group-item">Exclusions: {{ deal.deal_details.exclusions }}</li>
+                </ul>
+                <h5 class="mt-3">Deal Items:</h5>
+                <ul class="list-group list-group-flush">
+                    {% for item in deal.deal_details.deal_items %}
+                        <li class="list-group-item">
+                            {{ item.item }} - {{ item.item_type }} - Price: {{ item.pricing.price }} Discount: {{ item.pricing.discount }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="tags mt-3">
+                <h5>Tags:</h5>
+                <p>
+                    {% for tag in deal.deal_details.tags %}
+                        <span class="badge badge-secondary">{{ tag }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            Posted on {{ deal.created_at }}
+        </div>
+    </div>
+{% endblock %}

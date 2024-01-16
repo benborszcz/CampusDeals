@@ -1,0 +1,28 @@
+<!-- templates/index.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mb-4">Welcome to BarBlitz!</h1>
+    <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4">
+        <input type="text" name="query" class="form-control mr-2" placeholder="Search for deals...">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- Display popular deals using Bootstrap cards -->
+    <section>
+        <h2>Popular Deals</h2>
+        <div class="row">
+            {% for deal in popular_deals %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ deal['title'] }}</h5>
+                            <p class="card-text">{{ deal['description'] }}</p>
+                            <a href="{{ url_for('deal_details', deal_id=deal['deal_id']) }}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,63 @@
+<!-- templates/base.html -->
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarBlitz</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Optional: Include custom CSS for additional styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1 0 auto; /* The main content will expand to fill the space */
+        }
+        footer {
+            flex-shrink: 0; /* The footer will not shrink */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Bootstrap Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{{ url_for('index') }}">BarBlitz</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('submit_deal') }}">Submit Deal</a></li>
+                    <!-- Add other navigation links here -->
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="container mt-4">
+        {% block content %}{% endblock %}
+    </main>
+
+
+    <footer class="footer bg-dark text-white mt-4 py-3 text-center">
+        <p>&copy; 2023 BarBlitz</p>
+    </footer>
+
+    <!-- Include Bootstrap JS and its dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.9/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Optional: Include custom JS for additional interactivity -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
