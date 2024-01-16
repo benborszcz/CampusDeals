@@ -32,7 +32,7 @@ def transform_deal_structure(deal_structure_LLM):
 
 # Set the username and password for your Elasticsearch instance
 username = 'elastic'
-password = 'NaN*Rq08wkMh0HD2OVW5' # Will be different for you
+password = 'ADz3aZ+QmVNaw5NYh0f+' # Will be different for you
 
 # Connect to the local Elasticsearch instance using HTTPS and authentication
 es = Elasticsearch(

@@ -12,8 +12,8 @@
                 <h5>Deal Details:</h5>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">Type: {{ deal.deal_details.deal_type }}</li>
-                    <li class="list-group-item">Start Time: {{ deal.deal_details.start_time }}</li>
-                    <li class="list-group-item">End Time: {{ deal.deal_details.end_time }}</li>
+                    <li id="start-time" class="list-group-item">Start Time: {{ deal.deal_details.start_time }}</li>
+                    <li id="end-time" class="list-group-item">End Time: {{ deal.deal_details.end_time }}</li>
                     <li class="list-group-item">Days Active: {{ deal.deal_details.days_active | join(", ") }}</li>
                     <li class="list-group-item">Exclusions: {{ deal.deal_details.exclusions }}</li>
                 </ul>
@@ -39,4 +39,40 @@
             Posted on {{ deal.created_at }}
         </div>
     </div>
+
+    <!-- Include the JavaScript code -->
+    <script>
+        function convertMilitaryToStandardTime(militaryTime) {
+          if (militaryTime.toLowerCase() === "open" || militaryTime.toLowerCase() === "close") {
+            return militaryTime;
+          }
+
+          // Extract hours and minutes
+          var timeArray = militaryTime.split(":");
+          var hours = parseInt(timeArray[0]);
+          var minutes = timeArray[1];
+
+          // Determine AM or PM
+          var period = (hours < 12) ? "AM" : "PM";
+
+          // Convert to 12-hour format
+          hours = (hours > 12) ? hours - 12 : hours;
+          hours = (hours == 0) ? 12 : hours;
+
+          // Format the time
+          var standardTime = hours + ":" + minutes + " " + period;
+
+          return standardTime;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+          // Replace military time with standard time for Start Time
+          var startTimeElement = document.querySelector("#start-time");
+          startTimeElement.innerHTML = "Start Time: " + convertMilitaryToStandardTime("{{ deal.deal_details.start_time }}");
+
+          // Replace military time with standard time for End Time
+          var endTimeElement = document.querySelector("#end-time");
+          endTimeElement.innerHTML = "End Time: " + convertMilitaryToStandardTime("{{ deal.deal_details.end_time }}");
+        });
+    </script>
 {% endblock %}
