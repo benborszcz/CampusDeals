@@ -1,0 +1,8 @@
+Flask
+python-dotenv
+openai
+firebase-admin
+elasticsearch
+flask-wtf
+WTForms
+pytest
