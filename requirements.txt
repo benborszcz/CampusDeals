@@ -2,7 +2,7 @@ Flask
 python-dotenv
 openai
 firebase-admin
-elasticsearch
+elasticsearch==7.10.1
 flask-wtf
 WTForms
 pytest

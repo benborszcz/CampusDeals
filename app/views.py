@@ -2,20 +2,22 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from . import app
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
-from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch
+from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
+import config
 
 @app.route('/')
 def index():
     """
     Home page that could show popular deals or a search bar.
-    """
-    reset_elasticsearch()
+    """ 
     # load all deals from firestore
     deals = db.collection('deals').stream()
     deal_list = [deal.to_dict() for deal in deals]
     # index all deals in elasticsearch
-    for deal in deal_list:
-        index_deal(deal)
+    if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
+        reset_elasticsearch()
+        for deal in deal_list:
+            index_deal(deal)
     return render_template('index.html', popular_deals=deal_list)
 
 from flask import request, jsonify
