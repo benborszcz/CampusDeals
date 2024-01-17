@@ -3,6 +3,7 @@ from .agent import Agent
 import datetime
 import json
 import uuid
+import config
 
 def get_prompt_from_file(name):
     try:
@@ -32,7 +33,7 @@ def transform_deal_structure(deal_structure_LLM):
 
 # Set the username and password for your Elasticsearch instance
 username = 'elastic'
-password = 'ADz3aZ+QmVNaw5NYh0f+' # Will be different for you
+password = config.ELASTICSEARCH_PASSWORD
 
 # Connect to the local Elasticsearch instance using HTTPS and authentication
 es = Elasticsearch(
