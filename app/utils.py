@@ -4,6 +4,7 @@ import datetime
 import json
 import uuid
 import config
+import re
 
 def get_prompt_from_file(name):
     try:
@@ -31,16 +32,46 @@ def transform_deal_structure(deal_structure_LLM):
     return full_deal_structure
 
 
-# Set the username and password for your Elasticsearch instance
-username = 'elastic'
-password = config.ELASTICSEARCH_PASSWORD
+# Determine which Elasticsearch service to use
+elasticsearch_service = config.ELASTICSEARCH_SERVICE
 
-# Connect to the local Elasticsearch instance using HTTPS and authentication
-es = Elasticsearch(
-    ["https://localhost:9200"],
-    basic_auth=(username, password),
-    verify_certs=False  # Bypass certificate verification (not recommended for production)
-)
+if elasticsearch_service == 'bonsai':
+    # Retrieve the Bonsai URL from the config
+    bonsai = config.ELASTICSEARCH_BONSAI_URL
+    # Use regular expressions to extract the authentication credentials (username and password)
+    auth = re.search('https://(.*)@', bonsai).group(1).split(':')
+    # Extract the host by removing the authentication part from the Bonsai URL
+    host = bonsai.replace('https://%s:%s@' % (auth[0], auth[1]), '')
+    # Optionally extract the port if it's included in the BONSAI_URL
+    match = re.search('(:\d+)', host)
+    if match:
+        port = int(match.group(0).split(':')[1])
+        host = host.replace(match.group(0), '')
+    else:
+        port = 443  # Default to port 443 for HTTPS if no port is specified
+    # Set up the Elasticsearch connection configuration for Bonsai
+    es_header = [{
+        'host': host,
+        'port': port,
+        'use_ssl': True,
+        'http_auth': (auth[0], auth[1])
+    }]
+else:
+    # Configuration for local Elasticsearch instance
+    local_url = config.ELASTICSEARCH_LOCAL_URL
+    parsed_url = re.search('http://(.+?):(\d+)', local_url)
+    host = parsed_url.group(1)
+    port = int(parsed_url.group(2))
+    # Set up the Elasticsearch connection configuration for local
+    es_header = [{
+        'host': host,
+        'port': port,
+        'use_ssl': False,  # Assuming local is not using SSL
+        'http_auth': (config.ELASTICSEARCH_LOCAL_USERNAME, config.ELASTICSEARCH_LOCAL_PASSWORD) if config.ELASTICSEARCH_LOCAL_PASSWORD else None
+    }]
+
+# Instantiate the new Elasticsearch connection
+es = Elasticsearch(es_header)
 
 def index_deal(deal):
     """
@@ -59,6 +90,17 @@ def reset_elasticsearch():
 
     # Create the deals index
     es.indices.create(index='deals', ignore=400)
+
+def is_elasticsearch_empty():
+    """
+    Check if Elasticsearch is empty.
+    """
+    # Get the count of documents in the 'deals' index
+    response = es.count(index='deals')
+    count = response['count']
+    
+    # Return True if the count is 0, indicating that Elasticsearch is empty
+    return count == 0
 
 def remove_deal(deal_id):
     """
