@@ -34,7 +34,7 @@ To set up the CampusDeals project on your local machine, follow these steps:
    - `ELASTICSEARCH_BONSAI_URL` is provided in the slack.
    - `OPENAI_API_KEY` is optional and must be obtained from OpenAI if you wish to use the submit deal feature.
 
-4. Obtain the `firebase_service_account.json` file from the repository secrets and place it under the `app` folder.
+4. Obtain the `firebase_service_account.json` file from the slack and place it under the `app` folder.
 
 5. Run the Flask application:
    ```sh
