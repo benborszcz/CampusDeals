@@ -125,7 +125,7 @@ def search_deals(query):
     }
 
     # Perform the search on the 'deals' index
-    response = es.search(index="deals", body=search_query, min_score=0, from_=0, size=10)
+    response = es.search(index="deals", body=search_query, from_=0, size=10)
 
     return response['hits']['hits']
 
