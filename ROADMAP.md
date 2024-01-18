@@ -33,7 +33,7 @@ The CampusDeals project is focused on creating a platform for campus deal discov
   - [ ] Ensure responsive design
 
 ## Contribution Guide
-- Check the [issues](https://github.com/your-username/CampusDeals/issues) for tasks
+- Check the [issues](https://github.com/benborszcz/CampusDeals/issues) for tasks
 - Create a branch from an issue to start work
 - Submit a PR against the `dev` branch
 - Review others' PRs/Issues

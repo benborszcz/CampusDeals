@@ -62,7 +62,7 @@ Once the application is running, you can access the following features:
 
 To contribute to the CampusDeals project, please start by reviewing our [Roadmap](ROADMAP.md) to understand the current goals and priorities. Here's how you can get involved:
 
-1. **Check Existing Issues**: Look through the [issues](https://github.com/your-username/CampusDeals/issues) to find tasks or discussions that interest you.
+1. **Check Existing Issues**: Look through the [issues](https://github.com/benborszcz/CampusDeals/issues) to find tasks or discussions that interest you.
 
 2. **Create an Issue**: If you have a new idea or spot a bug, create an issue to start a discussion. This helps us coordinate efforts and avoid duplicate work.
 
