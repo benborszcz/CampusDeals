@@ -1,8 +1,7 @@
-import openai
 import config
+from openai import OpenAI
 
-# Set the API Params for OpenAI
-openai.api_key = config.OPENAI_API_KEY
+client = OpenAI(api_key=config.OPENAI_API_KEY)
 
 class Agent:
     def __init__(self, name: str, description: str, system_message = "", addtional_messages = None,
@@ -22,7 +21,7 @@ class Agent:
 
     def complete_task(self, task: str, persist = False):
         response = self.generate(task, persist)
-        response_message = response["choices"][0]["message"]["content"]
+        response_message = response.choices[0].message.content
         return response_message
 
     def generate(self, message: str, persist):
@@ -37,7 +36,7 @@ class Agent:
         if self.history is not None:
             messages.extend(self.history)
         messages.extend([{"role": "user", "content": message}])
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model=self.model,
             messages=messages,
             temperature=self.temperature,
