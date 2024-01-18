@@ -60,18 +60,20 @@ Once the application is running, you can access the following features:
 
 ## Contributing
 
-To contribute to the CampusDeals project, please follow these steps:
+To contribute to the CampusDeals project, please start by reviewing our [Roadmap](ROADMAP.md) to understand the current goals and priorities. Here's how you can get involved:
 
-1. **Create an Issue**: Before starting work on a new feature or fix, create an issue in the GitHub repository describing the change you propose to make. This helps to avoid duplicate efforts and allows for discussion before any code is written.
+1. **Check Existing Issues**: Look through the [issues](https://github.com/your-username/CampusDeals/issues) to find tasks or discussions that interest you.
 
-2. **Branch from Issue**: Once your issue has been created and discussed, create a new branch from the `dev` branch with a name that reflects the issue you're working on. For example, if your issue is number 42 and it's about adding a new search filter, you might name your branch `feature/add-search-filter-42`.
+2. **Create an Issue**: If you have a new idea or spot a bug, create an issue to start a discussion. This helps us coordinate efforts and avoid duplicate work.
 
-3. **Develop Your Feature**: Make your changes on your new branch. Be sure to keep your code clean and well-documented.
+3. **Branch from Issue**: Once your issue has been created and discussed, create a new branch from the `dev` branch with a name that reflects the issue you're working on. For example, if your issue is number 42 and it's about adding a new search filter, you might name your branch `feature/add-search-filter-42`.
 
-4. **Pull Request**: After you've completed your work and tested it locally, push your branch to the GitHub repository and create a pull request targeting the `dev` branch. Link the pull request to the issue you created in step 1.
+4. **Develop Your Feature**: Make your changes on your new branch. Be sure to keep your code clean and well-documented.
 
-5. **Code Review**: Your pull request will be reviewed by other team members. Be open to feedback and make any necessary changes. Once your pull request has been approved, it will be merged into the `dev` branch.
+5. **Pull Request**: After you've completed your work and tested it locally, push your branch to the GitHub repository and create a pull request targeting the `dev` branch. Link the pull request to the issue you created in step 1.
 
-6. **Merging to Main**: Periodically, after thorough testing and review, changes from the `dev` branch will be merged into the `main` branch, which is the production branch.
+6. **Code Review**: Your pull request will be reviewed by other team members. Be open to feedback and make any necessary changes. Once your pull request has been approved, it will be merged into the `dev` branch.
+
+7. **Merging to Main**: Periodically, after thorough testing and review, changes from the `dev` branch will be merged into the `main` branch, which is the production branch.
 
 Please note that both the `main` and `dev` branches are protected. Direct pushes to these branches are not allowed, and all changes must go through the pull request process described above.
