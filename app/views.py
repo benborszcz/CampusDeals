@@ -4,6 +4,7 @@ from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
 from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
 import config
+from firebase_admin import firestore
 
 @app.route('/')
 def index():
@@ -18,6 +19,13 @@ def index():
         reset_elasticsearch()
         for deal in deal_list:
             index_deal(deal)
+
+    for deal in deal_list:
+        deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
+        deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
+        
+    deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
+
     return render_template('index.html', popular_deals=deal_list)
 
 from flask import request, jsonify
@@ -80,3 +88,16 @@ def deal_details(deal_id):
     deal = db.collection('deals').document(deal_id).get()
     print(deal.to_dict())
     return render_template('deal_details.html', deal=deal.to_dict())
+
+
+@app.route('/deal/<deal_id>/upvote', methods=['POST'])
+def upvote_deal(deal_id):
+    deal_ref = db.collection('deals').document(deal_id)
+    deal_ref.update({"upvotes": firestore.Increment(1)})
+    return jsonify(success=True), 200
+
+@app.route('/deal/<deal_id>/downvote', methods=['POST'])
+def downvote_deal(deal_id):
+    deal_ref = db.collection('deals').document(deal_id)
+    deal_ref.update({"downvotes": firestore.Increment(1)})
+    return jsonify(success=True), 200
