@@ -71,6 +71,7 @@ def login():
             # Check if the entered password matches the stored hashed password
             if check_password_hash(user_data.to_dict()['password'], password):
                 user = User(user_id=username, username=username)
+                email = user_data.to_dict()['email']
                 login_user(user)
                 #flash('Login successful!', 'success')
                 # Implement login logic here (e.g., session management)
