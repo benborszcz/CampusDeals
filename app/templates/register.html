@@ -2,24 +2,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Register</h1>
-    <form action="{{ url_for('auth.register') }}" method="post">
-        {{ form.csrf_token }}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <h2>Register</h2>
+    <form method="POST" action="{{ url_for('auth.register') }}">
+        {{ form.hidden_tag() }}
         <div class="form-group">
-            {{ form.username.label(class_='form-control-label') }}
-            {{ form.username(class_='form-control') }}
+            {{ form.username.label(class="form-control-label") }}
+            {{ form.username(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.password.label(class_='form-control-label') }}
-            {{ form.password(class_='form-control') }}
+            {{ form.email.label(class="form-control-label") }}
+            {{ form.email(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.confirm.label(class_='form-control-label') }}
-            {{ form.confirm(class_='form-control') }}
+            {{ form.password.label(class="form-control-label") }}
+            {{ form.password(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.submit(class_='btn btn-success') }}
+            {{ form.confirm.label(class="form-control-label") }}
+            {{ form.confirm(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
         </div>
     </form>
-    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in here</a>.</p>
+    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>.</p>
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, get_flashed_messages
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, validators
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,6 +10,7 @@ auth_bp = Blueprint('auth', __name__)
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [validators.DataRequired(), validators.Length(min=4, max=25)])
+    email = StringField('Email', [validators.DataRequired(), validators.Email()])
     password = PasswordField('Password', [
         validators.DataRequired(),
         validators.EqualTo('confirm', message='Passwords must match'),
@@ -29,6 +30,7 @@ def register():
 
     if form.validate_on_submit():
         username = form.username.data
+        email = form.email.data
         password = form.password.data
 
         # Check if the username is already taken
@@ -43,12 +45,14 @@ def register():
         # Create a new user document in Firestore
         user_ref.set({
             'username': username,
+            'email': email,  # Added line to store email
             'password': hashed_password
         })
 
         flash('Account created successfully. You can now log in.', 'success')
         return redirect(url_for('auth.login'))
 
+    get_flashed_messages()
     return render_template('register.html', form=form)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -68,7 +72,7 @@ def login():
             if check_password_hash(user_data.to_dict()['password'], password):
                 user = User(user_id=username, username=username)
                 login_user(user)
-                flash('Login successful!', 'success')
+                #flash('Login successful!', 'success')
                 # Implement login logic here (e.g., session management)
                 return redirect(url_for('index'))
             else:
@@ -76,11 +80,12 @@ def login():
         else:
             flash('Username not found. Please register.', 'danger')
 
+    get_flashed_messages()
     return render_template('login.html', form=form)
 
 @auth_bp.route('/logout')
 @login_required  # This ensures that only logged-in users can access this route
 def logout():
     logout_user()
-    flash('You have been logged out.', 'success')
+    #flash('You have been logged out.', 'success')
     return redirect(url_for('index'))

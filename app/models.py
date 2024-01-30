@@ -5,8 +5,9 @@ from flask_login import LoginManager
 login_manager = LoginManager()
 
 class User(UserMixin):
-    def __init__(self, user_id, username):
+    def __init__(self, user_id, username, email):
         self.id = user_id
+        self.email = email
         self.username = username
 
 @login_manager.user_loader
