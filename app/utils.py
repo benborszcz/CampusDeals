@@ -110,9 +110,13 @@ def remove_deal(deal_id):
     response = es.delete(index="deals", id=deal_id)
     return response
 
-def search_deals(query):
+# utils.py
+
+# utils.py
+
+def search_deals(query, location=None, radius=None):
     """
-    Search for deals using Elasticsearch across all fields.
+    Search for deals using Elasticsearch across all fields and optionally filter by location.
     """
     # Define a query_string query to search across all fields
     search_query = {
@@ -124,10 +128,25 @@ def search_deals(query):
         }
     }
 
+    # If location and radius are provided, add a Geo filter to the query
+    if location and radius:
+        geo_filter = {
+            "geo_distance": {
+                "distance": f"{radius}km",
+                "location": {
+                    "lat": location["latitude"],
+                    "lon": location["longitude"]
+                }
+            }
+        }
+        search_query["query"]["bool"] = {"filter": [geo_filter]}
+
     # Perform the search on the 'deals' index
     response = es.search(index="deals", body=search_query, from_=0, size=10)
 
     return response['hits']['hits']
+
+
 
 def parse_deal_submission(text):
     """

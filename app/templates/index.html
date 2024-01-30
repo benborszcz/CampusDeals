@@ -5,6 +5,8 @@
     <h1 class="mb-4">Welcome to CampusDeals!</h1>
     <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4">
         <input type="text" name="query" class="form-control mr-2" placeholder="Search for deals...">
+        <input type="text" name="location" class="form-control mr-2" placeholder="Enter location...">
+        <input type="number" name="radius" class="form-control mr-2" placeholder="Enter radius (km)" value="5">
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
