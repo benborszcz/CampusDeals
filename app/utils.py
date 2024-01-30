@@ -29,6 +29,10 @@ def transform_deal_structure(deal_structure_LLM):
     full_deal_structure["deal_id"] = deal_id
     full_deal_structure["created_at"] = created_at
 
+    # Add the upvotes and downvotes to the full_deal_structure
+    full_deal_structure["upvotes"] = 0
+    full_deal_structure["downvotes"] = 0
+
     return full_deal_structure
 
 
