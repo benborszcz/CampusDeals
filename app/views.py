@@ -5,6 +5,8 @@ from .forms import DealSubmissionForm
 from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
 import config
 from firebase_admin import firestore
+from datetime import datetime
+
 
 @app.route('/')
 def index():
@@ -101,3 +103,25 @@ def downvote_deal(deal_id):
     deal_ref = db.collection('deals').document(deal_id)
     deal_ref.update({"downvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
+
+@app.route('/daily-deals')
+def daily_deals():
+    # Get the current day of the week (e.g., 'Monday', 'Tuesday', etc.)
+    current_day = datetime.now().strftime('%A')
+
+    # Query deals for the current day from Firestore
+    query = db.collection('deals').where('days_active', 'array_contains', current_day)
+    daily_deals = [deal.to_dict() for deal in query.stream()]
+
+
+    # Debugging output
+    # it is printing the correct day but not the correct deals
+    print(f"Current day: {current_day}")
+    print(f"Firestore Query Results: {daily_deals}")
+
+    # Sort deals based on votes or other criteria if needed
+    daily_deals = sorted(daily_deals, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0), reverse=True)
+
+    return render_template('daily_deals.html', daily_deals=daily_deals)
+
+
