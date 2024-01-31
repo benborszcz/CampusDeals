@@ -109,19 +109,27 @@ def daily_deals():
     # Get the current day of the week (e.g., 'Monday', 'Tuesday', etc.)
     current_day = datetime.now().strftime('%A')
 
-    # Query deals for the current day from Firestore
-    query = db.collection('deals').where('days_active', 'array_contains', current_day)
-    daily_deals = [deal.to_dict() for deal in query.stream()]
-
+    # Retrieve all documents from the Firestore collection
+    deals = db.collection('deals').stream()
+    all_deals = [deal.to_dict() for deal in deals]
 
     # Debugging output
-    # it is printing the correct day but not the correct deals
     print(f"Current day: {current_day}")
-    print(f"Firestore Query Results: {daily_deals}")
+    print(f"Firestore All Deals: {all_deals}")
+
+    # Filter deals for the current day (case-insensitive)
+    daily_deals = [
+        deal for deal in all_deals
+        if current_day.lower() in map(str.lower, deal.get('deal_details', {}).get('days_active', []))
+    ]
+
+    # Debugging output
+    print(f"Filtered Daily Deals: {daily_deals}")
 
     # Sort deals based on votes or other criteria if needed
     daily_deals = sorted(daily_deals, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0), reverse=True)
 
-    return render_template('index.html', popular_deals=deal_list, daily_deals=daily_deals)
+    # Render the 'daily_deals.html' template
+    return render_template('daily_deals.html', daily_deals=daily_deals)
 
 
