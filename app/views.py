@@ -122,6 +122,6 @@ def daily_deals():
     # Sort deals based on votes or other criteria if needed
     daily_deals = sorted(daily_deals, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0), reverse=True)
 
-    return render_template('daily_deals.html', daily_deals=daily_deals)
+    return render_template('index.html', popular_deals=deal_list, daily_deals=daily_deals)
 
 
