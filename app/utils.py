@@ -14,6 +14,36 @@ def get_prompt_from_file(name):
     except FileNotFoundError:
         return f'The file {name} does not exist.'
 
+"""
+Deal Structure
+{
+  "deal_id": "Unique Deal ID",
+  "title": "Quick Deal Title",
+  "description": "Description of the deal that people can tell everything from",
+  "establishment": {
+    "name": "Name",
+    "type": "Type",
+  },
+  "deal_details": {
+    "deal_type": "Type",
+    "deal_items": [
+        {
+            "item": "Item Name",
+            "item_type": "Type of Item",
+            "pricing": {"price": "# if price deal like $1 wells else N/A", "discout": "# if deal like 50% off or $2 off else N/A"}
+        },
+    ],
+    "start_time": "HH:MM:SS" or "Open",
+    "end_time": "HH:MM:SS" or "Close",
+    "days_active": ["Weekday 1", "Weekday 2", "etc"],
+    "exclusions": "any exclusions, if none put N/A",
+  },
+  "tags": ["tag1", "tag2", "etc"],
+  "created_at": "2022-01-01T00:00:00.000Z",
+  "upvotes": 0,
+  "downvotes": 0,
+}
+"""
 
 def transform_deal_structure(deal_structure_LLM):
     # Generate a unique deal_id
