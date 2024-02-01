@@ -6,7 +6,7 @@ from .utils import index_deal, search_deals, parse_deal_submission, transform_de
 import config
 from firebase_admin import firestore
 from datetime import datetime
-
+from .auth import login_required
 
 @app.route('/')
 def index():
@@ -93,12 +93,14 @@ def deal_details(deal_id):
 
 
 @app.route('/deal/<deal_id>/upvote', methods=['POST'])
+@login_required
 def upvote_deal(deal_id):
     deal_ref = db.collection('deals').document(deal_id)
     deal_ref.update({"upvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
 
 @app.route('/deal/<deal_id>/downvote', methods=['POST'])
+@login_required
 def downvote_deal(deal_id):
     deal_ref = db.collection('deals').document(deal_id)
     deal_ref.update({"downvotes": firestore.Increment(1)})
@@ -113,18 +115,11 @@ def daily_deals():
     deals = db.collection('deals').stream()
     all_deals = [deal.to_dict() for deal in deals]
 
-    # Debugging output
-    print(f"Current day: {current_day}")
-    print(f"Firestore All Deals: {all_deals}")
-
     # Filter deals for the current day (case-insensitive)
     daily_deals = [
         deal for deal in all_deals
         if current_day.lower() in map(str.lower, deal.get('deal_details', {}).get('days_active', []))
     ]
-
-    # Debugging output
-    print(f"Filtered Daily Deals: {daily_deals}")
 
     # Sort deals based on votes or other criteria if needed
     daily_deals = sorted(daily_deals, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0), reverse=True)
