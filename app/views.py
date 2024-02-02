@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from . import app
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
-from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
+from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty, search_deals_day
 import config
 from firebase_admin import firestore
 from datetime import datetime
@@ -74,6 +74,18 @@ def search():
     if query:
         # Assuming search_deals returns a list of Firestore documents
         hits = search_deals(query)
+        results = []
+        print(hits)
+        for hit in hits:
+            results.append(hit['_source'])
+        return render_template('search_results.html', results=results)
+    return redirect(url_for('index'))
+
+@app.route('/search/', methods=['GET'])
+def search_days():
+    days = request.args.getlist('day')
+    if days:
+        hits = search_deals_day(days)
         results = []
         print(hits)
         for hit in hits:
