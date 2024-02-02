@@ -3,10 +3,27 @@
 
 {% block content %}
     <h1 class="mb-4">Welcome to CampusDeals!</h1>
-    <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4">
+    <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4" style="float: left;">
         <input type="text" name="query" class="form-control mr-2" placeholder="Search for deals...">
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
+
+    <form action="{{ url_for('search_days') }}" method="get">
+        <div name="day" id="list1" class="dropdown-check-list" tabindex="100">
+            <span class="anchor"> Filter by Day </span>
+            <ul class="items">
+                <li><input type="checkbox" name="day" value="Monday" />Monday</li>
+                <li><input type="checkbox" name="day" value="Tuesday" />Tuesday</li>
+                <li><input type="checkbox" name="day" value="Wednesday" />Wednesday</li>
+                <li><input type="checkbox" name="day" value="Thursday" />Thursday</li>
+                <li><input type="checkbox" name="day" value="Friday" />Friday</li>
+                <li><input type="checkbox" name="day" value="Saturday" />Saturday</li>
+                <li><input type="checkbox" name="day" value="Sunday" />Sunday</li>
+            </ul>
+            <button type="submit" class="btn btn-primary" style="margin: 0px 0px 3px 4px;">Apply</button>
+        </div>
+    </form>
+
 
     <!-- Display popular deals using Bootstrap cards -->
     <section>
@@ -65,7 +82,7 @@
             })
             .catch(error => console.error('Error:', error));
         }
-    
+
         function downvote(dealId) {
             fetch('/deal/' + dealId + '/downvote', {
                 method: 'POST',

@@ -1,10 +1,10 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 from flask import Flask
-from .models import login_manager  
+from .models import login_manager
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 app.config['SECRET_KEY'] = 'asoifboiasfopbasopdbfou[asbo[d]]'
 
 # Initialize Firebase Admin SDK

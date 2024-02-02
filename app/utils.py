@@ -102,7 +102,7 @@ def is_elasticsearch_empty():
     # Get the count of documents in the 'deals' index
     response = es.count(index='deals')
     count = response['count']
-    
+
     # Return True if the count is 0, indicating that Elasticsearch is empty
     return count == 0
 
@@ -124,6 +124,38 @@ def search_deals(query):
             "query_string": {
                 "query": query,
                 "fuzziness": "AUTO"
+            }
+        }
+    }
+
+    # Perform the search on the 'deals' index
+    response = es.search(index="deals", body=search_query, from_=0, size=10)
+
+    return response['hits']['hits']
+
+def search_deals_day(days):
+    """
+    Search for deals using Elasticsearch by day.
+    """
+    # Set up elements for search_query
+    elements = "";
+    for day in days:
+        if day != days[len(days)-1]:
+            elements += day + ", ";
+        else:
+            elements += day;
+
+    # Define a query_string to filter deals based on day
+    search_query = {
+        "query" : {
+            "bool" : {
+                "must" : [
+                {
+                    "match" : {
+                        "deal_details.days_active": elements
+                    }
+                }
+                ]
             }
         }
     }
