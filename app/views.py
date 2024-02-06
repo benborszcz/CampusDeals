@@ -1,12 +1,22 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from . import app
+from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
 from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
 import config
 from firebase_admin import firestore
 from datetime import datetime
+from .auth import login_required
+from flask_login import login_user, logout_user, login_required, current_user
+from flask_wtf import FlaskForm
+from wtforms import TextAreaField, SubmitField
+from wtforms.validators import DataRequired
 
+
+class CommentForm(FlaskForm):
+    comment = TextAreaField('Comment', validators=[DataRequired()])
+    submit_comment = SubmitField('Submit Comment')
 
 @app.route('/')
 def index():
@@ -134,3 +144,44 @@ def daily_deals():
     return render_template('daily_deals.html', daily_deals=daily_deals)
 
 
+@app.route('/view-comments/<deal_id>', methods=['GET', 'POST'])
+def view_comments(deal_id):
+    deal = db.collection('deals').document(deal_id).get().to_dict()
+    comments = deal.get('comments', [])
+
+    comment_form = CommentForm()
+
+    if comment_form.validate_on_submit():
+        # Handle comment submission logic here
+        new_comment = comment_form.comment.data
+        # Add the new comment to the deal document in Firestore
+        db.collection('deals').document(deal_id).update({
+            'comments': firestore.ArrayUnion([new_comment])
+        })
+        return redirect(url_for('view_comments', deal_id=deal_id))
+
+    return render_template('view_comments.html', deal_name=deal.get('title', 'Unknown Deal'), deal_id=deal_id, comments=comments, comment_form=comment_form, current_user=current_user)
+
+@app.route('/deal/<deal_id>/comments/add', methods=['POST'])
+@login_required
+def add_comment(deal_id):
+    comment_text = request.form.get('comment')
+
+    # Retrieve the document from the Firestore collection
+    deal_ref = db.collection('deals').document(deal_id)
+    deal = deal_ref.get().to_dict()  # Convert to dictionary
+
+    # Retrieve existing comments from the deal document
+    comments = deal.get('comments', [])
+
+    # Add the new comment
+    new_comment = {
+    'user_id': current_user.id,
+    'username': current_user.username,
+    'text': comment_text,
+    'time': datetime.now().isoformat()
+    }
+    comments.append(new_comment)
+    # Update the deal document with the new comments
+    deal_ref.update({"comments": comments})
+    return redirect(url_for('view_comments', deal_id=deal_id))
