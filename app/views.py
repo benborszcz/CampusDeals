@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from . import app
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
-from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty, search_deals_day
+from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
 import config
 from firebase_admin import firestore
 from datetime import datetime
@@ -12,7 +12,7 @@ from datetime import datetime
 def index():
     """
     Home page that could show popular deals or a search bar.
-    """ 
+    """
     # load all deals from firestore
     deals = db.collection('deals').stream()
     deal_list = [deal.to_dict() for deal in deals]
@@ -25,7 +25,7 @@ def index():
     for deal in deal_list:
         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
-        
+
     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
 
     return render_template('index.html', popular_deals=deal_list)
@@ -54,8 +54,8 @@ def submit_deal():
         db.collection('deals').document(deal_data['deal_id']).set(deal_data)
         # Index the new deal in Elasticsearch
         index_deal(deal_data)
-        return redirect(url_for('index'))  
-        
+        return redirect(url_for('index'))
+
     return render_template('submit_deal.html', form=form)
 
 @app.route('/deals', methods=['GET'])
@@ -71,21 +71,10 @@ def get_deals():
 @app.route('/search', methods=['GET'])
 def search():
     query = request.args.get('query')
-    if query:
-        # Assuming search_deals returns a list of Firestore documents
-        hits = search_deals(query)
-        results = []
-        print(hits)
-        for hit in hits:
-            results.append(hit['_source'])
-        return render_template('search_results.html', results=results)
-    return redirect(url_for('index'))
-
-@app.route('/search/', methods=['GET'])
-def search_days():
     days = request.args.getlist('day')
-    if days:
-        hits = search_deals_day(days)
+    if query or days:
+        # Assuming search_deals returns a list of Firestore documents
+        hits = search_deals(query, days)
         results = []
         print(hits)
         for hit in hits:
