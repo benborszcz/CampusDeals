@@ -1,4 +1,3 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,19 +9,104 @@
     <!-- Optional: Include custom CSS for additional styling -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <style>
+        *,
+        *::before,
+        *::after {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
         html, body {
             height: 100%;
             margin: 0;
         }
+
         body {
+            font-family: "Satoshi";
+            height: 100vh;
             display: flex;
             flex-direction: column;
+            background: rgb(249, 245, 245);
         }
+
         main {
             flex: 1 0 auto; /* The main content will expand to fill the space */
         }
+
         footer {
             flex-shrink: 0; /* The footer will not shrink */
+        }
+
+        /* Custom Navbar Styles */
+        .navbar {
+            background-color: #f6fbf6; /* Customize the background color */
+        }
+
+        .navbar-brand {
+            font-family: 'YourFont', sans-serif; /* Change the font style */
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff; /* Customize the text color */
+        }
+
+        .navbar-collapse {
+            justify-content: flex-end; /* Align items to the right */
+        }
+
+        .navbar-toggler {
+            border-color: #fff; /* Customize the color of the toggler icon */
+        }
+
+        /* Custom Link Styles */
+        .navbar-nav .nav-item {
+            margin-right: 1rem;
+        }
+
+        .navbar-nav .nav-link {
+            text-decoration: none;
+            color: #fff;
+            font-size: 22px;
+            padding: 1rem 2rem;
+            position: relative;
+        }
+
+        .navbar-nav .nav-link::before,
+        .navbar-nav .nav-link::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #fff;
+            transform: scaleX(0);
+            transition: all 0.6s ease;
+        }
+
+        .navbar-nav .nav-link::before {
+            top: 0;
+            left: 0;
+            transform-origin: left;
+        }
+
+        .navbar-nav .nav-link::after {
+            bottom: 0;
+            left: 0;
+            transform-origin: right;
+        }
+
+        .navbar-nav .nav-link:hover::before,
+        .navbar-nav .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        /* Custom Footer Styles */
+        .footer {
+            background-color: #f6f8f6;
+            color: rgb(3, 2, 2);
+            text-align: center;
+            padding: 1rem;
+            margin-top: 4rem;
         }
     </style>
 </head>
@@ -31,16 +115,15 @@
         <!-- Bootstrap Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="{{ url_for('index') }}">CampusDeals</a>
-            <ul class="navbar-nav">
-                <!-- Add Home and Submit Deal links here -->
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('daily_deals') }}">Today's Deals</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('submit_deal') }}">Submit Deal</a></li>
-            </ul>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('daily_deals') }}">Today's Deals</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('submit_deal') }}">Submit Deal</a></li>
+                </ul>
                 <ul class="navbar-nav ml-auto">
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
@@ -58,14 +141,14 @@
                         </li>
                     {% endif %}
                 </ul>
-            </div>
+            </div>            
         </nav>
     </header>
     <main class="container mt-4">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="footer bg-dark text-white mt-4 py-3 text-center">
+    <footer class="footer">
         <p>&copy; 2024 CampusDeals</p>
     </footer>
 
@@ -75,6 +158,5 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Optional: Include custom JS for additional interactivity -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    
 </body>
 </html>
