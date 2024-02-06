@@ -63,6 +63,7 @@ def transform_deal_structure(deal_structure_LLM):
     full_deal_structure["upvotes"] = 0
     full_deal_structure["downvotes"] = 0
 
+
     return full_deal_structure
 
 
@@ -204,3 +205,4 @@ def parse_deal_submission(text):
     response = agent.complete_task(text)
     response = json.loads(response)
     return response
+
