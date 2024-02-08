@@ -22,7 +22,7 @@ class CommentForm(FlaskForm):
 def index():
     """
     Home page that could show popular deals or a search bar.
-    """ 
+    """
     # load all deals from firestore
     deals = db.collection('deals').stream()
     deal_list = [deal.to_dict() for deal in deals]
@@ -35,7 +35,7 @@ def index():
     for deal in deal_list:
         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
-        
+
     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
 
     return render_template('index.html', popular_deals=deal_list)
@@ -64,8 +64,8 @@ def submit_deal():
         db.collection('deals').document(deal_data['deal_id']).set(deal_data)
         # Index the new deal in Elasticsearch
         index_deal(deal_data)
-        return redirect(url_for('index'))  
-        
+        return redirect(url_for('index'))
+
     return render_template('submit_deal.html', form=form)
 
 @app.route('/deals', methods=['GET'])
@@ -99,7 +99,7 @@ def search():
             for result in results:
                 if deal['deal_id'] == result['deal_id']:
                     deal['_score'] = result['_score']
-        
+
         for result in deal_results:
             print(f"Deal: {result['title']}, Score: {result['_score']}")
 
@@ -199,3 +199,7 @@ def add_comment(deal_id):
     # Update the deal document with the new comments
     deal_ref.update({"comments": comments})
     return redirect(url_for('view_comments', deal_id=deal_id))
+
+@app.route('/auth0-login', methods=['POST'])
+def auth0Login():
+    return render_template('auth0_login.html')
