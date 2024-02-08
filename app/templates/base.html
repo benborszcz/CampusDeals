@@ -24,6 +24,16 @@
         footer {
             flex-shrink: 0; /* The footer will not shrink */
         }
+        form.form-inline.mb-4 {
+            margin-bottom: 0 !important;
+        }
+        .search-input {
+            width: 150px !important; /* Default width */
+            transition: width 0.4s ease-in-out; /* Animate the change */
+        }
+        .search-input.expanded {
+            width: 300px !important; /* Width when expanded */
+        }
     </style>
 </head>
 <body>
@@ -42,6 +52,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
+                    <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4">
+                        <input type="text" name="query" class="form-control mr-2 search-input" placeholder="Search for deals...">
+                    </form>
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
                             <span class="navbar-text">Hey {{ current_user.id }}</span>
@@ -69,6 +82,19 @@
         <p>&copy; 2024 CampusDeals</p>
     </footer>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var searchInput = document.querySelector('.search-input');
+
+            searchInput.addEventListener('focus', function() {
+                this.classList.add('expanded');
+            });
+
+            searchInput.addEventListener('blur', function() {
+                this.classList.remove('expanded');
+            });
+        });
+    </script>
     <!-- Include Bootstrap JS and its dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.9/dist/umd/popper.min.js"></script>
