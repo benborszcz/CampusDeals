@@ -87,8 +87,23 @@ def search():
         results = []
         print(hits)
         for hit in hits:
+            hit['_source']['_score'] = hit['_score']
             results.append(hit['_source'])
-        return render_template('search_results.html', results=results)
+
+        deals = db.collection('deals').stream()
+        deal_list = [deal.to_dict() for deal in deals]
+        deal_results = [deal for deal in deal_list if deal['deal_id'] in [result['deal_id'] for result in results]]
+
+        # Add score to each deal
+        for deal in deal_results:
+            for result in results:
+                if deal['deal_id'] == result['deal_id']:
+                    deal['_score'] = result['_score']
+        
+        for result in deal_results:
+            print(f"Deal: {result['title']}, Score: {result['_score']}")
+
+        return render_template('search_results.html', results=deal_results)
     return redirect(url_for('index'))
 
 @app.route('/deal_details/<deal_id>', methods=['GET'])
