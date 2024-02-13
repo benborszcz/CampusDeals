@@ -1,0 +1,29 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+body {
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex: 1 0 auto; /* The main content will expand to fill the space */
+}
+footer {
+    flex-shrink: 0; /* The footer will not shrink */
+}
+form.form-inline.mb-4 {
+    margin-bottom: 0 !important;
+}
+.search-input {
+    width: 150px !important; /* Default width */
+    transition: width 0.4s ease-in-out; /* Animate the change */
+}
+.search-input.expanded {
+    width: 300px !important; /* Width when expanded */
+}
+.navbar-logo {
+    width: 40px;
+    height: auto; /* maintains the aspect ratio */
+    margin-right: 10px;
+}

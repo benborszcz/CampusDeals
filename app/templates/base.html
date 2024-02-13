@@ -8,39 +8,8 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Optional: Include custom CSS for additional styling -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='images/campusDealsLogo.png') }}" type="image/png">
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-        main {
-            flex: 1 0 auto; /* The main content will expand to fill the space */
-        }
-        footer {
-            flex-shrink: 0; /* The footer will not shrink */
-        }
-        form.form-inline.mb-4 {
-            margin-bottom: 0 !important;
-        }
-        .search-input {
-            width: 150px !important; /* Default width */
-            transition: width 0.4s ease-in-out; /* Animate the change */
-        }
-        .search-input.expanded {
-            width: 300px !important; /* Width when expanded */
-        }
-        .navbar-logo {
-            width: 40px;
-            height: auto; /* maintains the aspect ratio */
-            margin-right: 10px;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -95,26 +64,13 @@
     <footer class="footer bg-dark text-white mt-4 py-3 text-center">
         <p>&copy; 2024 CampusDeals</p>
     </footer>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var searchInput = document.querySelector('.search-input');
-
-            searchInput.addEventListener('focus', function() {
-                this.classList.add('expanded');
-            });
-
-            searchInput.addEventListener('blur', function() {
-                this.classList.remove('expanded');
-            });
-        });
-    </script>
+    
     <!-- Include Bootstrap JS and its dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.9/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Optional: Include custom JS for additional interactivity -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
     
 </body>
 </html>
