@@ -101,7 +101,6 @@ def logout():
 @auth_bp.route('/auth0-login')
 def auth0_login():
     auth0 = current_app.config['AUTH0']
-    print(url_for('auth.auth0_callback', _external=True))
     return auth0.authorize_redirect(redirect_uri=url_for('auth.auth0_callback', _external=True))
 
 @auth_bp.route('/auth0-callback')
