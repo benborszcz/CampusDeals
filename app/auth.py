@@ -32,6 +32,8 @@ def register():
         username = form.username.data
         email = form.email.data
         password = form.password.data
+        birthday = form.birthday.data  # Add this line
+        college_class = form.college_class.data  # Add this line
 
         # Check if the username is already taken
         user_ref = db.collection('users').document(username)
@@ -42,11 +44,13 @@ def register():
         # Hash the password before storing it
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-        # Create a new user document in Firestore
+        # Create a new user document in Firestore with additional fields
         user_ref.set({
             'username': username,
-            'email': email,  # Added line to store email
-            'password': hashed_password
+            'email': email,
+            'password': hashed_password,
+            'birthday': birthday,  # Add this line
+            'college_class': college_class,  # Add this line
         })
 
         flash('Account created successfully. You can now log in.', 'success')
@@ -90,3 +94,24 @@ def logout():
     logout_user()
     #flash('You have been logged out.', 'success')
     return redirect(url_for('index'))
+
+@auth_bp.route('/view-profile')
+@login_required
+def view_profile():
+    return render_template('view_profile.html', user=current_user)
+
+@auth_bp.route('/update-profile', methods=['POST'])
+@login_required
+def update_profile():
+    # Handle the form data and update the user's information in the database
+    current_user_id = current_user.id
+    user_ref = db.collection('users').document(current_user_id)
+
+    # Update the user document with the new data
+    user_ref.update({
+        'birthday': request.form.get('birthday'),
+        'college_class': request.form.get('college_class'),
+        # Add other fields as needed
+    })
+
+    return redirect(url_for('auth.view_profile'))

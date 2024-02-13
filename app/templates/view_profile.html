@@ -1,0 +1,24 @@
+<!-- templates/view_profile.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome to Your Profile, {{ current_user.id }}!</h1>
+    <p>email: {{ user.email }}</p>
+
+
+    <!-- Add your profile details form here -->
+    <form method="post" action="{{ url_for('auth.update_profile') }}">
+        <!-- Add form fields for name, email, class year, etc. -->
+        <!-- You can use Flask-WTF forms or simple HTML forms -->
+        <!-- Don't forget to include CSRF protection if not using Flask-WTF -->
+        <!-- Add a submit button to update the profile -->
+        <input type="submit" value="Update Profile">
+    </form>
+
+    <hr>
+
+    <p>Other profile information goes here...</p>
+
+    <!-- Add an option to sign out -->
+    <a href="{{ url_for('auth.logout') }}">Sign Out</a>
+{% endblock %}
