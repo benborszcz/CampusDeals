@@ -118,12 +118,14 @@ def deal_details(deal_id):
 
 
 @app.route('/deal/<deal_id>/upvote', methods=['POST'])
+@login_required
 def upvote_deal(deal_id):
     deal_ref = db.collection('deals').document(deal_id)
     deal_ref.update({"upvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
 
 @app.route('/deal/<deal_id>/downvote', methods=['POST'])
+@login_required
 def downvote_deal(deal_id):
     deal_ref = db.collection('deals').document(deal_id)
     deal_ref.update({"downvotes": firestore.Increment(1)})

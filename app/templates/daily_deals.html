@@ -60,7 +60,7 @@
             })
             .catch(error => console.error('Error:', error));
         }
-    
+        
         function downvote(dealId) {
             fetch('/deal/' + dealId + '/downvote', {
                 method: 'POST',
