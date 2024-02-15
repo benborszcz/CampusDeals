@@ -19,6 +19,12 @@ class RegistrationForm(FlaskForm):
     confirm = PasswordField('Repeat Password')
     submit = SubmitField('Register')
 
+    def validate_email(form, field):
+        # Custom validation for email
+        user_ref = db.collection('users').where('email', '==', field.data).limit(1).get()
+        if user_ref:
+            raise validators.ValidationError('Email is already in use.')
+
 class LoginForm(FlaskForm):
     username = StringField('Username', [validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired()])
@@ -33,6 +39,12 @@ def register():
         email = form.email.data
         password = form.password.data
 
+        # Check if the email is already taken
+        email_ref = db.collection('users').where('email', '==', email).limit(1).get()
+        if email_ref:
+            flash('Email is already in use. Please use a different email.', 'danger')
+            return redirect(url_for('auth.register'))
+
         # Check if the username is already taken
         user_ref = db.collection('users').document(username)
         if user_ref.get().exists:
@@ -45,7 +57,7 @@ def register():
         # Create a new user document in Firestore
         user_ref.set({
             'username': username,
-            'email': email,  # Added line to store email
+            'email': email,
             'password': hashed_password
         })
 
@@ -73,8 +85,6 @@ def login():
                 user = User(user_id=username, username=username)
                 email = user_data.to_dict()['email']
                 login_user(user)
-                #flash('Login successful!', 'success')
-                # Implement login logic here (e.g., session management)
                 return redirect(url_for('index'))
             else:
                 flash('Incorrect password. Please try again.', 'danger')
@@ -85,8 +95,7 @@ def login():
     return render_template('login.html', form=form)
 
 @auth_bp.route('/logout')
-@login_required  # This ensures that only logged-in users can access this route
+@login_required
 def logout():
     logout_user()
-    #flash('You have been logged out.', 'success')
     return redirect(url_for('index'))
