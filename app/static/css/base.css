@@ -2,28 +2,95 @@ html, body {
     height: 100%;
     margin: 0;
 }
+
 body {
     display: flex;
     flex-direction: column;
 }
+
 main {
     flex: 1 0 auto; /* The main content will expand to fill the space */
 }
+
 footer {
     flex-shrink: 0; /* The footer will not shrink */
 }
+
 form.form-inline.mb-4 {
     margin-bottom: 0 !important;
 }
+
 .search-input {
     width: 150px !important; /* Default width */
     transition: width 0.4s ease-in-out; /* Animate the change */
 }
+
 .search-input.expanded {
     width: 300px !important; /* Width when expanded */
 }
+
 .navbar-logo {
     width: 40px;
     height: auto; /* maintains the aspect ratio */
     margin-right: 10px;
+}
+
+.dropdown-check-list {
+    display: inline-block;
+    margin-left: 8px;
+    margin-right: 15px;
+}
+
+.dropdown-check-list .anchor {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    padding: 6px 50px 6.5px 10px;
+    border: 1px solid #cfd4d8;
+    border-radius: 4px;
+    color: #6c747d;
+}
+
+.dropdown-check-list .anchor:after {
+    position: absolute;
+    content: "";
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    padding: 5px;
+    right: 10px;
+    top: 20%;
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
+
+.dropdown-check-list .anchor:active:after {
+    right: 8px;
+    top: 21%;
+}
+
+.dropdown-check-list ul.items {
+    padding: 2px;
+    display: none;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    position: absolute;
+    z-index: 1;
+    background-color: #fff;
+    padding-right: 50px;
+}
+
+.dropdown-check-list ul.items li {
+    list-style: none;
+}
+
+.dropdown-check-list.visible .anchor {
+    color: #0094ff;
+}
+
+.dropdown-check-list.visible .items {
+    display: block;
 }

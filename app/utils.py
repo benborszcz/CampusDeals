@@ -133,7 +133,7 @@ def is_elasticsearch_empty():
     # Get the count of documents in the 'deals' index
     response = es.count(index='deals')
     count = response['count']
-    
+
     # Return True if the count is 0, indicating that Elasticsearch is empty
     return count == 0
 
@@ -145,19 +145,60 @@ def remove_deal(deal_id):
     response = es.delete(index="deals", id=deal_id)
     return response
 
-def search_deals(query):
+def search_deals(query, days):
     """
     Search for deals using Elasticsearch across all fields.
     """
-    # Define a query_string query to search across all fields
-    search_query = {
-        "query": {
-            "query_string": {
-                "query": query,
-                "fuzziness": "AUTO"
+    # Sets up day elements for filter by day
+    dayElements = ""
+    if days:
+        for day in days:
+            if day != days[len(days)-1]:
+                dayElements += day + ", "
+            else:
+                dayElements += day
+    # If day filter is not specified, search across all days
+    else:
+        dayElements = "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday"
+
+    # If there's no query string, search all results filtered only by day
+    if not query:
+       search_query = {
+            "query" : {
+                "bool" : {
+                    "must" : [
+                    {
+                        "match" : {
+                            "deal_details.days_active": dayElements
+                        }
+                    }
+                    ]
+                }
             }
         }
-    }
+    # If there's a query string, search results filtered by query string and day
+    else:
+       search_query = {
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "query_string": {
+                                "query": query,
+                                "fuzziness": "AUTO"
+                            }
+                        }
+                    ],
+                    "filter": [
+                        {
+                            "match": {
+                                "deal_details.days_active": dayElements
+                            }
+                        }
+                    ]
+                }
+            }
+        }
 
     # Perform the search on the 'deals' index
     response = es.search(index="deals", body=search_query, from_=0, size=10)
@@ -173,4 +214,5 @@ def parse_deal_submission(text):
     response = agent.complete_task(text)
     response = json.loads(response)
     return response
+
 
