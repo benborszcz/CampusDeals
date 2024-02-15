@@ -2,6 +2,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+            <div class="flashes">
+                {% for message in messages %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+        {% if messages %}
+            <div class="flashes">
+                {% for message in messages %}
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <h2>{{ deal_name }}</h2>
 
     <!-- Display form for adding a comment (only for logged-in users) -->
@@ -27,9 +50,7 @@
                     {% if comment is mapping %}
                         <p><strong>{{ comment.get('user_id', 'Unknown User') }}</strong> said:</p>
                         <p>{{ comment.get('text', '') }}</p>
-                        <small class="text-muted">
-                            Posted on {{ comment.get('time', 'Unknown Time') }}
-                        </small>
+                        <small class="text-muted">Posted on {{ comment.get('time', 'Unknown Time') }}</small>
                     {% else %}
                         <p>{{ comment }}</p>
                     {% endif %}
