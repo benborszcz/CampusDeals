@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from . import app
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
