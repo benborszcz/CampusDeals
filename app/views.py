@@ -12,6 +12,8 @@ from flask_login import login_user, logout_user, login_required, current_user
 from flask_wtf import FlaskForm
 from wtforms import TextAreaField, SubmitField
 from wtforms.validators import DataRequired
+from profanity import profanity
+
 
 
 class CommentForm(FlaskForm):
@@ -169,6 +171,11 @@ def view_and_add_comments(deal_id):
 
     if comment_form.validate_on_submit() and current_user.is_authenticated:
         new_comment_text = comment_form.comment.data
+
+        # Check for profanity using the profanity library
+        if profanity.contains_profanity(new_comment_text):
+            flash('Your comment contains profanity and cannot be posted.', 'error')
+            return redirect(url_for('view_and_add_comments', deal_id=deal_id))
 
         new_comment = {
             'user_id': current_user.id,
