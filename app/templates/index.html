@@ -22,7 +22,7 @@
 
      <!-- Display popular deals using Bootstrap cards -->
      <section>
-        <h2>Popular Deals</h2>
+        <h2 class="my-4">Popular Deals</h2>
         <div class="row">
             {% for deal in popular_deals %}
                 <div class="col-md-4 mb-3">
@@ -56,57 +56,5 @@
         </div>
     </section>
 
-    <!-- Display daily deals using Bootstrap cards -->
-
-    <script>
-        function upvote(dealId) {
-            fetch('/deal/' + dealId + '/upvote', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Add any other headers your API requires
-                },
-                body: JSON.stringify({ 'deal_id': dealId }),
-                // Include credentials if your API requires authentication
-                credentials: 'same-origin'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the vote count on the page
-                    let voteCountElement = document.getElementById('vote-count-' + dealId);
-                    voteCountElement.textContent = parseInt(voteCountElement.textContent) + 1;
-                } else {
-                    // Handle error
-                    console.error('Failed to upvote');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
-        function downvote(dealId) {
-            fetch('/deal/' + dealId + '/downvote', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Add any other headers your API requires
-                },
-                body: JSON.stringify({ 'deal_id': dealId }),
-                // Include credentials if your API requires authentication
-                credentials: 'same-origin'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the vote count on the page
-                    let voteCountElement = document.getElementById('vote-count-' + dealId);
-                    voteCountElement.textContent = parseInt(voteCountElement.textContent) - 1;
-                } else {
-                    // Handle error
-                    console.error('Failed to downvote');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
