@@ -24,6 +24,16 @@ Deal Structure
     "name": "Name",
     "type": "Type",
   },
+  "address": {
+    "street_address": "Street Address",
+    "city": "City",
+    "state": "State",
+    "zip_code": "Zip Code",
+  },
+  "geolocation": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+  },
   "deal_details": {
     "deal_type": "Type",
     "deal_items": [
@@ -145,7 +155,7 @@ def remove_deal(deal_id):
     response = es.delete(index="deals", id=deal_id)
     return response
 
-def search_deals(query, days):
+def search_deals(query, days, distance, userLat, userLon):
     """
     Search for deals using Elasticsearch across all fields.
     """
@@ -202,8 +212,22 @@ def search_deals(query, days):
 
     # Perform the search on the 'deals' index
     response = es.search(index="deals", body=search_query, from_=0, size=10)
+    if (distance and userLat and userLon):
 
-    return response['hits']['hits']
+        deal_list = response['hits']['hits']
+
+        filtered_deals = []
+        for deal in deal_list:
+            if 'geolocation' in deal['_source']:
+                deal_lat = float(deal['_source']['geolocation']['lat'])
+                deal_lon = float(deal['_source']['geolocation']['lon'])
+                
+                if haversine(userLon, userLat, deal_lon, deal_lat) <= float(distance):
+                    filtered_deals.append(deal)
+        
+        return filtered_deals
+    
+    else: return response['hits']['hits']
 
 def parse_deal_submission(text):
     """
@@ -215,4 +239,20 @@ def parse_deal_submission(text):
     response = json.loads(response)
     return response
 
+from math import radians, cos, sin, asin, sqrt
 
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the distance in miles between two sets of coordinates on Earth
+    """
+    # Convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(float, [lon1, lat1, lon2, lat2])
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # Haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 3956 # Radius of earth in miles. Use 6371 for kilometers
+    return c * r

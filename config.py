@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 ELASTICSEARCH_LOCAL_USERNAME = 'elastic'
 ELASTICSEARCH_LOCAL_PASSWORD = os.getenv("ELASTICSEARCH_PASSWORD")
 ELASTICSEARCH_SERVICE = 'bonsai'

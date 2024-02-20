@@ -13,6 +13,22 @@
             {{ form.establishment_type(class_='form-control') }}
         </div>
         <div class="form-group">
+            {{ form.street_address.label(class_='form-control-label') }}
+            {{ form.street_address(class_='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.city.label(class_='form-control-label') }}
+            {{ form.city(class_='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.state.label(class_='form-control-label') }}
+            {{ form.state(class_='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.zip_code.label(class_='form-control-label') }}
+            {{ form.zip_code(class_='form-control') }}
+        </div>
+        <div class="form-group">
             {{ form.deal_name.label(class_='form-control-label') }}
             {{ form.deal_name(class_='form-control', size=32) }}
         </div>

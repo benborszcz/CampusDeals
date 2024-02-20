@@ -42,6 +42,10 @@ def index():
 
 from flask import request, jsonify
 from . import app, db
+from urllib.parse import urlencode
+import requests
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/submit-deal', methods=['POST', 'GET'])
 def submit_deal():
@@ -57,15 +61,48 @@ def submit_deal():
             form.end_time.validators = [DataRequired()]
 
     if form.validate_on_submit():
-        # Parse the form data using OpenAI's LLM
-        print(str(form.data))
-        deal_data = transform_deal_structure(parse_deal_submission(str(form.data)))
-        # Add a new document to the Firestore collection with the specified deal_id
-        db.collection('deals').document(deal_data['deal_id']).set(deal_data)
-        # Index the new deal in Elasticsearch
-        index_deal(deal_data)
-        return redirect(url_for('index'))
 
+        # Construct the address for geocoding and make a request to Google Maps Geocode API
+        full_address = f"{form.street_address.data}, {form.city.data}, {form.state.data}, {form.zip_code.data}"
+        encoded_address = urlencode({'address': full_address})
+        api_key = config.GOOGLE_MAPS_API_KEY
+        geocode_url = f"https://maps.googleapis.com/maps/api/geocode/json?{encoded_address}&key={api_key}"
+
+        # Perform the geocoding request
+        response = requests.get(geocode_url)
+        logging.debug(f"Geocoding API request URL: {geocode_url}")
+        logging.debug(f"Geocoding API response status: {response.status_code}")
+        logging.debug(f"Geocoding API full response: {response.json()}")
+        if response.status_code == 200:
+            geocode_data = response.json()
+            if geocode_data['status'] == 'OK':
+                # Extract the latitude and longitude from the response
+                latitude = geocode_data['results'][0]['geometry']['location']['lat']
+                longitude = geocode_data['results'][0]['geometry']['location']['lng']
+                logging.debug(f"\nLine 82, {latitude}, {longitude}\n")
+
+                # Add latitude and longitude before parsing data
+                deal_data = form.data.copy()
+                deal_data['latitude'] = latitude
+                deal_data['longitude'] = longitude
+
+                logging.debug(f"Deal to be parsed: {deal_data}")
+
+                # Parse the form data and transform the deal structure
+                deal_to_save = transform_deal_structure(parse_deal_submission(str(deal_data)))
+
+                logging.debug(f"Deal data to be saved: {deal_to_save}")
+
+                # Save the deal to Firestore and index in Elasticsearch
+                db.collection('deals').document(deal_to_save['deal_id']).set(deal_to_save)
+                index_deal(deal_to_save)
+
+                # Redirect to the index page after successful deal submission
+                return redirect(url_for('index'))
+    else:
+        logging.debug(f"Form validation errors: {form.errors}")
+
+    # Render the deal submission form for GET requests or failed validations
     return render_template('submit_deal.html', form=form)
 
 @app.route('/deals', methods=['GET'])
@@ -82,9 +119,12 @@ def get_deals():
 def search():
     query = request.args.get('query')
     days = request.args.getlist('day')
-    if query or days:
+    distance = request.args.get('distance')
+    userLat = request.args.get('userLat')
+    userLong = request.args.get('userLon')
+    if query or days or distance:
         # Assuming search_deals returns a list of Firestore documents
-        hits = search_deals(query, days)
+        hits = search_deals(query, days, distance, userLat, userLong)
         results = []
         print(hits)
         for hit in hits:

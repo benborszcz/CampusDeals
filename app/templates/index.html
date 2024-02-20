@@ -17,6 +17,10 @@
                 <li><input type="checkbox" name="day" value="Sunday" />Sunday</li>
             </ul>
         </div>
+        <input type="range" id="distance-slider" name="distance" min="1" max="300" value="1" class="form-control mr-2" oninput="requestLocation(value)">
+        <label for="distance-slider">Distance (mi)</label>
+        <input type="hidden" id="userLat" name="userLat">
+        <input type="hidden" id="userLon" name="userLon">
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
 

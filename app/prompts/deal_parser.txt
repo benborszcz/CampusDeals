@@ -8,13 +8,23 @@ Deal Submission Structure:
     "name": "Name",
     "type": "Type",
   },
+  "address": {
+    "street_address": "Street Address",
+    "city": "City",
+    "state": "State",
+    "zip_code": "Zip Code"
+  },
+  "geolocation": {
+    "lat": "Latitude",
+    "lon": "Longitude"
+  },
   "deal_details": {
     "deal_type": "Type",
     "deal_items": [
         {
             "item": "Item Name",
             "item_type": "Type of Item",
-            "pricing": {"price": "# if price deal like $1 wells else N/A", "discout": "# if deal like 50% off or $2 off else N/A"}
+            "pricing": {"price": "# if price deal like $1 wells else N/A", "discount": "# if deal like 50% off or $2 off else N/A"}
         },
     ],
     "start_time": "HH:MM:SS" or "Open",
@@ -26,7 +36,7 @@ Deal Submission Structure:
 }
 
 Example bar deal submission 1:
-{'establishment_name': 'Joe's', 'establishment_type': 'bar', 'deal_name': '50% off Friday', 'deal_description': 'All drinks 50% off on friday all night', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['fri'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
+{'establishment_name': 'Joe's', 'establishment_type': 'bar', 'street_address': '9500 Euclid Ave', 'city': 'Cleveland', 'state': 'Ohio', 'zip_code': '44195', 'latitude': '41.502595', 'longitude': '-81.621066', 'deal_name': '50% off Friday', 'deal_description': 'All drinks 50% off on friday all night', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['fri'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
 
 Expected parsed deal submission 1:
 {
@@ -35,6 +45,16 @@ Expected parsed deal submission 1:
   "establishment": {
     "name": "Joe's Bar",
     "type": "Bar"
+  },
+  "address": {
+    "street_address": "9500 Euclid Ave",
+    "city": "Cleveland",
+    "state": "Ohio",
+    "zip_code": "44195"
+  },
+  "geolocation": {
+    "lat": "41.502595",
+    "lon": "-81.621066"
   },
   "deal_details": {
     "deal_type": "Percentage Off",
@@ -59,7 +79,7 @@ Expected parsed deal submission 1:
 }
 
 Example bar deal submission 2:
-{'establishment_name': 'Midway', 'establishment_type': 'bar', 'deal_name': 'Wednesday Madness', 'deal_description': '$1 Wells and Bombs all night', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['wed'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
+{'establishment_name': 'Midway', 'establishment_type': 'bar', 'street_address': '1728 N High St', 'city': 'Columbus', 'state': 'Ohio', 'zip_code': '43201', 'latitude': '39.9977', 'longitude': '-83.0074', 'deal_name': 'Wednesday Madness', 'deal_description': '$1 Wells and Bombs all night', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['wed'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
 
 Expected parsed deal submission 2:
 {
@@ -68,6 +88,16 @@ Expected parsed deal submission 2:
   "establishment": {
     "name": "Midway",
     "type": "Bar"
+  },
+  "address": {
+    "street_address": "1728 N High St",
+    "city": "Columbus",
+    "state": "Ohio",
+    "zip_code": "43201"
+  },
+  "geolocation": {
+    "lat": "39.9977",
+    "lon": "-83.0074",
   },
   "deal_details": {
     "deal_type": "Type",
