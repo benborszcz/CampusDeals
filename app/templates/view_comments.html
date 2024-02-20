@@ -2,11 +2,34 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+            <div class="flashes">
+                {% for message in messages %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+        {% if messages %}
+            <div class="flashes">
+                {% for message in messages %}
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <h2>{{ deal_name }}</h2>
 
     <!-- Display form for adding a comment (only for logged-in users) -->
     {% if current_user.is_authenticated %}
-        <form action="{{ url_for('view_comments', deal_id=deal_id) }}" method="post">
+        <form action="{{ url_for('view_and_add_comments', deal_id=deal_id) }}" method="post">
             {{ comment_form.csrf_token }}
             <div class="mb-3">
                 <label for="comment" class="form-label">Add a Comment:</label>
@@ -24,7 +47,13 @@
         {% for comment in comments|reverse %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <p class="card-text">{{ comment }}</p>
+                    {% if comment is mapping %}
+                        <p><strong>{{ comment.get('user_id', 'Unknown User') }}</strong> said:</p>
+                        <p>{{ comment.get('text', '') }}</p>
+                        <small class="text-muted">Posted on {{ comment.get('time', 'Unknown Time') }}</small>
+                    {% else %}
+                        <p>{{ comment }}</p>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

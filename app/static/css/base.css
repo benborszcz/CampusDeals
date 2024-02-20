@@ -94,3 +94,19 @@ form.form-inline.mb-4 {
 .dropdown-check-list.visible .items {
     display: block;
 }
+
+.flashes {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+.flash-error {
+    color: rgb(245, 13, 13);
+    font-weight: bold;
+}
+
+.flash-success {
+    color: rgb(41, 155, 41);
+    font-weight: bold;
+}
