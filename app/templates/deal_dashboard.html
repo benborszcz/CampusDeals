@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4">
+
+     <!-- Display popular deals using Bootstrap cards -->
+
+     <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4">
         <input type="text" name="query" class="form-control mr-2" placeholder="Search for deals...">
         <div name="day" id="list1" class="dropdown-check-list" tabindex="100">
             <span class="anchor"> Filter by Day </span>
@@ -18,10 +21,9 @@
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
-     <!-- Display popular deals using Bootstrap cards -->
      <section>
         <h2 class="my-4">Popular Deals</h2>
-        <div class="row">
+        <div class="sidebar">
             {% for deal in popular_deals %}
                 <div class="col-md-4 mb-3">
                     <div class="card">
@@ -53,6 +55,21 @@
             {% endfor %}
         </div>
     </section>
+
+    <div class="container">
+        <div class="sidebar">
+          <h2>Cards</h2>
+          <div class="card-list">
+            <!-- Populate this list dynamically with JavaScript -->
+          </div>
+        </div>
+        <div class="main-content">
+          <h2>Card Details</h2>
+          <div class="card-details">
+            <!-- Card details will be displayed here -->
+          </div>
+        </div>
+      </div>
 
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
