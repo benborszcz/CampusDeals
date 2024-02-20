@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
-from . import app
+from . import app, db
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
@@ -42,8 +42,27 @@ def index():
 
     return render_template('index.html', popular_deals=deal_list)
 
-from flask import request, jsonify
-from . import app, db
+@app.route('/deal_dashboard')
+def deal_dashboard():
+    """
+    Dashboard page that shows all deals in database with filters
+    """
+    # load all deals from firestore
+    deals = db.collection('deals').stream()
+    deal_list = [deal.to_dict() for deal in deals]
+    # index all deals in elasticsearch
+    if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
+        reset_elasticsearch()
+        for deal in deal_list:
+            index_deal(deal)
+
+    for deal in deal_list:
+        deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
+        deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
+
+    deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
+
+    return render_template('deal_dashboard.html', popular_deals=deal_list)
 
 @app.route('/submit-deal', methods=['POST', 'GET'])
 def submit_deal():

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4">
+        <input type="text" name="query" class="form-control mr-2" placeholder="Search for deals...">
+        <div name="day" id="list1" class="dropdown-check-list" tabindex="100">
+            <span class="anchor"> Filter by Day </span>
+            <ul class="items">
+                <li><input type="checkbox" name="day" value="Monday" />Monday</li>
+                <li><input type="checkbox" name="day" value="Tuesday" />Tuesday</li>
+                <li><input type="checkbox" name="day" value="Wednesday" />Wednesday</li>
+                <li><input type="checkbox" name="day" value="Thursday" />Thursday</li>
+                <li><input type="checkbox" name="day" value="Friday" />Friday</li>
+                <li><input type="checkbox" name="day" value="Saturday" />Saturday</li>
+                <li><input type="checkbox" name="day" value="Sunday" />Sunday</li>
+            </ul>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+     <!-- Display popular deals using Bootstrap cards -->
+     <section>
+        <h2 class="my-4">Popular Deals</h2>
+        <div class="row">
+            {% for deal in popular_deals %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body d-flex">
+                            <!-- Deal Details Column -->
+                            <div class="col-11 d-flex align-items-center">
+                                <div>
+                                    <h5 class="card-title">{{ deal['title'] }}</h5>
+                                    <p class="card-text">{{ deal['description'] }}</p>
+                                    <div class="d-flex justify-content-between align-items-end">
+                                        <a href="{{ url_for('deal_details', deal_id=deal['deal_id']) }}" class="btn btn-primary mr-2">View Details</a>
+                                        <a href="{{ url_for('view_and_add_comments', deal_id=deal['deal_id']) }}" class="btn btn-secondary">View Comments</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Voting Column -->
+                            <div class="col-1 d-flex flex-column align-items-center justify-content-center">
+                                <button type="button" class="btn btn-link p-0 mb-0" onclick="upvote('{{ deal['deal_id'] }}')">
+                                    <b>▲</b>
+                                </button>
+                                <span id="vote-count-{{ deal['deal_id'] }}">{{ deal.get('upvotes', 0) - deal.get('downvotes', 0) }}</span>
+                                <button type="button" class="btn btn-link p-0 mt-0" onclick="downvote('{{ deal['deal_id']}}')">
+                                    <b>▼</b>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}
