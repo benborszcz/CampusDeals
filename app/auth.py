@@ -8,7 +8,7 @@ from .models import User, login_manager  # Import User directly from models, not
 import os
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
-from flask import url_for, redirect, session
+from flask import url_for, redirect, session, request
 
 load_dotenv()
 
@@ -101,26 +101,29 @@ def logout():
 @auth_bp.route('/auth0-login')
 def auth0_login():
     auth0 = current_app.config['AUTH0']
-    return auth0.authorize_redirect(redirect_uri=url_for('auth.auth0_callback', _external=True))
+    redirect_uri = url_for('auth.auth0_callback', _external=True)
+    result = auth0.authorize_redirect(redirect_uri=redirect_uri)
+    return result
 
 @auth_bp.route('/auth0-callback')
 def auth0_callback():
     auth0 = current_app.config['AUTH0']
-    auth0.authorize_access_token()
+    try:
+        token = auth0.authorize_access_token()
+    except Exception as e:
+        return redirect(url_for('auth.login'))
     resp = auth0.get('userinfo')
     userinfo = resp.json()
-
-    email = userinfo.get('email')
-    user = User.query.filter_by(email=email).first()
-
-    # if the Auth0 user is not in our db
-    if not user:
-        user = User(email=email)
-        db.session.add(user)
-        db.session.commit()
     
-    login_user(user)
-    return redirect(url_for('index'))  
+    # Adjusted to use your custom User class method for creating or updating users
+    user = User.create_or_update_from_auth0(userinfo)
+    
+    if user:
+        login_user(user)
+        return redirect(url_for('index'))
+    else:
+        # Handle error or failed user creation/login
+        return redirect(url_for('auth.login'))
 
 def configure_auth(app, oauth):
     auth0 = oauth.register(
@@ -131,5 +134,6 @@ def configure_auth(app, oauth):
     access_token_url='https://'+os.getenv('AUTH0_DOMAIN')+'/oauth/token',
     authorize_url='https://'+os.getenv('AUTH0_DOMAIN')+'/authorize',
     client_kwargs={'scope': 'openid profile email'},
+    server_metadata_url=os.environ["AUTH0_SERVER_METADATA_URL"]
     )
     return auth0
