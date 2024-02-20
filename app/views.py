@@ -70,28 +70,20 @@ def submit_deal():
 
         # Perform the geocoding request
         response = requests.get(geocode_url)
-        logging.debug(f"Geocoding API request URL: {geocode_url}")
-        logging.debug(f"Geocoding API response status: {response.status_code}")
-        logging.debug(f"Geocoding API full response: {response.json()}")
         if response.status_code == 200:
             geocode_data = response.json()
             if geocode_data['status'] == 'OK':
-                # Extract the latitude and longitude from the response
+                # Extract the latitude and longitude
                 latitude = geocode_data['results'][0]['geometry']['location']['lat']
                 longitude = geocode_data['results'][0]['geometry']['location']['lng']
-                logging.debug(f"\nLine 82, {latitude}, {longitude}\n")
 
                 # Add latitude and longitude before parsing data
                 deal_data = form.data.copy()
                 deal_data['latitude'] = latitude
                 deal_data['longitude'] = longitude
 
-                logging.debug(f"Deal to be parsed: {deal_data}")
-
                 # Parse the form data and transform the deal structure
                 deal_to_save = transform_deal_structure(parse_deal_submission(str(deal_data)))
-
-                logging.debug(f"Deal data to be saved: {deal_to_save}")
 
                 # Save the deal to Firestore and index in Elasticsearch
                 db.collection('deals').document(deal_to_save['deal_id']).set(deal_to_save)
@@ -123,7 +115,7 @@ def search():
     userLat = request.args.get('userLat')
     userLong = request.args.get('userLon')
     if query or days or distance:
-        # Assuming search_deals returns a list of Firestore documents
+        
         hits = search_deals(query, days, distance, userLat, userLong)
         results = []
         print(hits)
