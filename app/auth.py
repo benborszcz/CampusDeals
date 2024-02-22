@@ -111,6 +111,8 @@ def auth0_callback():
     try:
         token = auth0.authorize_access_token()
     except Exception as e:
+        print(e)
+        print('no token!')
         return redirect(url_for('auth.login'))
     resp = auth0.get('userinfo')
     userinfo = resp.json()
@@ -119,9 +121,11 @@ def auth0_callback():
     user = User.create_or_update_from_auth0(userinfo)
     
     if user:
+        print('Found user!')
         login_user(user)
         return redirect(url_for('index'))
     else:
+        print('No user!')
         # Handle error or failed user creation/login
         return redirect(url_for('auth.login'))
 
@@ -134,6 +138,7 @@ def configure_auth(app, oauth):
     access_token_url='https://'+os.getenv('AUTH0_DOMAIN')+'/oauth/token',
     authorize_url='https://'+os.getenv('AUTH0_DOMAIN')+'/authorize',
     client_kwargs={'scope': 'openid profile email'},
-    # server_metadata_url=os.environ["AUTH0_SERVER_METADATA_URL"]
+    jwks_uri='https://'+os.getenv('AUTH0_DOMAIN')+'/.well-known/jwks.json'
     )
+    app.config['AUTH0'] = auth0
     return auth0
