@@ -47,7 +47,7 @@ class Moderator:
 
     def _get_embedding(self, text, model="text-embedding-3-small"):
         text = text.replace("\n", " ")
-        return self._normalize_l2(self.client.embeddings.create(input = [text], model=model, dimensions=50).data[0].embedding)
+        return (self.client.embeddings.create(input = [text], model=model, dimensions=1000).data[0].embedding)
     
     def _normalize_l2(self, x):
         x = np.array(x)
@@ -94,8 +94,34 @@ collection = [
     'Half-price Martinis all night on Saturdays'
 ]
 
-# Get the similarity between the input text and the collection
-output = moderator.check_duplicate("Buy one get one free Captain Morgan on Thursdays", collection)
+collection = [
+    {'establishment': 'Joe\'s Bar', 'days_active': ['Thursday'], 'start_time': '18:00:00', 'end_time': '22:00:00', 'description': '$3 off all Whiskey Shots'},
+    {'establishment': 'Midway', 'days_active': ['Friday', 'Saturday'], 'start_time': 'Open', 'end_time': 'Close', 'description': '$2 off all Rum Cocktails'},
+    {'establishment': 'The Anchor', 'days_active': ['Monday'], 'start_time': '17:00:00', 'end_time': '20:00:00', 'description': 'Half-price Appetizers'},
+    {'establishment': 'Luna\'s Cafe', 'days_active': ['Wednesday', 'Thursday'], 'start_time': 'Open', 'end_time': '11:00:00', 'description': 'Buy one get one free on all espresso drinks'},
+    {'establishment': 'The Dockside', 'days_active': ['Sunday'], 'start_time': '12:00:00', 'end_time': '16:00:00', 'description': '25% off seafood platters'},
+    {'establishment': 'Brew Brothers', 'days_active': ['Tuesday', 'Wednesday'], 'start_time': '15:00:00', 'end_time': '18:00:00', 'description': '$1 off craft beers'},
+    {'establishment': 'The Golden Spoon', 'days_active': ['Monday', 'Tuesday', 'Wednesday'], 'start_time': 'Open', 'end_time': 'Close', 'description': '10% off total bill'},
+    {'establishment': 'Vine & Dine', 'days_active': ['Thursday', 'Friday'], 'start_time': '19:00:00', 'end_time': '21:00:00', 'description': 'Complimentary wine tasting with any entrée'},
+    {'establishment': 'The Night Owl', 'days_active': ['Friday', 'Saturday'], 'start_time': '22:00:00', 'end_time': '02:00:00', 'description': 'Free cover charge'},
+    {'establishment': 'Sunset Grill', 'days_active': ['Sunday'], 'start_time': 'Open', 'end_time': 'Close', 'description': 'Kids eat free'},
+    {'establishment': 'The Greenhouse', 'days_active': ['Monday', 'Tuesday'], 'start_time': '17:00:00', 'end_time': '19:00:00', 'description': '2 for 1 vegan dishes'},
+    {'establishment': 'Harbor View', 'days_active': ['Wednesday', 'Thursday', 'Friday'], 'start_time': '16:00:00', 'end_time': '18:00:00', 'description': 'Oyster Happy Hour'},
+    {'establishment': 'The Pit Stop', 'days_active': ['Saturday', 'Sunday'], 'start_time': 'Open', 'end_time': '15:00:00', 'description': '$5 Bloody Marys'},
+    {'establishment': 'Mystic Pizzeria', 'days_active': ['Tuesday'], 'start_time': 'Open', 'end_time': 'Close', 'description': '20% off all pizzas'},
+    {'establishment': 'The Library', 'days_active': ['Wednesday'], 'start_time': '20:00:00', 'end_time': '23:00:00', 'description': 'Buy 2 get 1 free on all craft cocktails'},
+    {'establishment': 'The Speakeasy', 'days_active': ['Thursday', 'Friday', 'Saturday'], 'start_time': '21:00:00', 'end_time': '01:00:00', 'description': 'Complimentary appetizer with premium cocktail purchase'},
+    {'establishment': 'Café Del Mar', 'days_active': ['Monday'], 'start_time': 'Open', 'end_time': 'Close', 'description': 'Free coffee refill'},
+    {'establishment': 'The Rooftop', 'days_active': ['Sunday'], 'start_time': '17:00:00', 'end_time': '20:00:00', 'description': 'Sunset Specials on signature cocktails'},
+    {'establishment': 'The Alley', 'days_active': ['Friday'], 'start_time': 'Open', 'end_time': 'Close', 'description': 'Half off bowling with shoe rental'},
+    {'establishment': 'Ocean\'s Edge', 'days_active': ['Saturday', 'Sunday'], 'start_time': '18:00:00', 'end_time': '22:00:00', 'description': 'Complimentary dessert with any main course'}
+]
+
+collection_str = [(item['establishment'] + " | " + item['description'] + " | " + " ".join(item['days_active']) + " | " + item['start_time'] + " - " + item['end_time']) for item in collection]
+print(collection_str)
+
+# Get the similarity between the input text and the collection_str
+output = moderator.check_duplicate("Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00", collection_str)
 
 # Convert the output to a DataFrame
 df = pd.DataFrame(output)

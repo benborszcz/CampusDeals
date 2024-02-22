@@ -1,21 +1,21 @@
 input_text,collection_text,similarity
-Buy one get one free Captain Morgan on Thursdays,$2 off all Drafts from 4-6pm on Mondays,0.4067113804202565
-Buy one get one free Captain Morgan on Thursdays,50% off Busch Light from 4-6pm on Tuesdays,0.3967321777315755
-Buy one get one free Captain Morgan on Thursdays,$3 Wells all night on Wednesdays,0.5051017682301444
-Buy one get one free Captain Morgan on Thursdays,Buy one get one free Captain Morgan on Thursdays,1.0
-Buy one get one free Captain Morgan on Thursdays,$1 off all Craft Beers from 4-close on Fridays,0.21417557005715482
-Buy one get one free Captain Morgan on Thursdays,Half-price Margaritas all night on Saturdays,0.49266015767977306
-Buy one get one free Captain Morgan on Thursdays,2-for-1 Shots all night on Sundays,0.5299451016335037
-Buy one get one free Captain Morgan on Thursdays,$4 off all Pitchers from 4-6pm on Mondays,0.47729420806241485
-Buy one get one free Captain Morgan on Thursdays,25% off all Wine from 4-6pm on Tuesdays,0.4670661903323199
-Buy one get one free Captain Morgan on Thursdays,$2 off all Cocktails all night on Wednesdays,0.48330076720445503
-Buy one get one free Captain Morgan on Thursdays,Buy one get one half off all Tequila on Thursdays,0.6780981427259845
-Buy one get one free Captain Morgan on Thursdays,$1 off all IPAs from 4-close on Fridays,0.38898226872378766
-Buy one get one free Captain Morgan on Thursdays,Half-price Mojitos all night on Saturdays,0.5233903622671496
-Buy one get one free Captain Morgan on Thursdays,2-for-1 Long Island Iced Teas all night on Sundays,0.49682657193415775
-Buy one get one free Captain Morgan on Thursdays,$3 off all Whiskey Shots from 4-6pm on Mondays,0.4062529864734585
-Buy one get one free Captain Morgan on Thursdays,30% off all Vodka Drinks from 4-6pm on Tuesdays,0.3429252335950949
-Buy one get one free Captain Morgan on Thursdays,$2 off all Rum Cocktails all night on Wednesdays,0.46817174000888173
-Buy one get one free Captain Morgan on Thursdays,Buy one get one free Gin & Tonics on Thursdays,0.7421273540350085
-Buy one get one free Captain Morgan on Thursdays,$1 off all Ciders from 4-close on Fridays,0.36504788252124293
-Buy one get one free Captain Morgan on Thursdays,Half-price Martinis all night on Saturdays,0.4376810185841242
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Joe's Bar | $3 off all Whiskey Shots | Thursday | 18:00:00 - 22:00:00,0.922817855715521
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Brew Brothers | $1 off craft beers | Tuesday Wednesday | 15:00:00 - 18:00:00,0.5865313576008261
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Midway | $2 off all Rum Cocktails | Friday Saturday | Open - Close,0.5826424894107735
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Speakeasy | Complimentary appetizer with premium cocktail purchase | Thursday Friday Saturday | 21:00:00 - 01:00:00,0.5766724001332524
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Library | Buy 2 get 1 free on all craft cocktails | Wednesday | 20:00:00 - 23:00:00,0.5445948543147473
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Anchor | Half-price Appetizers | Monday | 17:00:00 - 20:00:00,0.5332108176388383
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Harbor View | Oyster Happy Hour | Wednesday Thursday Friday | 16:00:00 - 18:00:00,0.5099733484806891
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Vine & Dine | Complimentary wine tasting with any entrée | Thursday Friday | 19:00:00 - 21:00:00,0.49356048975355765
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Pit Stop | $5 Bloody Marys | Saturday Sunday | Open - 15:00:00,0.4855851753286122
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Golden Spoon | 10% off total bill | Monday Tuesday Wednesday | Open - Close,0.4844289114248325
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Night Owl | Free cover charge | Friday Saturday | 22:00:00 - 02:00:00,0.4825935705927457
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Rooftop | Sunset Specials on signature cocktails | Sunday | 17:00:00 - 20:00:00,0.48047600286060976
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Mystic Pizzeria | 20% off all pizzas | Tuesday | Open - Close,0.4776511239928636
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Dockside | 25% off seafood platters | Sunday | 12:00:00 - 16:00:00,0.46693113682285853
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Luna's Cafe | Buy one get one free on all espresso drinks | Wednesday Thursday | Open - 11:00:00,0.45446711697541936
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Alley | Half off bowling with shoe rental | Friday | Open - Close,0.4497011612927195
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Café Del Mar | Free coffee refill | Monday | Open - Close,0.4475235763151663
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Ocean's Edge | Complimentary dessert with any main course | Saturday Sunday | 18:00:00 - 22:00:00,0.419098947489975
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,The Greenhouse | 2 for 1 vegan dishes | Monday Tuesday | 17:00:00 - 19:00:00,0.4038142604108154
+Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00,Sunset Grill | Kids eat free | Sunday | Open - Close,0.38328876327178135
