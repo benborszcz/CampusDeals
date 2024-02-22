@@ -102,7 +102,7 @@ def search():
             for result in results:
                 if deal['deal_id'] == result['deal_id']:
                     deal['_score'] = result['_score']
-        
+
         for result in deal_results:
             print(f"Deal: {result['title']}, Score: {result['_score']}")
 
@@ -202,5 +202,19 @@ def view_and_add_comments(deal_id):
         for comment in comments
     ]
 
+    # Add the new comment
+    new_comment = {
+    'user_id': current_user.id,
+    'username': current_user.username,
+    'text': comment_text,
+    'time': datetime.now().isoformat()
+    }
+    comments.append(new_comment)
+    # Update the deal document with the new comments
+    deal_ref.update({"comments": comments})
     return render_template('view_comments.html', deal_name=deal.get('title', 'Unknown Deal'),
                            deal_id=deal_id, comments=formatted_comments, comment_form=comment_form, current_user=current_user)
+
+@app.route('/auth0-login', methods=['POST'])
+def auth0Login():
+    return render_template('auth0_login.html')
