@@ -134,6 +134,6 @@ def configure_auth(app, oauth):
     access_token_url='https://'+os.getenv('AUTH0_DOMAIN')+'/oauth/token',
     authorize_url='https://'+os.getenv('AUTH0_DOMAIN')+'/authorize',
     client_kwargs={'scope': 'openid profile email'},
-    server_metadata_url=os.environ["AUTH0_SERVER_METADATA_URL"]
+    # server_metadata_url=os.environ["AUTH0_SERVER_METADATA_URL"]
     )
     return auth0
