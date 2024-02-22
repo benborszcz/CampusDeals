@@ -8,3 +8,4 @@ WTForms
 pytest
 flask-login
 authlib>=1.0
+

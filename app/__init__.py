@@ -6,7 +6,7 @@ from .models import login_manager
 
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 app.config['SECRET_KEY'] = 'asoifboiasfopbasopdbfou[asbo[d]]'
 
 # Initialize Firebase Admin SDK
