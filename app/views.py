@@ -117,6 +117,7 @@ def deal_details(deal_id):
     """
     # Retrieve the document from the Firestore collection
     deal = db.collection('deals').document(deal_id).get()
+    print(deal.to_dict())
     return render_template('deal_details.html', deal=deal.to_dict())
 
 
