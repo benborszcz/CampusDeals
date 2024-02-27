@@ -26,5 +26,10 @@
             {{ form.submit(class_='btn btn-primary') }}
         </div>
     </form>
+
+    <form action="{{ url_for('auth.auth0_login') }}" method="get">
+        <button type="submit" class="btn btn-primary">Login with Auth0</button>
+    </form>
+
     <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a>.</p>
 {% endblock %}
