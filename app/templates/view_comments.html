@@ -48,7 +48,7 @@
             <div class="card mb-3">
                 <div class="card-body">
                     {% if comment is mapping %}
-                        <p><strong>{{ comment.get('user_id', 'Unknown User') }}</strong> said:</p>
+                        <p><strong>{{ comment.get('username', 'Unknown User') }}</strong> said:</p>
                         <p>{{ comment.get('text', '') }}</p>
                         <small class="text-muted">Posted on {{ comment.get('time', 'Unknown Time') }}</small>
                     {% else %}
