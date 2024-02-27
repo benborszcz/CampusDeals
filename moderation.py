@@ -20,7 +20,7 @@ class Moderator:
         # Return the flagged status
         return output_o.flagged or output_p
     
-    def check_duplicate(self, text, collection):
+    def check_duplication_by_embeddings(self, text, collection):
         # Get the embedding for the input text
         text_embedding = self._get_embedding(text)
 
@@ -44,6 +44,64 @@ class Moderator:
             sim_list.append(comparison)
 
         return sim_list
+    
+    def check_duplicate_time_logic(self, deal, collection):
+        # Get the days of the week
+        days = deal['days_active']
+
+        # Get the start and end times
+        start_time = deal['start_time']
+        end_time = deal['end_time']
+
+        # Convert the start and end times to integers   
+        try:
+            start_time = int(start_time.replace(":", ""))
+        except:
+            start_time = 0
+
+        try:
+            end_time = int(end_time.replace(":", ""))
+        except:
+            end_time = 2400
+
+        # Get the deals that are active on the same days
+        deals = [item for item in collection if set(item['days_active']).intersection(set(days))]
+
+        # Create a list of establishments in text
+        deals_establishment_collection = [str(item['establishment']) for item in deals]
+        estab_sim_list = self.check_duplication_by_embeddings(str(deal['establishment']), deals_establishment_collection)
+        print(json.dumps(estab_sim_list, indent=2))
+
+        # Filter deals that are at the same establishment
+        for i, sim in enumerate(estab_sim_list):
+            if sim['similarity'] > 0.7:
+                deals = [deals[i]]
+
+        sim_list = []
+
+        # Get the deals that are active at the same time, while doing a try and except to handle the open and close times, and convert them to integers
+        for deal in deals:
+            try:
+                deal_start_time = int(deal['start_time'].replace(":", ""))
+            except:
+                deal_start_time = 0
+
+            try:
+                deal_end_time = int(deal['end_time'].replace(":", ""))
+            except:
+                deal_end_time = 2400
+
+            # Check if the deal is active at the same time
+            if (start_time >= deal_start_time and start_time <= deal_end_time) or (end_time >= deal_start_time and end_time <= deal_end_time):
+                sim_list.append(deal)
+            
+        return sim_list
+
+            
+
+
+        
+        
 
     def _get_embedding(self, text, model="text-embedding-3-small"):
         text = text.replace("\n", " ")
@@ -118,18 +176,13 @@ collection = [
 ]
 
 collection_str = [(item['establishment'] + " | " + item['description'] + " | " + " ".join(item['days_active']) + " | " + item['start_time'] + " - " + item['end_time']) for item in collection]
-print(collection_str)
 
 # Get the similarity between the input text and the collection_str
-output = moderator.check_duplicate("Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00", collection_str)
+# output_embeddings = moderator.check_duplicate_embeddings("Joes | $3 off Whiskey | Thursday | 18:00:00 - 22:00:00", collection_str)
 
-# Convert the output to a DataFrame
-df = pd.DataFrame(output)
+# Get the duplicate deals using the time logic
+output = moderator.check_duplicate_time_logic({"establishment": "Joes", "description": "$3 off whiskey", "days_active": ["Thursday"], "start_time": "18:00:00", "end_time": "22:00:00"}, collection)
 
-# Sort the DataFrame by similarity 
-df = df.sort_values(by="similarity", ascending=False)
-
-# Save the output to a CSV file
-df.to_csv("output/output.csv", index=False)
+print(json.dumps(output, indent=2))
 
 
