@@ -51,4 +51,10 @@
     </form>
 
     <script src="{{ url_for('static', filename='js/submit_deal.js') }}"></script>
+
+    {% if popup is not none %}
+        <script>
+            alert("{{ popup }}");
+        </script>
+    {% endif %}
 {% endblock %}
