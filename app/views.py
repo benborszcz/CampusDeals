@@ -148,11 +148,13 @@ def deal_details(deal_id):
 
 
 @app.route('/deal/<deal_id>/upvote', methods=['POST'])
+@login_required
 def upvote_deal(deal_id):
     deal_ref = db.collection('deals').document(deal_id)
     deal_ref.update({"upvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
 
+@login_required
 @app.route('/deal/<deal_id>/downvote', methods=['POST'])
 def downvote_deal(deal_id):
     deal_ref = db.collection('deals').document(deal_id)
@@ -266,6 +268,7 @@ def view_and_add_comments(deal_id):
     return render_template('view_comments.html', deal_name=deal.get('title', 'Unknown Deal'),
                            deal_id=deal_id, comments=sorted_comments, comment_form=comment_form, current_user=current_user)
 
+@login_required
 @app.route('/deal/<deal_id>/comment/<comment_id>/upvote', methods=['POST'])
 def upvote_comment(deal_id, comment_id):
     deal_ref = db.collection('deals').document(deal_id)
@@ -285,6 +288,7 @@ def upvote_comment(deal_id, comment_id):
             deal_ref.update({"comments" : firestore.ArrayUnion([updated_comment])})
     return jsonify(success=True), 200
 
+@login_required
 @app.route('/deal/<deal_id>/comment/<comment_id>/downvote', methods=['POST'])
 def downvote_comment(deal_id, comment_id):
     deal_ref = db.collection('deals').document(deal_id)
