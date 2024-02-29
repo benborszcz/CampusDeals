@@ -13,6 +13,8 @@ from flask_wtf import FlaskForm
 from wtforms import TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 from profanity import profanity
+from .moderation import Moderator
+import json
 
 
 
@@ -28,6 +30,7 @@ def index():
     # load all deals from firestore
     deals = db.collection('deals').stream()
     deal_list = [deal.to_dict() for deal in deals]
+
     # index all deals in elasticsearch
     if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
         reset_elasticsearch()
@@ -39,6 +42,8 @@ def index():
         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
 
     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
+    print("Deal List")
+    print(json.dumps(deal_list, indent=2))
 
     return render_template('index.html', popular_deals=deal_list)
 
@@ -61,7 +66,30 @@ def submit_deal():
     if form.validate_on_submit():
         # Parse the form data using OpenAI's LLM
         print(str(form.data))
+        moderator = Moderator()
+
+        # Moderation check
+        print('Moderating text')
+        if moderator.moderate_text(str(form.data)):
+            flash('Your deal contains profanity and cannot be posted.', 'error')
+            print('Your deal contains profanity and cannot be posted.')
+            return redirect(url_for('submit_deal'))
+
+        # Transform the parsed data into a structure suitable for Firestore
         deal_data = transform_deal_structure(parse_deal_submission(str(form.data)))
+
+        # load all deals from firestore
+        deals = db.collection('deals').stream()
+        deal_list = [deal.to_dict() for deal in deals]
+        
+        # Duplicate check
+        print('Checking for duplicates')
+        sim_list, details = moderator.check_duplicate_time_logic(deal_data, deal_list)
+        if len(sim_list) > 0:
+            flash('Your deal is a duplicate and cannot be posted.', 'error')
+            print('Your deal is a duplicate and cannot be posted.')
+            return redirect(url_for('submit_deal'))
+
         # Add a new document to the Firestore collection with the specified deal_id
         db.collection('deals').document(deal_data['deal_id']).set(deal_data)
         # Index the new deal in Elasticsearch
