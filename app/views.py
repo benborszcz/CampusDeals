@@ -42,8 +42,6 @@ def index():
         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
 
     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
-    print("Deal List")
-    print(json.dumps(deal_list, indent=2))
 
     return render_template('index.html', popular_deals=deal_list)
 
@@ -65,7 +63,6 @@ def submit_deal():
 
     if form.validate_on_submit():
         # Parse the form data using OpenAI's LLM
-        print(str(form.data))
         moderator = Moderator()
 
         # Moderation check
@@ -73,7 +70,7 @@ def submit_deal():
         if moderator.moderate_text(str(form.data)):
             flash('Your deal contains profanity and cannot be posted.', 'error')
             print('Your deal contains profanity and cannot be posted.')
-            return redirect(url_for('submit_deal'))
+            return render_template('submit_deal.html', form=form, popup="Your deal contains profanity and cannot be posted.")
 
         # Transform the parsed data into a structure suitable for Firestore
         deal_data = transform_deal_structure(parse_deal_submission(str(form.data)))
@@ -88,7 +85,8 @@ def submit_deal():
         if len(sim_list) > 0:
             flash('Your deal is a duplicate and cannot be posted.', 'error')
             print('Your deal is a duplicate and cannot be posted.')
-            return redirect(url_for('submit_deal'))
+            return render_template('submit_deal.html', form=form, popup="Your deal is a duplicate and cannot be posted.")
+
 
         # Add a new document to the Firestore collection with the specified deal_id
         db.collection('deals').document(deal_data['deal_id']).set(deal_data)
@@ -96,7 +94,7 @@ def submit_deal():
         index_deal(deal_data)
         return redirect(url_for('index'))
 
-    return render_template('submit_deal.html', form=form)
+    return render_template('submit_deal.html', form=form, popup=None)
 
 @app.route('/deals', methods=['GET'])
 def get_deals():

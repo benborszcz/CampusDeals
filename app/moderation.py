@@ -26,9 +26,6 @@ class Moderator:
 
         sim_list = []
         for i, item in enumerate(collection):
-            # Print update on progress
-            print(f"Comparing {i+1} of {len(collection)}")
-
             # Get the embedding for the item
             item_embedding = self._get_embedding(item)
 
@@ -46,9 +43,6 @@ class Moderator:
         return sim_list
     
     def check_duplicate_time_logic(self, deal_in, collection):
-        # Print collection length
-        print(f"Initial Collection length: {len(collection)}")
-
         # Create a dictionary to store the details of the comparisons
         details = {}
 
@@ -73,31 +67,11 @@ class Moderator:
         # Get the deals that are active on the same days
         deals_f1 = [item for item in collection if set(item['deal_details']['days_active']).intersection(set(days))]
 
-        # Print the length of the deals that are active on the same days
-        print(f"Collection length after filtering by days: {len(deals_f1)}")
         details['deals_f1'] = deals_f1
 
-        # Create a list of establishments in text
-        deals_establishment_collection = [str(item['establishment']['name']).lower().replace("'","").replace("bar","").replace("tavern","").replace("the","").replace("restaurant","").replace(" ","").strip() for item in deals_f1]
-        estab_sim_list = self.check_duplication_by_embeddings(str(deal_in['establishment']['name']).lower().replace("'","").replace("bar","").replace("tavern","").replace("the","").replace("restaurant","").replace(" ","").strip(), deals_establishment_collection)
-
-        # Print estab_sim_list nicely
-        print(json.dumps(estab_sim_list, indent=2))
-        details['estab_sim_list'] = estab_sim_list
-
-        # Filter deals that are at the same establishment
-        deals_f2 = []
-        for i, estab in enumerate(estab_sim_list):
-            if estab['similarity'] > 0.6:
-                deals_f2.append(deals_f1[i])
-
-        # Print the length of the deals that are active at the same establishment
-        print(f"Collection length after filtering by establishment: {len(deals_f2)}")
-        details['deals_f2'] = deals_f2
-        
         # Get the deals that are active at the same time, while doing a try and except to handle the open and close times, and convert them to integers
-        deals_f3 = []
-        for deal in deals_f2:
+        deals_f2 = []
+        for deal in deals_f1:
             try:
                 deal_start_time = int(deal['deal_details']['start_time'].replace(":", ""))
             except:
@@ -111,18 +85,28 @@ class Moderator:
             # Check if the deal is active at the same time
             # print(f"Deal start time: {deal_start_time}, Deal end time: {deal_end_time}, Input start time: {start_time}, Input end time: {end_time}")
             if (start_time == deal_start_time) and (end_time == deal_end_time):
-                deals_f3.append(deal)
+                deals_f2.append(deal)
 
-        # Print the length of the deals that are active at the same time
-        print(f"Collection length after filtering by time: {len(deals_f3)}")
+        details['deals_f2'] = deals_f2
+
+        # Create a list of establishments in text
+        deals_establishment_collection = [str(item['establishment']['name']).lower().replace("'","").replace("bar","").replace("tavern","").replace("the","").replace("restaurant","").replace(" ","").strip() for item in deals_f2]
+        estab_sim_list = self.check_duplication_by_embeddings(str(deal_in['establishment']['name']).lower().replace("'","").replace("bar","").replace("tavern","").replace("the","").replace("restaurant","").replace(" ","").strip(), deals_establishment_collection)
+
+        details['estab_sim_list'] = estab_sim_list
+
+        # Filter deals that are at the same establishment
+        deals_f3 = []
+        for i, estab in enumerate(estab_sim_list):
+            if estab['similarity'] > 0.6:
+                deals_f3.append(deals_f2[i])
+        
         details['deals_f3'] = deals_f3
 
         # Create a list of descriptions in text
         deals_description_collection = [str(item['description']).lower() for item in deals_f3]
         desc_sim_list = self.check_duplication_by_embeddings(str(deal_in['description']).lower(), deals_description_collection)
 
-        # Print desc_sim_list nicely
-        print(json.dumps(desc_sim_list, indent=2))
         details['desc_sim_list'] = desc_sim_list
 
         # Filter deals that have the same description
@@ -131,8 +115,7 @@ class Moderator:
             if desc['similarity'] > 0.4:
                 deals_f4.append(deals_f3[i])
 
-        # Print the length of the deals that have the same description
-        print(f"Collection length after filtering by description: {len(deals_f4)}")
+
         details['deals_f4'] = deals_f4
             
         sim_list = deals_f4
