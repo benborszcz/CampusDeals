@@ -1,0 +1,3262 @@
+[
+  {
+    "deal_in":{
+      "establishment":"Joes",
+      "days_active":[
+        "Thursday"
+      ],
+      "start_time":"18:00:00",
+      "end_time":"22:00:00",
+      "description":"$3 off whiskey"
+    },
+    "output":{
+      "establishment":"Joe's Bar",
+      "days_active":[
+        "Thursday"
+      ],
+      "start_time":"18:00:00",
+      "end_time":"22:00:00",
+      "description":"$3 off all Whiskey Shots"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Joe's Bar",
+          "days_active":[
+            "Thursday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"$3 off all Whiskey Shots"
+        },
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        },
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"joes",
+          "collection_text":"joes ",
+          "similarity":0.9280591534
+        },
+        {
+          "input_text":"joes",
+          "collection_text":"lunas cafe",
+          "similarity":0.2633530401
+        },
+        {
+          "input_text":"joes",
+          "collection_text":"vine & dine",
+          "similarity":0.2500536903
+        },
+        {
+          "input_text":"joes",
+          "collection_text":"harbor view",
+          "similarity":0.2012222497
+        },
+        {
+          "input_text":"joes",
+          "collection_text":" speakeasy",
+          "similarity":0.2573130713
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Joe's Bar",
+          "days_active":[
+            "Thursday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"$3 off all Whiskey Shots"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Joe's Bar",
+          "days_active":[
+            "Thursday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"$3 off all Whiskey Shots"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"$3 off whiskey",
+          "collection_text":"$3 off all whiskey shots",
+          "similarity":0.9036096414
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Joe's Bar",
+          "days_active":[
+            "Thursday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"$3 off all Whiskey Shots"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Midway on High",
+      "days_active":[
+        "Friday",
+        "Saturday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"$2 off rum cocktail's"
+    },
+    "output":{
+      "establishment":"Midway",
+      "days_active":[
+        "Friday",
+        "Saturday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"$2 off all Rum Cocktails"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        },
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        },
+        {
+          "establishment":"The Night Owl",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"22:00:00",
+          "end_time":"02:00:00",
+          "description":"Free cover charge"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        },
+        {
+          "establishment":"The Alley",
+          "days_active":[
+            "Friday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Half off bowling with shoe rental"
+        },
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"midway on high",
+          "collection_text":"midway",
+          "similarity":0.771920871
+        },
+        {
+          "input_text":"midway on high",
+          "collection_text":"vine & dine",
+          "similarity":0.2465829388
+        },
+        {
+          "input_text":"midway on high",
+          "collection_text":" night owl",
+          "similarity":0.1969988789
+        },
+        {
+          "input_text":"midway on high",
+          "collection_text":"harbor view",
+          "similarity":0.3206904206
+        },
+        {
+          "input_text":"midway on high",
+          "collection_text":" pit stop",
+          "similarity":0.2858325682
+        },
+        {
+          "input_text":"midway on high",
+          "collection_text":" speakeasy",
+          "similarity":0.1869186169
+        },
+        {
+          "input_text":"midway on high",
+          "collection_text":" alley",
+          "similarity":0.3062884765
+        },
+        {
+          "input_text":"midway on high",
+          "collection_text":"oceans edge",
+          "similarity":0.3246510559
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"$2 off rum cocktail's",
+          "collection_text":"$2 off all rum cocktails",
+          "similarity":0.9461823993
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Anchor",
+      "days_active":[
+        "Monday"
+      ],
+      "start_time":"17:00:00",
+      "end_time":"20:00:00",
+      "description":"Half-price apps"
+    },
+    "output":{
+      "establishment":"The Anchor",
+      "days_active":[
+        "Monday"
+      ],
+      "start_time":"17:00:00",
+      "end_time":"20:00:00",
+      "description":"Half-price Appetizers"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"The Anchor",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Half-price Appetizers"
+        },
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        },
+        {
+          "establishment":"The Greenhouse",
+          "days_active":[
+            "Monday",
+            "Tuesday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"19:00:00",
+          "description":"2 for 1 vegan dishes"
+        },
+        {
+          "establishment":"Caf\u00e9 Del Mar",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Free coffee refill"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"anchor",
+          "collection_text":" anchor",
+          "similarity":0.7853350767
+        },
+        {
+          "input_text":"anchor",
+          "collection_text":" golden spoon",
+          "similarity":0.2503404981
+        },
+        {
+          "input_text":"anchor",
+          "collection_text":" greenhouse",
+          "similarity":0.4329075149
+        },
+        {
+          "input_text":"anchor",
+          "collection_text":"caf\u00e9 del mar",
+          "similarity":0.2689728066
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"The Anchor",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Half-price Appetizers"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"The Anchor",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Half-price Appetizers"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"half-price apps",
+          "collection_text":"half-price appetizers",
+          "similarity":0.7226454067
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"The Anchor",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Half-price Appetizers"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Lunas",
+      "days_active":[
+        "Wednesday",
+        "Thursday"
+      ],
+      "start_time":"Open",
+      "end_time":"11:00:00",
+      "description":"Buy one get one espresso drinks"
+    },
+    "output":{
+      "establishment":"Luna's Cafe",
+      "days_active":[
+        "Wednesday",
+        "Thursday"
+      ],
+      "start_time":"Open",
+      "end_time":"11:00:00",
+      "description":"Buy one get one free on all espresso drinks"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Joe's Bar",
+          "days_active":[
+            "Thursday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"$3 off all Whiskey Shots"
+        },
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        },
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        },
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        },
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"The Library",
+          "days_active":[
+            "Wednesday"
+          ],
+          "start_time":"20:00:00",
+          "end_time":"23:00:00",
+          "description":"Buy 2 get 1 free on all craft cocktails"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"lunas",
+          "collection_text":"joes ",
+          "similarity":0.2525282922
+        },
+        {
+          "input_text":"lunas",
+          "collection_text":"lunas cafe",
+          "similarity":0.7463908731
+        },
+        {
+          "input_text":"lunas",
+          "collection_text":"brew brors",
+          "similarity":0.1592534592
+        },
+        {
+          "input_text":"lunas",
+          "collection_text":" golden spoon",
+          "similarity":0.2043072051
+        },
+        {
+          "input_text":"lunas",
+          "collection_text":"vine & dine",
+          "similarity":0.1600756181
+        },
+        {
+          "input_text":"lunas",
+          "collection_text":"harbor view",
+          "similarity":0.117894265
+        },
+        {
+          "input_text":"lunas",
+          "collection_text":" library",
+          "similarity":0.2484399735
+        },
+        {
+          "input_text":"lunas",
+          "collection_text":" speakeasy",
+          "similarity":0.1411689558
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"buy one get one espresso drinks",
+          "collection_text":"buy one get one free on all espresso drinks",
+          "similarity":0.8970715402
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"The Dockside Tavern",
+      "days_active":[
+        "Sunday"
+      ],
+      "start_time":"12:00:00",
+      "end_time":"16:00:00",
+      "description":"25% off platters of seafood"
+    },
+    "output":{
+      "establishment":"The Dockside",
+      "days_active":[
+        "Sunday"
+      ],
+      "start_time":"12:00:00",
+      "end_time":"16:00:00",
+      "description":"25% off seafood platters"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"The Dockside",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"12:00:00",
+          "end_time":"16:00:00",
+          "description":"25% off seafood platters"
+        },
+        {
+          "establishment":"Sunset Grill",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Kids eat free"
+        },
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        },
+        {
+          "establishment":"The Rooftop",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Sunset Specials on signature cocktails"
+        },
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":" dockside ",
+          "collection_text":" dockside",
+          "similarity":0.9493413881
+        },
+        {
+          "input_text":" dockside ",
+          "collection_text":"sunset grill",
+          "similarity":0.4021807622
+        },
+        {
+          "input_text":" dockside ",
+          "collection_text":" pit stop",
+          "similarity":0.3518939457
+        },
+        {
+          "input_text":" dockside ",
+          "collection_text":" rooftop",
+          "similarity":0.4723568708
+        },
+        {
+          "input_text":" dockside ",
+          "collection_text":"oceans edge",
+          "similarity":0.482272205
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"The Dockside",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"12:00:00",
+          "end_time":"16:00:00",
+          "description":"25% off seafood platters"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"The Dockside",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"12:00:00",
+          "end_time":"16:00:00",
+          "description":"25% off seafood platters"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"25% off platters of seafood",
+          "collection_text":"25% off seafood platters",
+          "similarity":0.9658112513
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"The Dockside",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"12:00:00",
+          "end_time":"16:00:00",
+          "description":"25% off seafood platters"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Brew Brothers Bar",
+      "days_active":[
+        "Tuesday",
+        "Wednesday"
+      ],
+      "start_time":"15:00:00",
+      "end_time":"18:00:00",
+      "description":"$1 off beers crafted"
+    },
+    "output":{
+      "establishment":"Brew Brothers",
+      "days_active":[
+        "Tuesday",
+        "Wednesday"
+      ],
+      "start_time":"15:00:00",
+      "end_time":"18:00:00",
+      "description":"$1 off craft beers"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        },
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        },
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        },
+        {
+          "establishment":"The Greenhouse",
+          "days_active":[
+            "Monday",
+            "Tuesday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"19:00:00",
+          "description":"2 for 1 vegan dishes"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"Mystic Pizzeria",
+          "days_active":[
+            "Tuesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"20% off all pizzas"
+        },
+        {
+          "establishment":"The Library",
+          "days_active":[
+            "Wednesday"
+          ],
+          "start_time":"20:00:00",
+          "end_time":"23:00:00",
+          "description":"Buy 2 get 1 free on all craft cocktails"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"brew brors ",
+          "collection_text":"lunas cafe",
+          "similarity":0.1981730113
+        },
+        {
+          "input_text":"brew brors ",
+          "collection_text":"brew brors",
+          "similarity":0.9639908839
+        },
+        {
+          "input_text":"brew brors ",
+          "collection_text":" golden spoon",
+          "similarity":0.177315135
+        },
+        {
+          "input_text":"brew brors ",
+          "collection_text":" greenhouse",
+          "similarity":0.2763053545
+        },
+        {
+          "input_text":"brew brors ",
+          "collection_text":"harbor view",
+          "similarity":0.2800840512
+        },
+        {
+          "input_text":"brew brors ",
+          "collection_text":"mystic pizzeria",
+          "similarity":0.211470291
+        },
+        {
+          "input_text":"brew brors ",
+          "collection_text":" library",
+          "similarity":0.2372520016
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"$1 off beers crafted",
+          "collection_text":"$1 off craft beers",
+          "similarity":0.9439871248
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Golden Spoon Tavern",
+      "days_active":[
+        "Monday",
+        "Tuesday",
+        "Wednesday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"10% discount on total bill"
+    },
+    "output":{
+      "establishment":"The Golden Spoon",
+      "days_active":[
+        "Monday",
+        "Tuesday",
+        "Wednesday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"10% off total bill"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"The Anchor",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Half-price Appetizers"
+        },
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        },
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        },
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        },
+        {
+          "establishment":"The Greenhouse",
+          "days_active":[
+            "Monday",
+            "Tuesday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"19:00:00",
+          "description":"2 for 1 vegan dishes"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"Mystic Pizzeria",
+          "days_active":[
+            "Tuesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"20% off all pizzas"
+        },
+        {
+          "establishment":"The Library",
+          "days_active":[
+            "Wednesday"
+          ],
+          "start_time":"20:00:00",
+          "end_time":"23:00:00",
+          "description":"Buy 2 get 1 free on all craft cocktails"
+        },
+        {
+          "establishment":"Caf\u00e9 Del Mar",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Free coffee refill"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"golden spoon ",
+          "collection_text":" anchor",
+          "similarity":0.3428846429
+        },
+        {
+          "input_text":"golden spoon ",
+          "collection_text":"lunas cafe",
+          "similarity":0.2427671728
+        },
+        {
+          "input_text":"golden spoon ",
+          "collection_text":"brew brors",
+          "similarity":0.179425182
+        },
+        {
+          "input_text":"golden spoon ",
+          "collection_text":" golden spoon",
+          "similarity":0.9362616133
+        },
+        {
+          "input_text":"golden spoon ",
+          "collection_text":" greenhouse",
+          "similarity":0.2192181296
+        },
+        {
+          "input_text":"golden spoon ",
+          "collection_text":"harbor view",
+          "similarity":0.1945309375
+        },
+        {
+          "input_text":"golden spoon ",
+          "collection_text":"mystic pizzeria",
+          "similarity":0.186304719
+        },
+        {
+          "input_text":"golden spoon ",
+          "collection_text":" library",
+          "similarity":0.1647429914
+        },
+        {
+          "input_text":"golden spoon ",
+          "collection_text":"caf\u00e9 del mar",
+          "similarity":0.2674030873
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"10% discount on total bill",
+          "collection_text":"10% off total bill",
+          "similarity":0.9388101806
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Vine & Dine Bistro",
+      "days_active":[
+        "Thursday",
+        "Friday"
+      ],
+      "start_time":"19:00:00",
+      "end_time":"21:00:00",
+      "description":"Wine tasting included with any entree"
+    },
+    "output":{
+      "establishment":"Vine & Dine",
+      "days_active":[
+        "Thursday",
+        "Friday"
+      ],
+      "start_time":"19:00:00",
+      "end_time":"21:00:00",
+      "description":"Complimentary wine tasting with any entr\u00e9e"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Joe's Bar",
+          "days_active":[
+            "Thursday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"$3 off all Whiskey Shots"
+        },
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        },
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        },
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        },
+        {
+          "establishment":"The Night Owl",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"22:00:00",
+          "end_time":"02:00:00",
+          "description":"Free cover charge"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        },
+        {
+          "establishment":"The Alley",
+          "days_active":[
+            "Friday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Half off bowling with shoe rental"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"vine & dine bistro",
+          "collection_text":"joes ",
+          "similarity":0.2091881735
+        },
+        {
+          "input_text":"vine & dine bistro",
+          "collection_text":"midway",
+          "similarity":0.2303235245
+        },
+        {
+          "input_text":"vine & dine bistro",
+          "collection_text":"lunas cafe",
+          "similarity":0.3246903491
+        },
+        {
+          "input_text":"vine & dine bistro",
+          "collection_text":"vine & dine",
+          "similarity":0.8705131399
+        },
+        {
+          "input_text":"vine & dine bistro",
+          "collection_text":" night owl",
+          "similarity":0.1925427643
+        },
+        {
+          "input_text":"vine & dine bistro",
+          "collection_text":"harbor view",
+          "similarity":0.3048139501
+        },
+        {
+          "input_text":"vine & dine bistro",
+          "collection_text":" speakeasy",
+          "similarity":0.3280473322
+        },
+        {
+          "input_text":"vine & dine bistro",
+          "collection_text":" alley",
+          "similarity":0.2495037453
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"wine tasting included with any entree",
+          "collection_text":"complimentary wine tasting with any entr\u00e9e",
+          "similarity":0.8560265064
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Night Owl Lounge",
+      "days_active":[
+        "Friday",
+        "Saturday"
+      ],
+      "start_time":"22:00:00",
+      "end_time":"02:00:00",
+      "description":"No cover charge"
+    },
+    "output":null,
+    "result":false,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        },
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        },
+        {
+          "establishment":"The Night Owl",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"22:00:00",
+          "end_time":"02:00:00",
+          "description":"Free cover charge"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        },
+        {
+          "establishment":"The Alley",
+          "days_active":[
+            "Friday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Half off bowling with shoe rental"
+        },
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"night owl lounge",
+          "collection_text":"midway",
+          "similarity":0.2297968585
+        },
+        {
+          "input_text":"night owl lounge",
+          "collection_text":"vine & dine",
+          "similarity":0.3220442908
+        },
+        {
+          "input_text":"night owl lounge",
+          "collection_text":" night owl",
+          "similarity":0.7585791607
+        },
+        {
+          "input_text":"night owl lounge",
+          "collection_text":"harbor view",
+          "similarity":0.2937101604
+        },
+        {
+          "input_text":"night owl lounge",
+          "collection_text":" pit stop",
+          "similarity":0.2486055865
+        },
+        {
+          "input_text":"night owl lounge",
+          "collection_text":" speakeasy",
+          "similarity":0.3904119312
+        },
+        {
+          "input_text":"night owl lounge",
+          "collection_text":" alley",
+          "similarity":0.3487109419
+        },
+        {
+          "input_text":"night owl lounge",
+          "collection_text":"oceans edge",
+          "similarity":0.3247097416
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"The Night Owl",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"22:00:00",
+          "end_time":"02:00:00",
+          "description":"Free cover charge"
+        }
+      ],
+      "deals_f3":[
+
+      ],
+      "desc_sim_list":[
+
+      ],
+      "deals_f4":[
+
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Sunset Grill & Bar",
+      "days_active":[
+        "Sunday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"Children dine for free"
+    },
+    "output":{
+      "establishment":"Sunset Grill",
+      "days_active":[
+        "Sunday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"Kids eat free"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"The Dockside",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"12:00:00",
+          "end_time":"16:00:00",
+          "description":"25% off seafood platters"
+        },
+        {
+          "establishment":"Sunset Grill",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Kids eat free"
+        },
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        },
+        {
+          "establishment":"The Rooftop",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Sunset Specials on signature cocktails"
+        },
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"sunset grill & ",
+          "collection_text":" dockside",
+          "similarity":0.4110584222
+        },
+        {
+          "input_text":"sunset grill & ",
+          "collection_text":"sunset grill",
+          "similarity":0.9158327985
+        },
+        {
+          "input_text":"sunset grill & ",
+          "collection_text":" pit stop",
+          "similarity":0.2553233944
+        },
+        {
+          "input_text":"sunset grill & ",
+          "collection_text":" rooftop",
+          "similarity":0.397015122
+        },
+        {
+          "input_text":"sunset grill & ",
+          "collection_text":"oceans edge",
+          "similarity":0.3683477389
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Sunset Grill",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Kids eat free"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Sunset Grill",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Kids eat free"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"children dine for free",
+          "collection_text":"kids eat free",
+          "similarity":0.8595241505
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Sunset Grill",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Kids eat free"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"The Greenhouse Cafe",
+      "days_active":[
+        "Monday",
+        "Tuesday"
+      ],
+      "start_time":"17:00:00",
+      "end_time":"19:00:00",
+      "description":"Two vegan dishes for the price of one"
+    },
+    "output":{
+      "establishment":"The Greenhouse",
+      "days_active":[
+        "Monday",
+        "Tuesday"
+      ],
+      "start_time":"17:00:00",
+      "end_time":"19:00:00",
+      "description":"2 for 1 vegan dishes"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"The Anchor",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Half-price Appetizers"
+        },
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        },
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        },
+        {
+          "establishment":"The Greenhouse",
+          "days_active":[
+            "Monday",
+            "Tuesday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"19:00:00",
+          "description":"2 for 1 vegan dishes"
+        },
+        {
+          "establishment":"Mystic Pizzeria",
+          "days_active":[
+            "Tuesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"20% off all pizzas"
+        },
+        {
+          "establishment":"Caf\u00e9 Del Mar",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Free coffee refill"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":" greenhouse cafe",
+          "collection_text":" anchor",
+          "similarity":0.2765302085
+        },
+        {
+          "input_text":" greenhouse cafe",
+          "collection_text":"brew brors",
+          "similarity":0.259864944
+        },
+        {
+          "input_text":" greenhouse cafe",
+          "collection_text":" golden spoon",
+          "similarity":0.2064548101
+        },
+        {
+          "input_text":" greenhouse cafe",
+          "collection_text":" greenhouse",
+          "similarity":0.6329428027
+        },
+        {
+          "input_text":" greenhouse cafe",
+          "collection_text":"mystic pizzeria",
+          "similarity":0.2512599543
+        },
+        {
+          "input_text":" greenhouse cafe",
+          "collection_text":"caf\u00e9 del mar",
+          "similarity":0.4411893713
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"The Greenhouse",
+          "days_active":[
+            "Monday",
+            "Tuesday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"19:00:00",
+          "description":"2 for 1 vegan dishes"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"The Greenhouse",
+          "days_active":[
+            "Monday",
+            "Tuesday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"19:00:00",
+          "description":"2 for 1 vegan dishes"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"two vegan dishes for the price of one",
+          "collection_text":"2 for 1 vegan dishes",
+          "similarity":0.8660826765
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"The Greenhouse",
+          "days_active":[
+            "Monday",
+            "Tuesday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"19:00:00",
+          "description":"2 for 1 vegan dishes"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Harbor View Pub",
+      "days_active":[
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "start_time":"16:00:00",
+      "end_time":"18:00:00",
+      "description":"Happy Hour on oysters"
+    },
+    "output":{
+      "establishment":"Harbor View",
+      "days_active":[
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "start_time":"16:00:00",
+      "end_time":"18:00:00",
+      "description":"Oyster Happy Hour"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Joe's Bar",
+          "days_active":[
+            "Thursday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"$3 off all Whiskey Shots"
+        },
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        },
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        },
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        },
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        },
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        },
+        {
+          "establishment":"The Night Owl",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"22:00:00",
+          "end_time":"02:00:00",
+          "description":"Free cover charge"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"The Library",
+          "days_active":[
+            "Wednesday"
+          ],
+          "start_time":"20:00:00",
+          "end_time":"23:00:00",
+          "description":"Buy 2 get 1 free on all craft cocktails"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        },
+        {
+          "establishment":"The Alley",
+          "days_active":[
+            "Friday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Half off bowling with shoe rental"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"harbor view pub",
+          "collection_text":"joes ",
+          "similarity":0.2069535971
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":"midway",
+          "similarity":0.2894651741
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":"lunas cafe",
+          "similarity":0.3019085209
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":"brew brors",
+          "similarity":0.3670330863
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":" golden spoon",
+          "similarity":0.1824826723
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":"vine & dine",
+          "similarity":0.2993841501
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":" night owl",
+          "similarity":0.2152859188
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":"harbor view",
+          "similarity":0.8372418988
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":" library",
+          "similarity":0.282464832
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":" speakeasy",
+          "similarity":0.3218564711
+        },
+        {
+          "input_text":"harbor view pub",
+          "collection_text":" alley",
+          "similarity":0.310202684
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"happy hour on oysters",
+          "collection_text":"oyster happy hour",
+          "similarity":0.8546514698
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Pit Stop Bar & Grill",
+      "days_active":[
+        "Saturday",
+        "Sunday"
+      ],
+      "start_time":"Open",
+      "end_time":"15:00:00",
+      "description":"$5 for Bloody Marys"
+    },
+    "output":{
+      "establishment":"The Pit Stop",
+      "days_active":[
+        "Saturday",
+        "Sunday"
+      ],
+      "start_time":"Open",
+      "end_time":"15:00:00",
+      "description":"$5 Bloody Marys"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        },
+        {
+          "establishment":"The Dockside",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"12:00:00",
+          "end_time":"16:00:00",
+          "description":"25% off seafood platters"
+        },
+        {
+          "establishment":"The Night Owl",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"22:00:00",
+          "end_time":"02:00:00",
+          "description":"Free cover charge"
+        },
+        {
+          "establishment":"Sunset Grill",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Kids eat free"
+        },
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        },
+        {
+          "establishment":"The Rooftop",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Sunset Specials on signature cocktails"
+        },
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"pit stop  & grill",
+          "collection_text":"midway",
+          "similarity":0.319772974
+        },
+        {
+          "input_text":"pit stop  & grill",
+          "collection_text":" dockside",
+          "similarity":0.3727268637
+        },
+        {
+          "input_text":"pit stop  & grill",
+          "collection_text":" night owl",
+          "similarity":0.1645706896
+        },
+        {
+          "input_text":"pit stop  & grill",
+          "collection_text":"sunset grill",
+          "similarity":0.562841828
+        },
+        {
+          "input_text":"pit stop  & grill",
+          "collection_text":" pit stop",
+          "similarity":0.6739538353
+        },
+        {
+          "input_text":"pit stop  & grill",
+          "collection_text":" speakeasy",
+          "similarity":0.2987130982
+        },
+        {
+          "input_text":"pit stop  & grill",
+          "collection_text":" rooftop",
+          "similarity":0.3706898903
+        },
+        {
+          "input_text":"pit stop  & grill",
+          "collection_text":"oceans edge",
+          "similarity":0.2558049855
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"$5 for bloody marys",
+          "collection_text":"$5 bloody marys",
+          "similarity":0.9565652693
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Mystic Pizza",
+      "days_active":[
+        "Tuesday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"20% discount on all pizzas"
+    },
+    "output":{
+      "establishment":"Mystic Pizzeria",
+      "days_active":[
+        "Tuesday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"20% off all pizzas"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        },
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        },
+        {
+          "establishment":"The Greenhouse",
+          "days_active":[
+            "Monday",
+            "Tuesday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"19:00:00",
+          "description":"2 for 1 vegan dishes"
+        },
+        {
+          "establishment":"Mystic Pizzeria",
+          "days_active":[
+            "Tuesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"20% off all pizzas"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"mystic pizza",
+          "collection_text":"brew brors",
+          "similarity":0.2529185329
+        },
+        {
+          "input_text":"mystic pizza",
+          "collection_text":" golden spoon",
+          "similarity":0.2195483621
+        },
+        {
+          "input_text":"mystic pizza",
+          "collection_text":" greenhouse",
+          "similarity":0.1663268147
+        },
+        {
+          "input_text":"mystic pizza",
+          "collection_text":"mystic pizzeria",
+          "similarity":0.9181430227
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Mystic Pizzeria",
+          "days_active":[
+            "Tuesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"20% off all pizzas"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Mystic Pizzeria",
+          "days_active":[
+            "Tuesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"20% off all pizzas"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"20% discount on all pizzas",
+          "collection_text":"20% off all pizzas",
+          "similarity":0.9546811093
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Mystic Pizzeria",
+          "days_active":[
+            "Tuesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"20% off all pizzas"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Library Lounge",
+      "days_active":[
+        "Wednesday"
+      ],
+      "start_time":"20:00:00",
+      "end_time":"23:00:00",
+      "description":"Buy 2 craft cocktails, get 1 free"
+    },
+    "output":{
+      "establishment":"The Library",
+      "days_active":[
+        "Wednesday"
+      ],
+      "start_time":"20:00:00",
+      "end_time":"23:00:00",
+      "description":"Buy 2 get 1 free on all craft cocktails"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        },
+        {
+          "establishment":"Brew Brothers",
+          "days_active":[
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"15:00:00",
+          "end_time":"18:00:00",
+          "description":"$1 off craft beers"
+        },
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"The Library",
+          "days_active":[
+            "Wednesday"
+          ],
+          "start_time":"20:00:00",
+          "end_time":"23:00:00",
+          "description":"Buy 2 get 1 free on all craft cocktails"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"library lounge",
+          "collection_text":"lunas cafe",
+          "similarity":0.4141259746
+        },
+        {
+          "input_text":"library lounge",
+          "collection_text":"brew brors",
+          "similarity":0.2253085462
+        },
+        {
+          "input_text":"library lounge",
+          "collection_text":" golden spoon",
+          "similarity":0.2053820561
+        },
+        {
+          "input_text":"library lounge",
+          "collection_text":"harbor view",
+          "similarity":0.3122938335
+        },
+        {
+          "input_text":"library lounge",
+          "collection_text":" library",
+          "similarity":0.6778450147
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"The Library",
+          "days_active":[
+            "Wednesday"
+          ],
+          "start_time":"20:00:00",
+          "end_time":"23:00:00",
+          "description":"Buy 2 get 1 free on all craft cocktails"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"The Library",
+          "days_active":[
+            "Wednesday"
+          ],
+          "start_time":"20:00:00",
+          "end_time":"23:00:00",
+          "description":"Buy 2 get 1 free on all craft cocktails"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"buy 2 craft cocktails, get 1 free",
+          "collection_text":"buy 2 get 1 free on all craft cocktails",
+          "similarity":0.9321794509
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"The Library",
+          "days_active":[
+            "Wednesday"
+          ],
+          "start_time":"20:00:00",
+          "end_time":"23:00:00",
+          "description":"Buy 2 get 1 free on all craft cocktails"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"The Speak Easy",
+      "days_active":[
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "start_time":"21:00:00",
+      "end_time":"01:00:00",
+      "description":"Free appetizer with premium cocktail purchase"
+    },
+    "output":null,
+    "result":false,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Joe's Bar",
+          "days_active":[
+            "Thursday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"$3 off all Whiskey Shots"
+        },
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        },
+        {
+          "establishment":"Luna's Cafe",
+          "days_active":[
+            "Wednesday",
+            "Thursday"
+          ],
+          "start_time":"Open",
+          "end_time":"11:00:00",
+          "description":"Buy one get one free on all espresso drinks"
+        },
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        },
+        {
+          "establishment":"The Night Owl",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"22:00:00",
+          "end_time":"02:00:00",
+          "description":"Free cover charge"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        },
+        {
+          "establishment":"The Alley",
+          "days_active":[
+            "Friday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Half off bowling with shoe rental"
+        },
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":" speak easy",
+          "collection_text":"joes ",
+          "similarity":0.3083368993
+        },
+        {
+          "input_text":" speak easy",
+          "collection_text":"midway",
+          "similarity":0.1848713677
+        },
+        {
+          "input_text":" speak easy",
+          "collection_text":"lunas cafe",
+          "similarity":0.1792377126
+        },
+        {
+          "input_text":" speak easy",
+          "collection_text":"vine & dine",
+          "similarity":0.2437960644
+        },
+        {
+          "input_text":" speak easy",
+          "collection_text":" night owl",
+          "similarity":0.2263852057
+        },
+        {
+          "input_text":" speak easy",
+          "collection_text":"harbor view",
+          "similarity":0.210290056
+        },
+        {
+          "input_text":" speak easy",
+          "collection_text":" pit stop",
+          "similarity":0.2407291572
+        },
+        {
+          "input_text":" speak easy",
+          "collection_text":" speakeasy",
+          "similarity":0.4353854194
+        },
+        {
+          "input_text":" speak easy",
+          "collection_text":" alley",
+          "similarity":0.2547402571
+        },
+        {
+          "input_text":" speak easy",
+          "collection_text":"oceans edge",
+          "similarity":0.2222831767
+        }
+      ],
+      "deals_f2":[
+
+      ],
+      "deals_f3":[
+
+      ],
+      "desc_sim_list":[
+
+      ],
+      "deals_f4":[
+
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Cafe Del Mar",
+      "days_active":[
+        "Monday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"Free refill on coffee"
+    },
+    "output":{
+      "establishment":"Caf\u00e9 Del Mar",
+      "days_active":[
+        "Monday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"Free coffee refill"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"The Anchor",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Half-price Appetizers"
+        },
+        {
+          "establishment":"The Golden Spoon",
+          "days_active":[
+            "Monday",
+            "Tuesday",
+            "Wednesday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"10% off total bill"
+        },
+        {
+          "establishment":"The Greenhouse",
+          "days_active":[
+            "Monday",
+            "Tuesday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"19:00:00",
+          "description":"2 for 1 vegan dishes"
+        },
+        {
+          "establishment":"Caf\u00e9 Del Mar",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Free coffee refill"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"cafe del mar",
+          "collection_text":" anchor",
+          "similarity":0.2366208556
+        },
+        {
+          "input_text":"cafe del mar",
+          "collection_text":" golden spoon",
+          "similarity":0.2570102583
+        },
+        {
+          "input_text":"cafe del mar",
+          "collection_text":" greenhouse",
+          "similarity":0.1860687691
+        },
+        {
+          "input_text":"cafe del mar",
+          "collection_text":"caf\u00e9 del mar",
+          "similarity":0.9411273639
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Caf\u00e9 Del Mar",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Free coffee refill"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Caf\u00e9 Del Mar",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Free coffee refill"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"free refill on coffee",
+          "collection_text":"free coffee refill",
+          "similarity":0.9120951814
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Caf\u00e9 Del Mar",
+          "days_active":[
+            "Monday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Free coffee refill"
+        }
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Rooftop Lounge",
+      "days_active":[
+        "Sunday"
+      ],
+      "start_time":"17:00:00",
+      "end_time":"20:00:00",
+      "description":"Specials on signature cocktails during sunset"
+    },
+    "output":null,
+    "result":false,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"The Dockside",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"12:00:00",
+          "end_time":"16:00:00",
+          "description":"25% off seafood platters"
+        },
+        {
+          "establishment":"Sunset Grill",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Kids eat free"
+        },
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        },
+        {
+          "establishment":"The Rooftop",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Sunset Specials on signature cocktails"
+        },
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"rooftop lounge",
+          "collection_text":" dockside",
+          "similarity":0.4452994148
+        },
+        {
+          "input_text":"rooftop lounge",
+          "collection_text":"sunset grill",
+          "similarity":0.4610348104
+        },
+        {
+          "input_text":"rooftop lounge",
+          "collection_text":" pit stop",
+          "similarity":0.2610549286
+        },
+        {
+          "input_text":"rooftop lounge",
+          "collection_text":" rooftop",
+          "similarity":0.5746373993
+        },
+        {
+          "input_text":"rooftop lounge",
+          "collection_text":"oceans edge",
+          "similarity":0.3233389641
+        }
+      ],
+      "deals_f2":[
+
+      ],
+      "deals_f3":[
+
+      ],
+      "desc_sim_list":[
+
+      ],
+      "deals_f4":[
+
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Alley Bowling",
+      "days_active":[
+        "Friday"
+      ],
+      "start_time":"Open",
+      "end_time":"Close",
+      "description":"Bowling at half price with shoe rental"
+    },
+    "output":null,
+    "result":false,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        },
+        {
+          "establishment":"Vine & Dine",
+          "days_active":[
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"19:00:00",
+          "end_time":"21:00:00",
+          "description":"Complimentary wine tasting with any entr\u00e9e"
+        },
+        {
+          "establishment":"The Night Owl",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"22:00:00",
+          "end_time":"02:00:00",
+          "description":"Free cover charge"
+        },
+        {
+          "establishment":"Harbor View",
+          "days_active":[
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "start_time":"16:00:00",
+          "end_time":"18:00:00",
+          "description":"Oyster Happy Hour"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        },
+        {
+          "establishment":"The Alley",
+          "days_active":[
+            "Friday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Half off bowling with shoe rental"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"alley bowling",
+          "collection_text":"midway",
+          "similarity":0.2715150568
+        },
+        {
+          "input_text":"alley bowling",
+          "collection_text":"vine & dine",
+          "similarity":0.2821240478
+        },
+        {
+          "input_text":"alley bowling",
+          "collection_text":" night owl",
+          "similarity":0.2477722908
+        },
+        {
+          "input_text":"alley bowling",
+          "collection_text":"harbor view",
+          "similarity":0.3269439819
+        },
+        {
+          "input_text":"alley bowling",
+          "collection_text":" speakeasy",
+          "similarity":0.2607018263
+        },
+        {
+          "input_text":"alley bowling",
+          "collection_text":" alley",
+          "similarity":0.4503244799
+        }
+      ],
+      "deals_f2":[
+
+      ],
+      "deals_f3":[
+
+      ],
+      "desc_sim_list":[
+
+      ],
+      "deals_f4":[
+
+      ]
+    }
+  },
+  {
+    "deal_in":{
+      "establishment":"Ocean's Edge Restaurant",
+      "days_active":[
+        "Saturday",
+        "Sunday"
+      ],
+      "start_time":"18:00:00",
+      "end_time":"22:00:00",
+      "description":"Dessert on the house with any main course"
+    },
+    "output":{
+      "establishment":"Ocean's Edge",
+      "days_active":[
+        "Saturday",
+        "Sunday"
+      ],
+      "start_time":"18:00:00",
+      "end_time":"22:00:00",
+      "description":"Complimentary dessert with any main course"
+    },
+    "result":true,
+    "details":{
+      "deals_f1":[
+        {
+          "establishment":"Midway",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"$2 off all Rum Cocktails"
+        },
+        {
+          "establishment":"The Dockside",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"12:00:00",
+          "end_time":"16:00:00",
+          "description":"25% off seafood platters"
+        },
+        {
+          "establishment":"The Night Owl",
+          "days_active":[
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"22:00:00",
+          "end_time":"02:00:00",
+          "description":"Free cover charge"
+        },
+        {
+          "establishment":"Sunset Grill",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"Close",
+          "description":"Kids eat free"
+        },
+        {
+          "establishment":"The Pit Stop",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"Open",
+          "end_time":"15:00:00",
+          "description":"$5 Bloody Marys"
+        },
+        {
+          "establishment":"The Speakeasy",
+          "days_active":[
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "start_time":"21:00:00",
+          "end_time":"01:00:00",
+          "description":"Complimentary appetizer with premium cocktail purchase"
+        },
+        {
+          "establishment":"The Rooftop",
+          "days_active":[
+            "Sunday"
+          ],
+          "start_time":"17:00:00",
+          "end_time":"20:00:00",
+          "description":"Sunset Specials on signature cocktails"
+        },
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "estab_sim_list":[
+        {
+          "input_text":"oceans edge ",
+          "collection_text":"midway",
+          "similarity":0.2837682949
+        },
+        {
+          "input_text":"oceans edge ",
+          "collection_text":" dockside",
+          "similarity":0.5081045501
+        },
+        {
+          "input_text":"oceans edge ",
+          "collection_text":" night owl",
+          "similarity":0.2808883332
+        },
+        {
+          "input_text":"oceans edge ",
+          "collection_text":"sunset grill",
+          "similarity":0.3822647835
+        },
+        {
+          "input_text":"oceans edge ",
+          "collection_text":" pit stop",
+          "similarity":0.2052210354
+        },
+        {
+          "input_text":"oceans edge ",
+          "collection_text":" speakeasy",
+          "similarity":0.2327393509
+        },
+        {
+          "input_text":"oceans edge ",
+          "collection_text":" rooftop",
+          "similarity":0.3929767816
+        },
+        {
+          "input_text":"oceans edge ",
+          "collection_text":"oceans edge",
+          "similarity":0.9480701863
+        }
+      ],
+      "deals_f2":[
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "deals_f3":[
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ],
+      "desc_sim_list":[
+        {
+          "input_text":"dessert on the house with any main course",
+          "collection_text":"complimentary dessert with any main course",
+          "similarity":0.8377742606
+        }
+      ],
+      "deals_f4":[
+        {
+          "establishment":"Ocean's Edge",
+          "days_active":[
+            "Saturday",
+            "Sunday"
+          ],
+          "start_time":"18:00:00",
+          "end_time":"22:00:00",
+          "description":"Complimentary dessert with any main course"
+        }
+      ]
+    }
+  }
+]
