@@ -1,5 +1,14 @@
 <!-- templates/view_comments.html -->
 {% extends 'base.html' %}
+<head>
+    <!-- Other head elements -->
+
+    <!-- Include FontAwesome library -->
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+    <!-- Your other styles and scripts -->
+    <!-- ... -->
+</head>
 
 {% block content %}
     {% with messages = get_flashed_messages(category_filter=["error"]) %}
@@ -50,13 +59,28 @@
                     {% if comment is mapping %}
                         <!-- Voting Column -->
                         <div class="col-1 d-flex flex-column align-items-center justify-content-center" style="float:right;">
-                            <button type="button" class="btn btn-link p-0 mb-0" onclick="upvote('{{ deal_id }}', '{{ comment['comment_id'] }}')">
-                                <b>▲</b>
-                            </button>
-                            <span id="vote-count-{{ comment['comment_id'] }}">{{ comment.get('upvotes', 0) - comment.get('downvotes', 0) }}</span>
-                            <button type="button" class="btn btn-link p-0 mt-0" onclick="downvote('{{ deal_id }}', '{{ comment['comment_id'] }}')">
-                                <b>▼</b>
-                            </button>
+                            {% if current_user.is_authenticated %}
+                                <button type="button" class="btn btn-link p-0 mb-0" onclick="upvote('{{ deal_id }}', '{{ comment['comment_id'] }}')">
+                                    <b>▲</b>
+                                </button>
+                                <span id="vote-count-{{ comment['comment_id'] }}">{{ comment.get('upvotes', 0) - comment.get('downvotes', 0) }}</span>
+                                <button type="button" class="btn btn-link p-0 mt-0" onclick="downvote('{{ deal_id }}', '{{ comment['comment_id'] }}')">
+                                    <b>▼</b>
+                                </button>
+                            {% else %}
+                            <div class="text-center">
+                                <a href="{{ url_for('auth.login') }}" class="btn btn-link p-0 mb-0">
+                                    <b>🔒</b>
+                                </a>
+                                <br> <!-- New line for separation -->
+                                <span id="vote-count-{{ comment['comment_id'] }}">{{ comment.get('upvotes', 0) - comment.get('downvotes', 0) }}</span>
+                                <br> <!-- New line for separation -->
+                                <a href="{{ url_for('auth.login') }}" class="btn btn-link p-0 mt-0">
+                                    <b>🔒</b>
+                                </a>
+                            </div>
+                    
+                            {% endif %}
                         </div>
                         <p><strong>{{ comment.get('username', 'Unknown User') }}</strong> said:</p>
                         <p>{{ comment.get('text', '') }}</p>
