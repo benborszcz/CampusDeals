@@ -134,9 +134,12 @@ def deal_details(deal_id):
     Route to get deal details.
     """
     # Retrieve the document from the Firestore collection
-    deal = db.collection('deals').document(deal_id).get()
-    print(deal.to_dict())
-    return render_template('deal_details.html', deal=deal.to_dict())
+    # deal = db.collection('deals').document(deal_id).get()
+    # print(deal.to_dict())
+    # return render_template('deal_details.html', deal=deal.to_dict())
+
+    deal = db.collection('deals').document(deal_id).get().to_dict()
+    return jsonify(deal)
 
 
 @app.route('/deal/<deal_id>/upvote', methods=['POST'])
