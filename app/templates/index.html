@@ -17,8 +17,12 @@
                 <li><input type="checkbox" name="day" value="Sunday" />Sunday</li>
             </ul>
         </div>
-        <input type="range" id="distance-slider" name="distance" min="1" max="300" value="1" class="form-control mr-2" oninput="requestLocation(value)">
-        <label for="distance-slider">Distance (mi)</label>
+        <select name="distance" id="distance-select" class="form-control mr-2" onchange="requestLocation()">
+            <option value="">Deals within...</option>
+            <option value="1">1 mi</option>
+            <option value="1">5 mi</option>
+            <option value="1">10 mi</option>
+            <option value="1">20 mi</option>
         <input type="hidden" id="userLat" name="userLat">
         <input type="hidden" id="userLon" name="userLon">
         <button type="submit" class="btn btn-primary">Search</button>

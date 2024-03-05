@@ -7,7 +7,7 @@ checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
 }
 
 function requestLocation() {
-    if (document.getElementById('distance-slider').value !== "" && navigator.geolocation) {
+    if (document.getElementById('distance-select').value !== "" && navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             // Populate hidden form fields
             document.getElementById('userLat').value = position.coords.latitude;
