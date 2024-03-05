@@ -1,3 +1,5 @@
+from itertools import groupby
+from operator import itemgetter
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from . import app
 from flask_wtf.csrf import generate_csrf
@@ -29,8 +31,18 @@ def index():
     Home page that could show popular deals or a search bar.
     """
     # load all deals from firestore
-    deals = db.collection('deals').stream()
+    deals = db.collection(config.DEAL_COLLECTION).stream()
     deal_list = [deal.to_dict() for deal in deals]
+
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
+
+    # link deals to establishments
+    for deal in deal_list:
+        for establishment in establishment_list:
+            if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
+                deal['establishment'] = establishment
 
     # index all deals in elasticsearch
     if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
@@ -41,16 +53,40 @@ def index():
     for deal in deal_list:
         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
-
+        deal['url'] = url_for('deal_details', deal_id=deal['deal_id']) # Assuming url_for is defined elsewhere
+        deal['lat'] = deal['establishment']['latitude']
+        deal['lng'] = deal['establishment']['longitude']
     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
 
-    return render_template('index.html', popular_deals=deal_list)
+    # Function to slightly adjust coordinates
+    def adjust_coords(lat, lng, count):
+        # Define how much to adjust. These values can be very small.
+        lat_adj = -0.00000
+        lng_adj = -0.00007
+        return lat + (lat_adj * count), lng + (lng_adj * count)
+
+    # Group deals by their coordinates
+    sorted_deals = sorted(deal_list, key=itemgetter('lat', 'lng'))
+    for _, group in groupby(sorted_deals, key=itemgetter('lat', 'lng')):
+        duplicates = list(group)
+        if len(duplicates) > 1:
+            for i, deal in enumerate(duplicates):
+                # Adjust coordinates starting from the second item
+                if i > 0:
+                    print(f"Adjusting coordinates for {deal['title']}")
+                    deal['lat'], deal['lng'] = adjust_coords(deal['lat'], deal['lng'], i)
+
+    return render_template('index.html', popular_deals=deal_list, deals_json=json.dumps(deal_list))
 
 from flask import request, jsonify
 from . import app, db
 
 @app.route('/submit-deal', methods=['POST', 'GET'])
 def submit_deal():
+
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
 
     form = DealSubmissionForm()
     if request.method == 'POST':
@@ -74,10 +110,10 @@ def submit_deal():
             return render_template('submit_deal.html', form=form, popup="Your deal contains profanity and cannot be posted.")
 
         # Transform the parsed data into a structure suitable for Firestore
-        deal_data = transform_deal_structure(parse_deal_submission(str(form.data)))
+        deal_data = transform_deal_structure(parse_deal_submission(str(form.data), establishment_list), establishment_list)
 
         # load all deals from firestore
-        deals = db.collection('deals').stream()
+        deals = db.collection(config.DEAL_COLLECTION).stream()
         deal_list = [deal.to_dict() for deal in deals]
         
         # Duplicate check
@@ -90,7 +126,7 @@ def submit_deal():
 
 
         # Add a new document to the Firestore collection with the specified deal_id
-        db.collection('deals').document(deal_data['deal_id']).set(deal_data)
+        db.collection(config.DEAL_COLLECTION).document(deal_data['deal_id']).set(deal_data)
         # Index the new deal in Elasticsearch
         index_deal(deal_data)
         return redirect(url_for('index'))
@@ -103,7 +139,7 @@ def get_deals():
     Route to get all deals.
     """
     # Retrieve all documents from the Firestore collection
-    deals = db.collection('deals').stream()
+    deals = db.collection(config.DEAL_COLLECTION).stream()
     deal_list = [deal.to_dict() for deal in deals]
     return jsonify(deal_list), 200
 
@@ -120,7 +156,7 @@ def search():
             hit['_source']['_score'] = hit['_score']
             results.append(hit['_source'])
 
-        deals = db.collection('deals').stream()
+        deals = db.collection(config.DEAL_COLLECTION).stream()
         deal_list = [deal.to_dict() for deal in deals]
         deal_results = [deal for deal in deal_list if deal['deal_id'] in [result['deal_id'] for result in results]]
 
@@ -142,22 +178,32 @@ def deal_details(deal_id):
     Route to get deal details.
     """
     # Retrieve the document from the Firestore collection
-    deal = db.collection('deals').document(deal_id).get()
-    print(deal.to_dict())
-    return render_template('deal_details.html', deal=deal.to_dict())
+    deal = db.collection(config.DEAL_COLLECTION).document(deal_id).get()
+    deal_dict = deal.to_dict()
+
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
+
+    # link deal to establishment
+    for establishment in establishment_list:
+        if deal_dict['establishment']['name'] == establishment['name'] or deal_dict['establishment']['name'] in establishment['shortname']:
+            deal_dict['establishment'] = establishment
+
+    return render_template('deal_details.html', deal=deal_dict, deals_json=json.dumps([deal_dict]))
 
 
 @app.route('/deal/<deal_id>/upvote', methods=['POST'])
 @login_required
 def upvote_deal(deal_id):
-    deal_ref = db.collection('deals').document(deal_id)
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     deal_ref.update({"upvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
 
 @login_required
 @app.route('/deal/<deal_id>/downvote', methods=['POST'])
 def downvote_deal(deal_id):
-    deal_ref = db.collection('deals').document(deal_id)
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     deal_ref.update({"downvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
 
@@ -167,7 +213,7 @@ def daily_deals():
     current_day = datetime.now().strftime('%A')
 
     # Retrieve all documents from the Firestore collection
-    deals = db.collection('deals').stream()
+    deals = db.collection(config.DEAL_COLLECTION).stream()
     all_deals = [deal.to_dict() for deal in deals]
 
     # Debugging output
@@ -192,7 +238,7 @@ def daily_deals():
 
 @app.route('/view-comments/<deal_id>', methods=['GET', 'POST'])
 def view_and_add_comments(deal_id):
-    deal_ref = db.collection('deals').document(deal_id)
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     deal = deal_ref.get().to_dict()
     comments = deal.get('comments', [])
     comment_form = CommentForm()
@@ -271,7 +317,7 @@ def view_and_add_comments(deal_id):
 @login_required
 @app.route('/deal/<deal_id>/comment/<comment_id>/upvote', methods=['POST'])
 def upvote_comment(deal_id, comment_id):
-    deal_ref = db.collection('deals').document(deal_id)
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     comments = deal_ref.get().to_dict().get('comments', [])
     for comment in comments:
         if comment['comment_id'] == comment_id:
@@ -291,7 +337,7 @@ def upvote_comment(deal_id, comment_id):
 @login_required
 @app.route('/deal/<deal_id>/comment/<comment_id>/downvote', methods=['POST'])
 def downvote_comment(deal_id, comment_id):
-    deal_ref = db.collection('deals').document(deal_id)
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     comments = deal_ref.get().to_dict().get('comments', [])
     for comment in comments:
         if comment['comment_id'] == comment_id:

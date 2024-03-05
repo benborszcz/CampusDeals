@@ -110,3 +110,32 @@ form.form-inline.mb-4 {
     color: rgb(41, 155, 41);
     font-weight: bold;
 }
+
+#map { 
+    height: 400px; 
+    border-radius: 10px 10px 0px 0px;
+}
+
+.map-container { 
+    padding-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.map-button-container {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    border-radius: 0px 0px 10px 10px;
+}
+
+.map-toggle-button {
+    cursor: pointer;
+    color: var(--secondary-text-color);
+    background-color: var(--accent-color);
+    border-color: transparent;
+    width: 100%;
+    border-radius: 0px 0px 10px 10px;
+    text-align: center;
+}
