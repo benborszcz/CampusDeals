@@ -45,7 +45,7 @@ Deal Structure
 }
 """
 
-def transform_deal_structure(deal_structure_LLM):
+def transform_deal_structure(deal_structure_LLM, establishments_list):
     # Generate a unique deal_id
     deal_id = str(uuid.uuid4())
 
@@ -63,6 +63,21 @@ def transform_deal_structure(deal_structure_LLM):
     full_deal_structure["upvotes"] = 0
     full_deal_structure["downvotes"] = 0
 
+    full_deal_establishment = next((establishment for establishment in establishments_list if establishment["name"] == full_deal_structure["establishment"]["name"]), None)
+    establishment_hours = full_deal_establishment['hours'][full_deal_structure["deal_details"]["days_active"][0][:3]]
+    print(establishment_hours)
+    if full_deal_structure["deal_details"]["start_time"] == "Open":
+        full_deal_structure["deal_details"]["start_time"] = establishment_hours.split("-")[0]
+    
+    print(full_deal_structure["deal_details"]["days_active"][0])
+    if full_deal_structure["deal_details"]["end_time"] == "Close":
+        full_deal_structure["deal_details"]["end_time"] = establishment_hours.split("-")[1]
+
+    # If time is in format HH:MM, add seconds
+    if len(full_deal_structure["deal_details"]["start_time"]) == 5:
+        full_deal_structure["deal_details"]["start_time"] += ":00"
+    if len(full_deal_structure["deal_details"]["end_time"]) == 5:
+        full_deal_structure["deal_details"]["end_time"] += ":00"
 
     return full_deal_structure
 
@@ -205,12 +220,12 @@ def search_deals(query, days):
 
     return response['hits']['hits']
 
-def parse_deal_submission(text):
+def parse_deal_submission(text, establishments_list):
     """
     Use OpenAI's LLM to parse a deal submission text.
     """
     # Call OpenAI's API to parse the text and extract structured data
-    agent = Agent("Deal Parser", "Parse a deal submission into structured data", get_prompt_from_file("deal_parser"))
+    agent = Agent("Deal Parser", "Parse a deal submission into structured data", get_prompt_from_file("deal_parser").replace("{{establishments_list}}", str(establishments_list)))
     response = agent.complete_task(text)
     response = json.loads(response)
     return response

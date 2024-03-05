@@ -10,11 +10,13 @@ Deal Submission Structure:
   },
   "deal_details": {
     "deal_type": "Type",
+    "deal_name": "Name of the deal",
+    "deal_description": "Description of the Deal Items",
     "deal_items": [
         {
             "item": "Item Name",
             "item_type": "Type of Item",
-            "pricing": {"price": "# if price deal like $1 wells else N/A", "discout": "# if deal like 50% off or $2 off else N/A"}
+            "pricing": {"price": "# if price deal like $1 wells else N/A", "discount": "# if deal like 50% off or $2 off else N/A"}
         },
     ],
     "start_time": "HH:MM:SS" or "Open",
@@ -25,19 +27,24 @@ Deal Submission Structure:
   "tags": ["tag1", "tag2", "etc"],
 }
 
+The establishment.name MUST be one of the following:
+{{establishment_list}}
+
 Example bar deal submission 1:
-{'establishment_name': 'Joe's', 'establishment_type': 'bar', 'deal_name': '50% off Friday', 'deal_description': 'All drinks 50% off on friday all night', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['fri'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
+{'establishment_name': 'Joe's', 'establishment_type': 'bar', 'deal_name': '50% off Friday', 'deal_description': 'ALl drinks 50% off', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['fri'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
 
 Expected parsed deal submission 1:
 {
   "title": "Joe's Bar, 50% off Friday",
-  "description": "50% off all drinks at Joe's Bar this Friday night!",
+  "description": "50% off all drinks at Joe's Bar Friday Night",
   "establishment": {
     "name": "Joe's Bar",
     "type": "Bar"
   },
   "deal_details": {
     "deal_type": "Percentage Off",
+    "deal_name": "Half Off",
+    "deal_description": "50% Off All Drinks",
     "deal_items": [
       {
         "item": "All drinks",
@@ -70,22 +77,24 @@ Expected parsed deal submission 2:
     "type": "Bar"
   },
   "deal_details": {
-    "deal_type": "Type",
+    "deal_type": "Set Price",
+    "deal_name": "Madness",
+    "deal_description": "$1 Wells & Bombs",
     "deal_items": [
       {
-        "item": "wells",
-        "item_type": "Alcohol"
+        "item": "Wells",
+        "item_type": "Mixed"
         "pricing": {
           "price": "$1",
-          "discout": "N/A"
+          "discount": "N/A"
         }
       },
       {
-        "item": "bombs",
-        "item_type": "Alcohol"
+        "item": "Bombs",
+        "item_type": "Shot"
         "pricing": {
           "price": "$1",
-          "discout": "N/A"
+          "discount": "N/A"
         }
       }
     ],

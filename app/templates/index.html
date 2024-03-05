@@ -20,8 +20,14 @@
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
+    <div class="map-container">
+        <div class="shadow" style="border-radius: 10px;">
+            <div id="map"></div>
+        </div>
+    </div>
+
      <!-- Display popular deals using Bootstrap cards -->
-     <section>
+    <section>
         <h2 class="my-4">Popular Deals</h2>
         <div class="row">
             {% for deal in popular_deals %}
@@ -72,4 +78,31 @@
     </section>
 
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script>
+        var deals = {{ deals_json|safe }};
+        var map = L.map('map', {
+            center: [40.0022, -83.0075],
+            zoom: 15,
+            maxZoom: 19 // Global maximum zoom level for the map
+        });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+
+        // Add markers and popups with URLs
+        deals.forEach(function(deal) {
+            L.marker([deal.lat, deal.lng]).addTo(map)
+                .bindPopup(`
+                <a href="${deal.url}" style="text-decoration: none;">
+                    <b>${deal.establishment.shortname}</b> - <d style="font-size: smaller;">${deal.deal_details.deal_name}</d>
+                    <br>
+                    <div>
+                        <d style="font-size: x-small;">${deal.deal_details.deal_description}</d>
+                    </div>
+                </a>
+                `, {maxWidth: "200"});
+        });
+    </script>
 {% endblock %}
