@@ -17,15 +17,7 @@
                 <li><input type="checkbox" name="day" value="Sunday" />Sunday</li>
             </ul>
         </div>
-        <select name="distance" id="distance-select" class="form-control mr-2" onchange="requestLocation()">
-            <option value="">Select distance...</option>
-            <option value="0.1">0.1mi</option>
-            <option value="0.5">0.5mi</option>
-            <option value="1">1mi</option>
-            <option value="5">5mi</option>
-            <option value="10">10mi</option>
-            <option value="15">20mi</option>
-        </select>
+        <input type="number" step="0.1" name="distance" id="distance-input" class="form-control mr-2" placeholder="Enter distance in miles" onchange="requestLocation()">
         <input type="hidden" id="userLat" name="userLat">
         <input type="hidden" id="userLng" name="userLng">
         <button type="submit" class="btn btn-primary">Search</button>
