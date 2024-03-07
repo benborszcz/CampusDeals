@@ -160,6 +160,7 @@ def remove_deal(deal_id):
     response = es.delete(index="deals", id=deal_id)
     return response
 
+
 def search_deals(query, days, distance, user_lat, user_lng):
     """
     Search for deals using Elasticsearch across all fields.
@@ -201,7 +202,7 @@ def search_deals(query, days, distance, user_lat, user_lng):
         # Add filter for establishment names if there are any nearby
         search_query["query"]["bool"]["filter"].append({
             "terms": {
-                "establishment_name.keyword": nearby_establishments
+                "establishment.name.keyword": nearby_establishments
             }
         })
 
@@ -243,7 +244,7 @@ def get_nearby_establishments(user_lat, user_lng, distance):
         est_lng = est['longitude']
         
         # only return establishments within distance of user's coordinates
-        if haversine(user_lat, user_lng, est_lat, est_lng) <= distance:
+        if haversine(user_lat, user_lng, est_lat, est_lng) <= float(distance):
             nearby_establishments.append(est['name'])
 
     return nearby_establishments
