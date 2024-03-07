@@ -17,6 +17,13 @@
                 <li><input type="checkbox" name="day" value="Sunday" />Sunday</li>
             </ul>
         </div>
+        <select name="distance" id="distance-select" class="form-control mr-2" onchange="requestLocation()">
+            <option value="">Select distance...</option>
+            <option value="1">1mi</option>
+            <option value="5">5mi</option>
+            <option value="10">10mi</option>
+            <option value="15">20mi</option>
+        </select>
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
