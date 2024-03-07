@@ -160,7 +160,8 @@ def remove_deal(deal_id):
     response = es.delete(index="deals", id=deal_id)
     return response
 
-def search_deals(query, days):
+
+def search_deals(query, days, distance, user_lat, user_lng):
     """
     Search for deals using Elasticsearch across all fields.
     """
@@ -176,44 +177,43 @@ def search_deals(query, days):
     else:
         dayElements = "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday"
 
-    # If there's no query string, search all results filtered only by day
-    if not query:
-       search_query = {
-            "query" : {
-                "bool" : {
-                    "must" : [
+    # base query structure using dayElements
+    search_query = {
+        "query": {
+            "bool": {
+                "must": [],
+                "filter": [
                     {
-                        "match" : {
+                        "match": {
                             "deal_details.days_active": dayElements
                         }
                     }
-                    ]
-                }
+                ]
             }
         }
-    # If there's a query string, search results filtered by query string and day
-    else:
-       search_query = {
-            "query": {
-                "bool": {
-                    "must": [
-                        {
-                            "query_string": {
-                                "query": query,
-                                "fuzziness": "AUTO"
-                            }
-                        }
-                    ],
-                    "filter": [
-                        {
-                            "match": {
-                                "deal_details.days_active": dayElements
-                            }
-                        }
-                    ]
-                }
+    }
+
+    # Retrieve nearby establishments if distance filtering is applied
+    if distance and user_lat and user_lng:
+        nearby_establishments = get_nearby_establishments(user_lat, user_lng, distance)
+        if not nearby_establishments: 
+            return []
+
+        # Add filter for establishment names if there are any nearby
+        search_query["query"]["bool"]["filter"].append({
+            "terms": {
+                "establishment.name.keyword": nearby_establishments
             }
-        }
+        })
+
+    # Add string query if present
+    if query:
+        search_query["query"]["bool"]["must"].append({
+            "query_string": {
+                "query": query,
+                "fuzziness": "AUTO"
+            }
+        })
 
     # Perform the search on the 'deals' index
     response = es.search(index="deals", body=search_query, from_=0, size=10)
@@ -230,4 +230,37 @@ def parse_deal_submission(text, establishments_list):
     response = json.loads(response)
     return response
 
+from . import db
+from math import radians, cos, sin, asin, sqrt
 
+def get_nearby_establishments(user_lat, user_lng, distance):
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishments_list = [establishment.to_dict() for establishment in establishments]
+    nearby_establishments = []
+
+    for est in establishments_list:
+        est_lat = est['latitude']
+        est_lng = est['longitude']
+        
+        # only return establishments within distance of user's coordinates
+        if haversine(user_lat, user_lng, est_lat, est_lng) <= float(distance):
+            nearby_establishments.append(est['name'])
+
+    return nearby_establishments
+
+def haversine(lat1, lng1, lat2, lng2):
+    """
+    Calculate the distance in miles between two sets of coordinates on Earth
+    """
+    # Convert decimal degrees to radians 
+    lat1, lng1, lat2, lng2 = map(float, [lat1, lng1, lat2, lng2])
+    lat1, lng1, lat2, lng2 = map(radians, [lat1, lng1, lat2, lng2])
+
+    # Haversine formula 
+    dlon = lng2 - lng1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 3956 # Radius of earth in miles
+    return c * r

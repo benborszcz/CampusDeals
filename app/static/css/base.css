@@ -36,6 +36,7 @@ form.form-inline.mb-4 {
 }
 
 .dropdown-check-list {
+    z-index: 1000;
     display: inline-block;
     margin-left: 8px;
     margin-right: 15px;
