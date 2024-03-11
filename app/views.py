@@ -115,7 +115,7 @@ def submit_deal():
         # load all deals from firestore
         deals = db.collection(config.DEAL_COLLECTION).stream()
         deal_list = [deal.to_dict() for deal in deals]
-        
+
         # Duplicate check
         print('Checking for duplicates')
         sim_list, details = moderator.check_duplicate_time_logic(deal_data, deal_list)
@@ -242,9 +242,11 @@ def daily_deals():
 @app.route('/view-comments/<deal_id>', methods=['GET', 'POST'])
 def view_and_add_comments(deal_id):
     deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
+    comments_ref = deal_ref.collection("comments").stream()
     deal = deal_ref.get().to_dict()
-    comments = deal.get('comments', [])
     comment_form = CommentForm()
+
+    # Handle new comments
     if comment_form.validate_on_submit() and current_user.is_authenticated:
         new_comment_text = comment_form.comment.data
 
@@ -263,51 +265,22 @@ def view_and_add_comments(deal_id):
             'downvotes': 0
         }
 
-        # Update the deal document with the new comment
-        deal_ref.update({
-            'comments': firestore.ArrayUnion([new_comment])
-        })
+        # Add new comment document to comments collection
+        deal_ref.collection("comments").document(new_comment['comment_id']).set(new_comment)
 
         flash('Comment added successfully!', 'success')
         return redirect(url_for('view_and_add_comments', deal_id=deal_id))
 
-    # Update comment structures
-    for comment in comments:
-        if type(comment) is not str:
-            # Update comments without comment_id, upvotes, and downvotes
-            if 'comment_id' not in comment:
-                updated_comment = {
-                    'comment_id': str(uuid.uuid4()),
-                    'user_id': comment['user_id'],
-                    'username': comment['username'],
-                    'text': comment['text'],
-                    'time': comment['time'],
-                    'upvotes': 0,
-                    'downvotes': 0
-                }
-                deal_ref.update({"comments" : firestore.ArrayRemove([comment])})
-                deal_ref.update({"comments" : firestore.ArrayUnion([updated_comment])})
-        # Update plain text comments
-        else:
-            updated_comment = {
-                'comment_id': str(uuid.uuid4()),
-                'user_id': 'Unknown',
-                'username': 'Unknown',
-                'text': comment,
-                'time': datetime.now().isoformat(),
-                'upvotes': 0,
-                'downvotes': 0
-            }
-            deal_ref.update({"comments" : firestore.ArrayRemove([comment])})
-            deal_ref.update({"comments" : firestore.ArrayUnion([updated_comment])})
-
-    # Format the date before passing it to the template
+    # Format dates before passing comments array to template
+    comments = []
+    for comment in comments_ref:
+        comments.append(comment.to_dict())
     formatted_comments = [
         {
             **comment,
-            'time': datetime.strptime(comment['time'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+            'time': datetime.strptime(comment.get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
         }
-        if 'time' in comment else comment
+        if comment.get('time') else comment
         for comment in comments
     ]
 
@@ -320,39 +293,13 @@ def view_and_add_comments(deal_id):
 @login_required
 @app.route('/deal/<deal_id>/comment/<comment_id>/upvote', methods=['POST'])
 def upvote_comment(deal_id, comment_id):
-    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
-    comments = deal_ref.get().to_dict().get('comments', [])
-    for comment in comments:
-        if comment['comment_id'] == comment_id:
-            updated_comment = {
-                'comment_id': comment['comment_id'],
-                'user_id': comment['user_id'],
-                'username': comment['username'],
-                'text': comment['text'],
-                'time': comment['time'],
-                'upvotes': comment['upvotes']+1,
-                'downvotes': comment['downvotes']
-            }
-            deal_ref.update({"comments" : firestore.ArrayRemove([comment])})
-            deal_ref.update({"comments" : firestore.ArrayUnion([updated_comment])})
+    comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(comment_id)
+    comment_ref.update({"upvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
 
 @login_required
 @app.route('/deal/<deal_id>/comment/<comment_id>/downvote', methods=['POST'])
 def downvote_comment(deal_id, comment_id):
-    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
-    comments = deal_ref.get().to_dict().get('comments', [])
-    for comment in comments:
-        if comment['comment_id'] == comment_id:
-            updated_comment = {
-                'comment_id': comment['comment_id'],
-                'user_id': comment['user_id'],
-                'username': comment['username'],
-                'text': comment['text'],
-                'time': comment['time'],
-                'upvotes': comment['upvotes'],
-                'downvotes': comment['downvotes']+1
-            }
-            deal_ref.update({"comments" : firestore.ArrayRemove([comment])})
-            deal_ref.update({"comments" : firestore.ArrayUnion([updated_comment])})
+    comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(comment_id)
+    comment_ref.update({"downvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
