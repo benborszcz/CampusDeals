@@ -147,9 +147,12 @@ def get_deals():
 def search():
     query = request.args.get('query')
     days = request.args.getlist('day')
-    if query or days:
+    distance = request.args.get('distance')
+    userLat = request.args.get('userLat')
+    userLng = request.args.get('userLng')
+    if query or days or distance:
         # Assuming search_deals returns a list of Firestore documents
-        hits = search_deals(query, days)
+        hits = search_deals(query, days, distance, userLat, userLng)
         results = []
         print(hits)
         for hit in hits:
