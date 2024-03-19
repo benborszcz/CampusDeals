@@ -22,6 +22,7 @@
                 </c>
             </div>
             <div class="mt-1">
+                <h2><strong><u>Deal Details</u></strong></h2>
                 {% for item in deal.deal_details.deal_items %}
                     <c>
                         <b>{{ item.item }}</b> - 
@@ -30,6 +31,7 @@
                         {% else %}
                             <b style="color: green"> {{item.pricing.discount}}</b> 
                         {% endif %}
+                        <br>
                     </c>
                 {% endfor %}
             </div>
