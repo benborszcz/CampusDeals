@@ -70,7 +70,7 @@
                                         <b>🔒</b>
                                     </a>
                                 </div>
-                        
+
                                 {% endif %}
                             </div>
                         </div>
@@ -86,11 +86,13 @@
         var map = L.map('map', {
             center: [40.0022, -83.0075],
             zoom: 15,
-            maxZoom: 19 // Global maximum zoom level for the map
+            maxZoom: 19, // Global maximum zoom level for the map
+            minZoom: 10
         });
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
-            maxZoom: 19
+            maxZoom: 19,
+            minZoom: 10
         }).addTo(map);
 
 
