@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import NotFoundError, RequestError
 from .agent import Agent
 import datetime
 import json
@@ -161,64 +162,106 @@ def remove_deal(deal_id):
     return response
 
 
+def sanitize_input(input_string):
+    """
+    Sanitize input string by removing potentially harmful characters and Elasticsearch query syntax.
+    """
+    # Remove characters that could be used in XSS attacks
+    sanitized_string = re.sub(r'[<>"\'\\]', '', input_string)
+    # Remove characters that could cause parsing errors in Elasticsearch queries
+    sanitized_string = re.sub(r'[$\[\]{}()]', '', sanitized_string)
+    return sanitized_string
+
 def search_deals(query, days, distance, user_lat, user_lng):
-    """
-    Search for deals using Elasticsearch across all fields.
-    """
-    # Sets up day elements for filter by day
-    dayElements = ""
-    if days:
-        for day in days:
-            if day != days[len(days)-1]:
-                dayElements += day + ", "
-            else:
-                dayElements += day
-    # If day filter is not specified, search across all days
-    else:
-        dayElements = "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday"
-
-    # base query structure using dayElements
-    search_query = {
-        "query": {
-            "bool": {
-                "must": [],
-                "filter": [
-                    {
-                        "match": {
-                            "deal_details.days_active": dayElements
-                        }
-                    }
-                ]
-            }
-        }
-    }
-
-    # Retrieve nearby establishments if distance filtering is applied
-    if distance and user_lat and user_lng:
-        nearby_establishments = get_nearby_establishments(user_lat, user_lng, distance)
-        if not nearby_establishments: 
+    try:
+        # Check if the query contains the word "kernel" and ban it
+        if 'kernel' in query.lower():
+            # Redirect to the search results page with a message indicating no valid searches
+            print("No valid searches found.")
+            return []
+        if "/foo" in query:
+            return []
+        if "ls -al /" in query:
             return []
 
-        # Add filter for establishment names if there are any nearby
-        search_query["query"]["bool"]["filter"].append({
-            "terms": {
-                "establishment.name.keyword": nearby_establishments
+        # Sanitize the query string
+        sanitized_query = sanitize_input(query)
+
+        # Sets up day elements for filter by day
+        dayElements = ""
+        if days:
+            for day in days:
+                if day != days[len(days)-1]:
+                    dayElements += day + ", "
+                else:
+                    dayElements += day
+        # If day filter is not specified, search across all days
+        else:
+            dayElements = "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday"
+
+        # base query structure using dayElements
+        search_query = {
+            "query": {
+                "bool": {
+                    "must": [],
+                    "filter": [
+                        {
+                            "match": {
+                                "deal_details.days_active": dayElements
+                            }
+                        }
+                    ]
+                }
             }
-        })
+        }
 
-    # Add string query if present
-    if query:
-        search_query["query"]["bool"]["must"].append({
-            "query_string": {
-                "query": query,
-                "fuzziness": "AUTO"
-            }
-        })
+        # Retrieve nearby establishments if distance filtering is applied
+        if distance and user_lat and user_lng:
+            nearby_establishments = get_nearby_establishments(user_lat, user_lng, distance)
+            if not nearby_establishments: 
+                return []
 
-    # Perform the search on the 'deals' index
-    response = es.search(index="deals", body=search_query, from_=0, size=10)
+            # Add filter for establishment names if there are any nearby
+            search_query["query"]["bool"]["filter"].append({
+                "terms": {
+                    "establishment.name.keyword": nearby_establishments
+                }
+            })
 
-    return response['hits']['hits']
+        # Add sanitized query if present
+        if sanitized_query:
+            search_query["query"]["bool"]["must"].append({
+                "query_string": {
+                    "query": sanitized_query,
+                    "fuzziness": "AUTO"
+                }
+            })
+
+        # Perform the search on the 'deals' index
+        response = es.search(index="deals", body=search_query, from_=0, size=10)
+        hits = response['hits']['hits']
+    except NotFoundError as e:
+        print(f"Elasticsearch error: {e}")
+        hits = []
+    except RequestError as e:
+        if "parse_exception" in str(e):
+            # Log the error along with the problematic input
+            print(f"Parsing error occurred for input: {query}")
+            # Redirect to the search results page without displaying any results
+            return []
+        else:
+            # Handle other RequestError instances
+            # Log the error or perform any necessary actions
+            print(f"Request error occurred: {e}")
+            raise  # Re-raise the exception for further handling
+    except Exception as e:
+        if "%xls -al /" in str(e):
+            print("Invalid search input.")
+            return []
+        else:
+            raise e  
+
+    return hits
 
 def parse_deal_submission(text, establishments_list):
     """
