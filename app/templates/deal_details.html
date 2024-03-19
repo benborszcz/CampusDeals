@@ -25,11 +25,11 @@
                 <h2><strong><u>Deal Details</u></strong></h2>
                 {% for item in deal.deal_details.deal_items %}
                     <c>
-                        <b>{{ item.item }}</b> - 
+                        <b>{{ item.item }}</b> -
                         {% if item.pricing.discount == 'N/A' %}
-                             <b style="color: green"> {{item.pricing.price}}</b> 
+                             <b style="color: green"> {{item.pricing.price}}</b>
                         {% else %}
-                            <b style="color: green"> {{item.pricing.discount}}</b> 
+                            <b style="color: green"> {{item.pricing.discount}}</b>
                         {% endif %}
                         <br>
                     </c>
@@ -46,11 +46,13 @@
         var map = L.map('map', {
             center: [deals[0].establishment.latitude, deals[0].establishment.longitude],
             zoom: 18,
-            maxZoom: 19 // Global maximum zoom level for the map
+            maxZoom: 19, // Global maximum zoom level for the map
+            minZoom: 10
         });
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
-            maxZoom: 19
+            maxZoom: 19,
+            minZoom: 10
         }).addTo(map);
 
 
@@ -68,7 +70,7 @@
                 `, {maxWidth: "200"});
         });
     </script>
-    
+
 
     <script>
         function convertMilitaryToStandardTime(militaryTime) {
