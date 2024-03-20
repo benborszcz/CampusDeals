@@ -183,6 +183,10 @@ def search_deals(query, days, distance, user_lat, user_lng):
             return []
         if "ls -al /" in query:
             return []
+        if "/" in query:
+            return []
+        if "&" in query:
+            return []
 
         # Sanitize the query string
         sanitized_query = sanitize_input(query)
