@@ -153,13 +153,13 @@ form.form-inline.mb-4 {
 
   #suggestions {
     position: absolute;
-    top: 100%; /* Position it directly below the input field */
+    top: 100%; 
     left: 0;
-    width: 100%; /* Match the width to the container */
-    box-sizing: border-box; /* Make sure padding and borders are included in the width */
+    width: 100%; 
+    box-sizing: border-box; 
     border: 1px solid #ccc;
     background-color: #fff;
-    z-index: 1000; /* Ensure it's above other content */
+    z-index: 1000; 
     list-style-type: none;
     padding: 0;
     margin: 0;
@@ -168,7 +168,7 @@ form.form-inline.mb-4 {
   #suggestions li {
     padding: 10px;
     cursor: pointer;
-    border-bottom: 1px solid #eee; /* optional, for styling */
+    border-bottom: 1px solid #eee; 
   }
   
   #suggestions li:hover {
