@@ -182,7 +182,6 @@ def daily_deals():
     # Render the 'daily_deals.html' template
     return render_template('daily_deals.html', daily_deals=daily_deals)
 
-
 @app.route('/view-comments/<deal_id>', methods=['GET', 'POST'])
 def view_and_add_comments(deal_id):
     deal_ref = db.collection('deals').document(deal_id)
@@ -190,7 +189,7 @@ def view_and_add_comments(deal_id):
     comments = deal.get('comments', [])
 
     comment_form = CommentForm()
-
+    
     if comment_form.validate_on_submit() and current_user.is_authenticated:
         new_comment_text = comment_form.comment.data
 
@@ -224,5 +223,5 @@ def view_and_add_comments(deal_id):
         for comment in comments
     ]
 
-    return render_template('view_comments.html', deal_name=deal.get('title', 'Unknown Deal'),
+    return render_template('deal_dashboard.html', deal_name=deal.get('title', 'Unknown Deal'),
                            deal_id=deal_id, comments=formatted_comments, comment_form=comment_form, current_user=current_user)

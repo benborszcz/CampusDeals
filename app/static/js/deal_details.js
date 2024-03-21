@@ -41,8 +41,8 @@ function loadDeal(dealId) {
             document.getElementById('establishment-name').textContent = data.establishment.name;
             document.getElementById('deal-description').textContent = data.description;
             document.getElementById('deal-type').textContent = data.deal_details.deal_type;
-            document.getElementById('start-time-value').textContent = data.deal_details.start_time;
-            document.getElementById('end-time-value').textContent = data.deal_details.end_time;
+            document.getElementById('start-time').textContent = data.deal_details.start_time;
+            document.getElementById('end-time').textContent = data.deal_details.end_time;
             document.getElementById('days-active').textContent = data.deal_details.days_active.join(", ");
             document.getElementById('exclusions').textContent = data.deal_details.exclusions;
             document.getElementById('created-at').textContent = data.created_at;
@@ -76,7 +76,7 @@ function loadDeal(dealId) {
 }
 
 function loadComments(dealId) {
-    fetch('/load-comments/' + dealId)
+    fetch('/view-comments/' + dealId)
         .then(response => response.json())
         .then(comments => {
             const commentsContainer = document.getElementById('comments-container');
