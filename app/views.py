@@ -5,7 +5,7 @@ from . import app
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
-from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
+from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty, autocomplete_deals
 import config
 from firebase_admin import firestore
 from datetime import datetime
@@ -303,3 +303,9 @@ def downvote_comment(deal_id, comment_id):
     comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(comment_id)
     comment_ref.update({"downvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    query = request.args.get('query', '')
+    suggestions = autocomplete_deals(query)
+    return jsonify(suggestions)

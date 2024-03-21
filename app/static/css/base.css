@@ -140,3 +140,37 @@ form.form-inline.mb-4 {
     border-radius: 0px 0px 10px 10px;
     text-align: center;
 }
+
+.search-input-container {
+    position: relative; 
+    width: 100%; 
+    max-width: 400px;
+  }
+  
+  #suggestions:empty {
+    display: none;
+  }
+
+  #suggestions {
+    position: absolute;
+    top: 100%; /* Position it directly below the input field */
+    left: 0;
+    width: 100%; /* Match the width to the container */
+    box-sizing: border-box; /* Make sure padding and borders are included in the width */
+    border: 1px solid #ccc;
+    background-color: #fff;
+    z-index: 1000; /* Ensure it's above other content */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  #suggestions li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee; /* optional, for styling */
+  }
+  
+  #suggestions li:hover {
+    background-color: #f0f0f0;
+  }
