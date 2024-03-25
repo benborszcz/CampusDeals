@@ -76,14 +76,75 @@ function loadDeal(dealId) {
 }
 
 function loadComments(dealId) {
+    // Fetch comments
     fetch('/view-comments/' + dealId)
         .then(response => response.json())
-        .then(comments => {
+        .then(data => {
+            const comments = data.comments;
+            const csrfToken = data.csrf_token;
             const commentsContainer = document.getElementById('comments-container');
             commentsContainer.innerHTML = '';
 
+            // Create and append the comment form
+            const form = document.createElement('form');
+            form.action = 'javascript:void(0)'; // Set action to avoid page reload
+            form.method = 'post';
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken; // Use the CSRF token obtained from the response
+
+            const div = document.createElement('div');
+            div.className = 'mb-3';
+
+            const label = document.createElement('label');
+            label.htmlFor = 'comment';
+            label.className = 'form-label';
+            label.textContent = 'Add a Comment:';
+
+            const textarea = document.createElement('textarea');
+            textarea.className = 'form-control';
+            textarea.placeholder = 'Write your comment here';
+            textarea.name = 'comment';
+
+            const button = document.createElement('button');
+            button.type = 'submit';
+            button.className = 'btn btn-primary';
+            button.textContent = 'Submit Comment';
+
+            div.appendChild(label);
+            div.appendChild(textarea);
+            form.appendChild(csrfInput);
+            form.appendChild(div);
+            form.appendChild(button);
+            commentsContainer.appendChild(form);
+
+            // Add form submission event listener
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+                const formData = new FormData(form);
+
+                // Submit form data asynchronously
+                fetch('/view-comments/' + dealId, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.error) {
+                        console.error('Error:', result.error);
+                    } else {
+                        // If comment submission is successful, reload comments
+                        loadComments(dealId);
+                    }
+                })
+                .catch(error => console.error('Error submitting comment:', error));
+            });
+
             if (comments.length > 0) {
                 comments.forEach(comment => {
+                    // Create card elements for each comment
                     const card = document.createElement('div');
                     card.className = 'card mb-3';
                     const cardBody = document.createElement('div');
@@ -114,9 +175,6 @@ function loadComments(dealId) {
                 noComments.textContent = 'No comments yet.';
                 commentsContainer.appendChild(noComments);
             }
-
-            const commentsSection = document.getElementById('comments');
-            commentsSection.classList.remove('hidden');
         })
         .catch(error => console.error('Error fetching comments:', error));
 }

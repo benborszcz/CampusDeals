@@ -14,8 +14,6 @@ from wtforms import TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 from profanity import profanity
 
-
-
 class CommentForm(FlaskForm):
     comment = TextAreaField('Comment', validators=[DataRequired()])
     submit_comment = SubmitField('Submit Comment')
@@ -134,9 +132,6 @@ def deal_details(deal_id):
     Route to get deal details.
     """
     # Retrieve the document from the Firestore collection
-    # deal = db.collection('deals').document(deal_id).get()
-    # print(deal.to_dict())
-    # return render_template('deal_details.html', deal=deal.to_dict())
 
     deal = db.collection('deals').document(deal_id).get().to_dict()
     return jsonify(deal)
@@ -182,46 +177,109 @@ def daily_deals():
     # Render the 'daily_deals.html' template
     return render_template('daily_deals.html', daily_deals=daily_deals)
 
+# @app.route('/view-comments/<deal_id>', methods=['GET', 'POST'])
+# def view_and_add_comments(deal_id):
+#     deal_ref = db.collection('deals').document(deal_id)
+#     deal = deal_ref.get().to_dict()
+#     comments = deal.get('comments', [])
+
+#     comment_form = CommentForm()
+    
+#     if comment_form.validate_on_submit() and current_user.is_authenticated:
+#         new_comment_text = comment_form.comment.data
+
+#         # Check for profanity using the profanity library
+#         if profanity.contains_profanity(new_comment_text):
+#             flash('Your comment contains profanity and cannot be posted.', 'error')
+#             return redirect(url_for('view_and_add_comments', deal_id=deal_id))
+
+#         new_comment = {
+#             'user_id': current_user.id,
+#             'username': current_user.username,
+#             'text': new_comment_text,
+#             'time': datetime.now().isoformat()
+#         }
+
+#         # Update the deal document with the new comment
+#         deal_ref.update({
+#             'comments': firestore.ArrayUnion([new_comment])
+#         })
+
+#         flash('Comment added successfully!', 'success')
+#         return redirect(url_for('view_and_add_comments', deal_id=deal_id))
+
+#     # Format the date before passing it to the template
+#     formatted_comments = [
+#         {
+#             **comment,
+#             'time': datetime.strptime(comment['time'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+#         }
+#         if 'time' in comment else comment
+#         for comment in comments
+#     ]
+
+#     return render_template('deal_dashboard.html', deal_name=deal.get('title', 'Unknown Deal'),
+#                            deal_id=deal_id, comments=formatted_comments, comment_form=comment_form, current_user=current_user)
+
 @app.route('/view-comments/<deal_id>', methods=['GET', 'POST'])
 def view_and_add_comments(deal_id):
     deal_ref = db.collection('deals').document(deal_id)
     deal = deal_ref.get().to_dict()
     comments = deal.get('comments', [])
 
-    comment_form = CommentForm()
-    
-    if comment_form.validate_on_submit() and current_user.is_authenticated:
-        new_comment_text = comment_form.comment.data
+    if request.method == 'POST':
+        # Handle comment submission
+        comment_form = CommentForm(request.form)
+        if comment_form.validate_on_submit() and current_user.is_authenticated:
+            new_comment_text = comment_form.comment.data
 
-        # Check for profanity using the profanity library
-        if profanity.contains_profanity(new_comment_text):
-            flash('Your comment contains profanity and cannot be posted.', 'error')
-            return redirect(url_for('view_and_add_comments', deal_id=deal_id))
+            # Check for profanity using the profanity library
+            if profanity.contains_profanity(new_comment_text):
+                flash('Your comment contains profanity and cannot be posted.', 'error')
+                return jsonify({'error': 'Comment contains profanity'}), 400
 
-        new_comment = {
-            'user_id': current_user.id,
-            'username': current_user.username,
-            'text': new_comment_text,
-            'time': datetime.now().isoformat()
-        }
+            new_comment = {
+                'user_id': current_user.id,
+                'username': current_user.username,
+                'text': new_comment_text,
+                'time': datetime.now().isoformat()
+            }
 
-        # Update the deal document with the new comment
-        deal_ref.update({
-            'comments': firestore.ArrayUnion([new_comment])
-        })
+            # Update the deal document with the new comment
+            deal_ref.update({
+                'comments': firestore.ArrayUnion([new_comment])
+            })
 
-        flash('Comment added successfully!', 'success')
-        return redirect(url_for('view_and_add_comments', deal_id=deal_id))
+            # Generate a new CSRF token and include it in the JSON response
+            csrf_token = generate_csrf()
+            flash('Comment added successfully!', 'success')
+            return jsonify({'message': 'Comment added successfully', 'csrf_token': csrf_token}), 201
+        else:
+            # If form validation fails, reload the comments and form data
+            formatted_comments = [
+                {
+                    **comment,
+                    'time': datetime.strptime(comment['time'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+                }
+                if 'time' in comment else comment
+                for comment in comments
+            ]
+            comment_form = CommentForm()  # Reinitialize an empty comment form
 
-    # Format the date before passing it to the template
-    formatted_comments = [
-        {
-            **comment,
-            'time': datetime.strptime(comment['time'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
-        }
-        if 'time' in comment else comment
-        for comment in comments
-    ]
+            return render_template('deal_dashboard.html', deal_name=deal.get('title', 'Unknown Deal'),
+                                   deal_id=deal_id, comments=formatted_comments, comment_form=comment_form, current_user=current_user)
 
-    return render_template('deal_dashboard.html', deal_name=deal.get('title', 'Unknown Deal'),
-                           deal_id=deal_id, comments=formatted_comments, comment_form=comment_form, current_user=current_user)
+    elif request.method == 'GET':
+        # Return comments for the deal
+        formatted_comments = [
+            {
+                **comment,
+                'time': datetime.strptime(comment['time'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+            }
+            if 'time' in comment else comment
+            for comment in comments
+        ]
+
+        # Generate a new CSRF token and include it in the JSON response
+        csrf_token = generate_csrf()
+        return jsonify({'comments': formatted_comments, 'csrf_token': csrf_token})

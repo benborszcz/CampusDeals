@@ -89,6 +89,7 @@
             </div>
         </div>
         <div id="comments-container">
+            <!-- Flash messages for errors -->
             {% with messages = get_flashed_messages(category_filter=["error"]) %}
                 {% if messages %}
                     <div class="flashes">
@@ -100,6 +101,8 @@
                     </div>
                 {% endif %}
             {% endwith %}
+
+            <!-- Flash messages for success -->
             {% with messages = get_flashed_messages(category_filter=["success"]) %}
                 {% if messages %}
                     <div class="flashes">
@@ -116,36 +119,20 @@
 
             <!-- Display form for adding a comment (only for logged-in users) -->
             {% if current_user.is_authenticated %}
-                <form action="{{ url_for('view_and_add_comments', deal_id=deal_id) }}" method="post">
-                    {{ comment_form.csrf_token }}
-                    <div class="mb-3">
-                        <label for="comment" class="form-label">Add a Comment:</label>
-                        {{ comment_form.comment(class="form-control", placeholder="Write your comment here") }}
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Comment</button>
-                </form>
+                {% if comment_form %}
+                    <form action="{{ url_for('view_and_add_comments', deal_id=deal_id) }}" method="post">
+                        {{ comment_form.csrf_token }}
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Add a Comment:</label>
+                            {{ comment_form.comment(class="form-control", placeholder="Write your comment here") }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Comment</button>
+                    </form>
+                {% else %}
+                    <p>Click on a view comments button to see comments!</p>
+                {% endif %}
             {% else %}
                 <p><a href="{{ url_for('auth.login') }}">Log in</a> to leave a comment.</p>
-            {% endif %}
-
-            <!-- Display existing comments or "No comments yet" -->
-            {% if comments %}
-                <h3 class="mt-4">Comments:</h3>
-                {% for comment in comments|reverse %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            {% if comment is mapping %}
-                                <p><strong>{{ comment.get('user_id', 'Unknown User') }}</strong> said:</p>
-                                <p>{{ comment.get('text', '') }}</p>
-                                <small class="text-muted">Posted on {{ comment.get('time', 'Unknown Time') }}</small>
-                            {% else %}
-                                <p>{{ comment }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p class="mt-4">No comments yet.</p>
             {% endif %}
         </div>
     </div>
