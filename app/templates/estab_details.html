@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title">{{ establishment.name }}</h2>
+            <p class="card-text text-muted">{{ establishment.address }}</p>
+        </div>
+        <div class="card-body">
+            <h5>Hours</h5>
+            <ul class="list-group list-group-flush">
+                {% for day, hours in establishment.hours.items() %}
+                    <li class="list-group-item">
+                        <strong>{{ day }}</strong> - {{ hours }}
+                    </li>
+                {% endfor %}
+            </ul>
+            <h5>Deals</h5>
+            {% for deal in deals %}
+                <div class="card-footer text-muted">
+                    <a href="{{ url_for('deal_details', deal_id=deal.deal_id) }}">{{ deal.description }}</a>
+                </div>
+            {% endfor %}
+        </div>
+        
+    </div>
+{% endblock %}

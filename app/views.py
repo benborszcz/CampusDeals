@@ -143,6 +143,16 @@ def get_deals():
     deal_list = [deal.to_dict() for deal in deals]
     return jsonify(deal_list), 200
 
+@app.route('/establishments', methods=['GET'])
+def establishments():
+    """
+    Route to get all establishments.
+    """
+    # Retrieve all documents from the Firestore collection
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
+    return render_template('establishments.html', establishments=establishment_list)
+
 @app.route('/search', methods=['GET'])
 def search():
     query = request.args.get('query')
@@ -174,6 +184,29 @@ def search():
 
         return render_template('search_results.html', results=deal_results)
     return redirect(url_for('index'))
+    
+@app.route('/establishment_details/<establishment_name>', methods=['GET'])
+def establishment_details(establishment_name):
+    """
+    Route to get establishment details.
+    """
+    # Retrieve the document from the Firestore collection
+    establishment = db.collection('establishments').document(establishment_name).get()
+    establishment_dict = establishment.to_dict()
+
+    # load all deals from firestore
+    deals = db.collection(config.DEAL_COLLECTION).stream()
+    deal_list = [deal.to_dict() for deal in deals]
+
+    # link deals to establishment
+    for deal in deal_list:
+        if deal['establishment']['name'] == establishment_dict['name'] or deal['establishment']['name'] in establishment_dict['shortname']:
+            deal['establishment'] = establishment_dict
+
+    # create list of deals for the establishment
+    deal_list = [deal for deal in deal_list if deal['establishment']['name'] == establishment_dict['name'] or deal['establishment']['name'] in establishment_dict['shortname']]
+
+    return render_template('estab_details.html', establishment=establishment_dict, deals=deal_list)
 
 @app.route('/deal_details/<deal_id>', methods=['GET'])
 def deal_details(deal_id):
