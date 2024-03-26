@@ -48,14 +48,14 @@ function downvote(dealId) {
     .catch(error => console.error('Error:', error));
 }
 
-function requestLocation() {
-    if (document.getElementById('distance-input').value !== "" && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            // Populate hidden form fields
-            document.getElementById('userLat').value = position.coords.latitude;
-            document.getElementById('userLng').value = position.coords.longitude;
-        }, function(error) {
-            alert('Unable to retrieve your location. Please check your settings and try again.');
-        });
+function updateDistanceInputState(locationEnabled) {
+    console.log('Update distance getting called, set to ' + locationEnabled);
+    const distanceInput = document.getElementById('distance-input');
+    if (locationEnabled) {
+        distanceInput.removeAttribute('disabled');
+        distanceInput.placeholder = "Enter distance in miles";
+    } else {
+        distanceInput.setAttribute('disabled', true);
+        distanceInput.placeholder = "Enable location to use this filter";
     }
 }

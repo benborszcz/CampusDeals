@@ -17,7 +17,8 @@
                 <li><input type="checkbox" name="day" value="Sunday" />Sunday</li>
             </ul>
         </div>
-        <input type="number" step="0.1" name="distance" id="distance-input" class="form-control mr-2" placeholder="Enter distance in miles" onchange="requestLocation()">
+        <input type="number" step="0.1" name="distance" id="distance-input" class="form-control mr-2" placeholder="Enter distance in miles">
+        <!-- Hidden inputs for storing user coordinates -->
         <input type="hidden" id="userLat" name="userLat">
         <input type="hidden" id="userLng" name="userLng">
         <button type="submit" class="btn btn-primary">Search</button>
