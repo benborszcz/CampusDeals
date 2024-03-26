@@ -207,11 +207,15 @@ def establishment_details(establishment_name):
 
     for day, hours in establishment_dict['hours'].items():
         if hours:
-            if hours == 'Closed':
+            if hours == 'Closed' or hours == 'Varies':
                 establishment_dict['hours'][day] = hours
                 continue
             start_time = hours.split('-')[0]
+            if start_time == '24:00':
+                start_time = '00:00'
             end_time = hours.split('-')[1]
+            if end_time == '24:00':
+                end_time = '00:00'
             start_time = datetime.strptime(start_time, '%H:%M').strftime('%I:%M %p')
             end_time = datetime.strptime(end_time, '%H:%M').strftime('%I:%M %p')
             print(f"Start time: {start_time}, End time: {end_time}")
