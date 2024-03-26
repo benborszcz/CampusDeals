@@ -151,6 +151,8 @@ def establishments():
     # Retrieve all documents from the Firestore collection
     establishments = db.collection('establishments').stream()
     establishment_list = [establishment.to_dict() for establishment in establishments]
+    # Convert establishments.hours to normalized time (non-military time)
+        
     return render_template('establishments.html', establishments=establishment_list)
 
 @app.route('/search', methods=['GET'])
@@ -202,6 +204,19 @@ def establishment_details(establishment_name):
     for deal in deal_list:
         if deal['establishment']['name'] == establishment_dict['name'] or deal['establishment']['name'] in establishment_dict['shortname']:
             deal['establishment'] = establishment_dict
+
+    for day, hours in establishment_dict['hours'].items():
+        if hours:
+            if hours == 'Closed':
+                establishment_dict['hours'][day] = hours
+                continue
+            start_time = hours.split('-')[0]
+            end_time = hours.split('-')[1]
+            start_time = datetime.strptime(start_time, '%H:%M').strftime('%I:%M %p')
+            end_time = datetime.strptime(end_time, '%H:%M').strftime('%I:%M %p')
+            print(f"Start time: {start_time}, End time: {end_time}")
+            establishment_dict['hours'][day] = f"{start_time} - {end_time}"
+
 
     # create list of deals for the establishment
     deal_list = [deal for deal in deal_list if deal['establishment']['name'] == establishment_dict['name'] or deal['establishment']['name'] in establishment_dict['shortname']]

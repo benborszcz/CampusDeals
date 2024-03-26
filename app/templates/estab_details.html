@@ -16,11 +16,15 @@
                 {% endfor %}
             </ul>
             <h5>Deals</h5>
-            {% for deal in deals %}
-                <div class="card-footer text-muted">
-                    <a href="{{ url_for('deal_details', deal_id=deal.deal_id) }}">{{ deal.description }}</a>
-                </div>
-            {% endfor %}
+            {% if deals == [] %}
+                <p>No deals available</p>
+            {% else %}
+                {% for deal in deals %}
+                    <div class="card-footer text-muted">
+                        <a href="{{ url_for('deal_details', deal_id=deal.deal_id) }}">{{ deal.description }}</a>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
         
     </div>
