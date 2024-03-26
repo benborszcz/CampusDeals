@@ -6,7 +6,7 @@
             <h2 class="card-title">{{ deal.title }}</h2>
         </div>
         <div class="card-body">
-            <h3 class="card-text">{{ deal.establishment.name }}</h3>
+            <a href="{{ url_for('establishment_details', establishment_name=deal.establishment.name)}}"> <h3 class="card-text">{{ deal.establishment.name }}</h3></a>
             <h4 class="card-text text-muted">{{ deal.establishment.address }}</h4>
             <h5 class="card-text text-muted"><c>{{ deal.deal_details.days_active | join(", ") }},</c> <c id="start-time">{{ deal.deal_details.start_time }} - </c><c id="end-time">{{ deal.deal_details.end_time }}</c></h5>
             <div class="map-container">
