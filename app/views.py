@@ -267,4 +267,4 @@ def view_and_add_comments(deal_id):
 
     # Generate a new CSRF token and include it in the JSON response
     csrf_token = generate_csrf()
-    return jsonify({'comments': formatted_comments, 'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)})
+    return jsonify({'title': deal.get('title'), 'comments': formatted_comments, 'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)})

@@ -143,3 +143,7 @@ form.form-inline.mb-4 {
     overflow-y: auto; /* Enable vertical scrolling */
     padding: 15px 15px; /* Add padding for better spacing */
 }
+
+#submitButton {
+    margin-bottom: 16px;
+}

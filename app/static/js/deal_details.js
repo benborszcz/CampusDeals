@@ -80,7 +80,7 @@ function loadDeal(dealId) {
         });
 }
 
-function loadComments(dealId) {
+function loadComments(messages, dealId) {
     // Fetch comments
     fetch('/view-comments/' + dealId)
         .then(response => response.json())
@@ -89,6 +89,22 @@ function loadComments(dealId) {
             const csrfToken = data.csrf_token;
             const commentsContainer = document.getElementById('comments-container');
             commentsContainer.innerHTML = '';
+
+            // Add the deal title
+            const dealTitle = document.createElement('h2');
+            dealTitle.className = 'card-title';
+            dealTitle.id = 'deal-title';
+            dealTitle.textContent = data.title; // Change the text content as needed
+            commentsContainer.appendChild(dealTitle);
+
+            // Display flash messages, if any
+            messages.forEach(message => {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-' + message[0];
+                alertDiv.role = 'alert';
+                alertDiv.textContent = message[1];
+                commentsContainer.appendChild(alertDiv);
+            });
 
             // Create and append the comment form
             const form = document.createElement('form');
@@ -116,6 +132,7 @@ function loadComments(dealId) {
             const button = document.createElement('button');
             button.type = 'submit';
             button.className = 'btn btn-primary';
+            button.id = 'submitButton'
             button.textContent = 'Submit Comment';
 
             div.appendChild(label);
@@ -137,9 +154,7 @@ function loadComments(dealId) {
                 })
                 .then(response => response.json())
                 .then(result => {
-                    const messages = result.messages; // flash messages
-                    console.log(messages);
-                    loadCommentsWithoutRequest(comments, csrfToken, messages, commentsContainer);
+                    loadComments(result.messages, dealId);
                 })
                 .catch(error => console.error('Error submitting comment:', error));
             });
@@ -185,119 +200,4 @@ function loadComments(dealId) {
             document.getElementById('comments-container').style.display = 'block';
         })
         .catch(error => console.error('Error fetching comments:', error));
-}
-
-function loadCommentsWithoutRequest(comments, csrfToken, messages, commentsContainer) {
-    commentsContainer.innerHTML = '';
-
-    // Display flash messages, if any
-    messages.forEach(message => {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-' + message.category;
-        alertDiv.role = 'alert';
-        alertDiv.textContent = message.message;
-        commentsContainer.appendChild(alertDiv);
-    });
-
-    // Create and append the comment form
-    const form = document.createElement('form');
-    form.action = 'javascript:void(0)'; // Set action to avoid page reload
-    form.method = 'post';
-
-    const csrfInput = document.createElement('input');
-    csrfInput.type = 'hidden';
-    csrfInput.name = 'csrf_token';
-    csrfInput.value = csrfToken; // Use the CSRF token obtained from the response
-
-    const div = document.createElement('div');
-    div.className = 'mb-3';
-
-    const label = document.createElement('label');
-    label.htmlFor = 'comment';
-    label.className = 'form-label';
-    label.textContent = 'Add a Comment:';
-
-    const textarea = document.createElement('textarea');
-    textarea.className = 'form-control';
-    textarea.placeholder = 'Write your comment here';
-    textarea.name = 'comment';
-
-    const button = document.createElement('button');
-    button.type = 'submit';
-    button.className = 'btn btn-primary';
-    button.textContent = 'Submit Comment';
-
-    div.appendChild(label);
-    div.appendChild(textarea);
-    form.appendChild(csrfInput);
-    form.appendChild(div);
-    form.appendChild(button);
-    commentsContainer.appendChild(form);
-
-    // // Add form submission event listener
-    // form.addEventListener('submit', function(event) {
-    //     event.preventDefault(); // Prevent default form submission
-    //     const formData = new FormData(form);
-
-    //     // Submit form data asynchronously
-    //     fetch('/view-comments/' + dealId, {
-    //         method: 'POST',
-    //         body: formData
-    //     })
-    //     .then(response => response.json())
-    //     .then(result => {
-    //         const messages = result.messages; // flash messages
-    //         console.log(messages);
-    //         // Display flash messages, if any
-    //         messages.forEach(message => {
-    //             const alertDiv = document.createElement('div');
-    //             alertDiv.className = 'alert alert-' + message.category;
-    //             alertDiv.role = 'alert';
-    //             alertDiv.textContent = message.message;
-    //             commentsContainer.appendChild(alertDiv);
-    //         });
-    //         loadComments(dealId);
-    //     })
-    //     .catch(error => console.error('Error submitting comment:', error));
-    // });
-
-    if (comments.length > 0) {
-        comments.forEach(comment => {
-            // Create card elements for each comment
-            const card = document.createElement('div');
-            card.className = 'card mb-3';
-            const cardBody = document.createElement('div');
-            cardBody.className = 'card-body';
-
-            const strong = document.createElement('strong');
-            strong.textContent = comment.user_id || 'Unknown User';
-            const p1 = document.createElement('p');
-            p1.appendChild(strong);
-            p1.textContent += ' said:';
-
-            const p2 = document.createElement('p');
-            p2.textContent = comment.text || '';
-
-            const small = document.createElement('small');
-            small.className = 'text-muted';
-            small.textContent = 'Posted on ' + (comment.time || 'Unknown Time');
-
-            cardBody.appendChild(p1);
-            cardBody.appendChild(p2);
-            cardBody.appendChild(small);
-            card.appendChild(cardBody);
-            commentsContainer.appendChild(card);
-        });
-    } else {
-        const noComments = document.createElement('p');
-        noComments.className = 'mt-4';
-        noComments.textContent = 'No comments yet.';
-        commentsContainer.appendChild(noComments);
-    }
-
-    // // Hide the deal-details container
-    // document.getElementById('deal-details-container').style.display = 'none';
-
-    // // Show the comments container
-    // document.getElementById('comments-container').style.display = 'block';
 }
