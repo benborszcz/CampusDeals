@@ -87,53 +87,53 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="comments-container">
-            <!-- Flash messages for errors -->
-            {% with messages = get_flashed_messages(category_filter=["error"]) %}
-                {% if messages %}
-                    <div class="flashes">
-                        {% for message in messages %}
-                            <div class="alert alert-danger" role="alert">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            <!-- Flash messages for success -->
-            {% with messages = get_flashed_messages(category_filter=["success"]) %}
-                {% if messages %}
-                    <div class="flashes">
-                        {% for message in messages %}
-                            <div class="alert alert-success" role="alert">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            <h2>{{ deal_name }}</h2>
-
-            <!-- Display form for adding a comment (only for logged-in users) -->
-            {% if current_user.is_authenticated %}
-                {% if comment_form %}
-                    <form action="{{ url_for('view_and_add_comments', deal_id=deal_id) }}" method="post">
-                        {{ comment_form.csrf_token }}
-                        <div class="mb-3">
-                            <label for="comment" class="form-label">Add a Comment:</label>
-                            {{ comment_form.comment(class="form-control", placeholder="Write your comment here") }}
+            <div id="comments-container">
+                <!-- Flash messages for errors -->
+                {% with messages = get_flashed_messages(category_filter=["error"]) %}
+                    {% if messages %}
+                        <div class="flashes">
+                            {% for message in messages %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit Comment</button>
-                    </form>
+                    {% endif %}
+                {% endwith %}
+            
+                <!-- Flash messages for success -->
+                {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                        <div class="flashes">
+                            {% for message in messages %}
+                                <div class="alert alert-success" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            
+                <h2>{{ deal_name }}</h2>
+            
+                <!-- Display form for adding a comment (only for logged-in users) -->
+                {% if current_user.is_authenticated %}
+                    {% if comment_form %}
+                        <form action="{{ url_for('view_and_add_comments', deal_id=deal_id) }}" method="post">
+                            {{ comment_form.csrf_token }}
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Add a Comment:</label>
+                                {{ comment_form.comment(class="form-control", placeholder="Write your comment here") }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit Comment</button>
+                        </form>
+                    {% else %}
+                        <p>Click on a view comments button to see comments!</p>
+                    {% endif %}
                 {% else %}
-                    <p>Click on a view comments button to see comments!</p>
+                    <p><a href="{{ url_for('auth.login') }}">Log in</a> to leave a comment.</p>
                 {% endif %}
-            {% else %}
-                <p><a href="{{ url_for('auth.login') }}">Log in</a> to leave a comment.</p>
-            {% endif %}
+            </div>
         </div>
     </div>
 

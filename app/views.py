@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, get_flashed_messages
 from . import app, db
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
@@ -227,59 +227,44 @@ def view_and_add_comments(deal_id):
     deal = deal_ref.get().to_dict()
     comments = deal.get('comments', [])
 
-    if request.method == 'POST':
-        # Handle comment submission
-        comment_form = CommentForm(request.form)
-        if comment_form.validate_on_submit() and current_user.is_authenticated:
-            new_comment_text = comment_form.comment.data
+    
+    # Handle comment submission
+    comment_form = CommentForm(request.form)
+    if comment_form.validate_on_submit() and current_user.is_authenticated:
+        new_comment_text = comment_form.comment.data
 
-            # Check for profanity using the profanity library
-            if profanity.contains_profanity(new_comment_text):
-                flash('Your comment contains profanity and cannot be posted.', 'error')
-                return jsonify({'error': 'Comment contains profanity'}), 400
+        # Check for profanity using the profanity library
+        if profanity.contains_profanity(new_comment_text):
+            flash('Your comment contains profanity and cannot be posted.', 'error')
+            return jsonify({'messages': get_flashed_messages(with_categories=True)}), 400
 
-            new_comment = {
-                'user_id': current_user.id,
-                'username': current_user.username,
-                'text': new_comment_text,
-                'time': datetime.now().isoformat()
-            }
+        new_comment = {
+            'user_id': current_user.id,
+            'username': current_user.username,
+            'text': new_comment_text,
+            'time': datetime.now().isoformat()
+        }
 
-            # Update the deal document with the new comment
-            deal_ref.update({
-                'comments': firestore.ArrayUnion([new_comment])
-            })
-
-            # Generate a new CSRF token and include it in the JSON response
-            csrf_token = generate_csrf()
-            flash('Comment added successfully!', 'success')
-            return jsonify({'message': 'Comment added successfully', 'csrf_token': csrf_token}), 201
-        else:
-            # If form validation fails, reload the comments and form data
-            formatted_comments = [
-                {
-                    **comment,
-                    'time': datetime.strptime(comment['time'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
-                }
-                if 'time' in comment else comment
-                for comment in comments
-            ]
-            comment_form = CommentForm()  # Reinitialize an empty comment form
-
-            return render_template('deal_dashboard.html', deal_name=deal.get('title', 'Unknown Deal'),
-                                   deal_id=deal_id, comments=formatted_comments, comment_form=comment_form, current_user=current_user)
-
-    elif request.method == 'GET':
-        # Return comments for the deal
-        formatted_comments = [
-            {
-                **comment,
-                'time': datetime.strptime(comment['time'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
-            }
-            if 'time' in comment else comment
-            for comment in comments
-        ]
+        # Update the deal document with the new comment
+        deal_ref.update({
+            'comments': firestore.ArrayUnion([new_comment])
+        })
 
         # Generate a new CSRF token and include it in the JSON response
         csrf_token = generate_csrf()
-        return jsonify({'comments': formatted_comments, 'csrf_token': csrf_token})
+        flash('Comment added successfully!', 'success')
+        return jsonify({'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)}), 201
+
+    # Return comments for the deal
+    formatted_comments = [
+        {
+            **comment,
+            'time': datetime.strptime(comment['time'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+        }
+        if 'time' in comment else comment
+        for comment in comments
+    ]
+
+    # Generate a new CSRF token and include it in the JSON response
+    csrf_token = generate_csrf()
+    return jsonify({'comments': formatted_comments, 'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)})
