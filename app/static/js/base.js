@@ -21,6 +21,7 @@ checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
 document.addEventListener('DOMContentLoaded', function() {
     var searchInput = document.querySelector('.search-input');
     var suggestionsList = document.getElementById('suggestions');
+    var searchForm = document.querySelector('form'); // Select the form
 
     searchInput.addEventListener('input', function() {
         var query = this.value;
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         li.addEventListener('click', function() {
                             searchInput.value = item; // Fill input with clicked suggestion
                             suggestionsList.innerHTML = ''; // Clear suggestions
+                            searchForm.submit(); // Submit the form
                         });
                         suggestionsList.appendChild(li);
                     });
