@@ -78,40 +78,40 @@ def index():
 
     return render_template('index.html', popular_deals=deal_list, deals_json=json.dumps(deal_list))
 
-@app.route('/deal_dashboard')
-def deal_dashboard():
-    """
-    Dashboard page that shows all deals in database with filters
-    """
-    # load all deals from firestore
-    deals = db.collection(config.DEAL_COLLECTION).stream()
-    deal_list = [deal.to_dict() for deal in deals]
+# @app.route('/deal_dashboard')
+# def deal_dashboard():
+#     """
+#     Dashboard page that shows all deals in database with filters
+#     """
+#     # load all deals from firestore
+#     deals = db.collection(config.DEAL_COLLECTION).stream()
+#     deal_list = [deal.to_dict() for deal in deals]
 
-    # load all establishments from firestore
-    establishments = db.collection('establishments').stream()
-    establishment_list = [establishment.to_dict() for establishment in establishments]
+#     # load all establishments from firestore
+#     establishments = db.collection('establishments').stream()
+#     establishment_list = [establishment.to_dict() for establishment in establishments]
 
-    # link deals to establishments
-    for deal in deal_list:
-        for establishment in establishment_list:
-            if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
-                deal['establishment'] = establishment
+#     # link deals to establishments
+#     for deal in deal_list:
+#         for establishment in establishment_list:
+#             if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
+#                 deal['establishment'] = establishment
 
-    # index all deals in elasticsearch
-    if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
-        reset_elasticsearch()
-        for deal in deal_list:
-            index_deal(deal)
+#     # index all deals in elasticsearch
+#     if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
+#         reset_elasticsearch()
+#         for deal in deal_list:
+#             index_deal(deal)
 
-    for deal in deal_list:
-        deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
-        deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
-        deal['url'] = url_for('deal_details', deal_id=deal['deal_id']) # Assuming url_for is defined elsewhere
-        deal['lat'] = deal['establishment']['latitude']
-        deal['lng'] = deal['establishment']['longitude']
-    deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
+#     for deal in deal_list:
+#         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
+#         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
+#         deal['url'] = url_for('deal_details', deal_id=deal['deal_id']) # Assuming url_for is defined elsewhere
+#         deal['lat'] = deal['establishment']['latitude']
+#         deal['lng'] = deal['establishment']['longitude']
+#     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
 
-    return render_template('index.html', popular_deals=deal_list)
+#     return render_template('index.html', popular_deals=deal_list)
 
 @app.route('/deal_dashboard')
 def deal_dashboard():
@@ -443,7 +443,7 @@ def view_and_add_comments(deal_id):
     ]
 
     # Sort comments based on votes or other criteria if needed
-    sorted_comments = sorted(formatted_comments, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0))4
+    sorted_comments = sorted(formatted_comments, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0))
 
     return render_template('view_comments.html', deal_name=deal.get('title', 'Unknown Deal'),
-                           deal_id=deal_id, comments=formatted_comments, comment_form=comment_form, current_user=current_user)
+                           deal_id=deal_id, comments=sorted_comments, comment_form=comment_form, current_user=current_user)

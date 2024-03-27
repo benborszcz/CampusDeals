@@ -48,7 +48,7 @@ function selectCard(cardElement) {
 
 function loadDeal(dealId) {
     // Make an AJAX request to fetch deal details
-    fetch('/deal_details/' + dealId)
+    fetch('/deal_details_dashboard/' + dealId)
         .then(response => response.json())
         .then(data => {
             selectCard(document.getElementById('deal-card-' + dealId));
@@ -98,7 +98,7 @@ function loadDeal(dealId) {
 
 function loadComments(messages, dealId) {
     // Fetch comments
-    fetch('/view-comments/' + dealId)
+    fetch('/view-comments-dashboard/' + dealId)
         .then(response => response.json())
         .then(data => {
             selectCard(document.getElementById('deal-card-' + dealId));
