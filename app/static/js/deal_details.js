@@ -31,11 +31,23 @@ document.addEventListener("DOMContentLoaded", function() {
     endTimeElement.innerHTML = "End Time: " + convertMilitaryToStandardTime("{{ deal.deal_details.end_time }}");
 });
 
+function selectCard(cardElement) {
+    // Remove the 'selected-card' class from all cards
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.classList.remove('selected-card');
+    });
+
+    // Add the 'selected-card' class to the clicked card
+    cardElement.classList.add('selected-card');
+}
+
 function loadDeal(dealId) {
     // Make an AJAX request to fetch deal details
     fetch('/deal_details/' + dealId)
         .then(response => response.json())
         .then(data => {
+            selectCard(document.getElementById('deal-card-' + dealId));
             // Populate deal details
             document.getElementById('deal-title').textContent = data.title;
             document.getElementById('establishment-name').textContent = data.establishment.name;
@@ -85,6 +97,7 @@ function loadComments(messages, dealId) {
     fetch('/view-comments/' + dealId)
         .then(response => response.json())
         .then(data => {
+            selectCard(document.getElementById('deal-card-' + dealId));
             const comments = data.comments;
             const csrfToken = data.csrf_token;
             const commentsContainer = document.getElementById('comments-container');
@@ -94,70 +107,74 @@ function loadComments(messages, dealId) {
             const dealTitle = document.createElement('h2');
             dealTitle.className = 'card-title';
             dealTitle.id = 'deal-title';
-            dealTitle.textContent = data.title; // Change the text content as needed
+            dealTitle.textContent = data.title;
             commentsContainer.appendChild(dealTitle);
 
             // Display flash messages, if any
             messages.forEach(message => {
                 const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert alert-' + message[0];
+                alertDiv.className = 'alert alert-' + message[0]; // alert type
                 alertDiv.role = 'alert';
-                alertDiv.textContent = message[1];
+                alertDiv.textContent = message[1]; // alert message
                 commentsContainer.appendChild(alertDiv);
             });
+            if (data.user_authenticated) {
+                // Create and append the comment form
+                const form = document.createElement('form');
+                form.action = 'javascript:void(0)'; // avoids page reload
+                form.method = 'post';
 
-            // Create and append the comment form
-            const form = document.createElement('form');
-            form.action = 'javascript:void(0)'; // Set action to avoid page reload
-            form.method = 'post';
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrf_token';
+                csrfInput.value = csrfToken; // use the CSRF token obtained from the response
 
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = 'csrf_token';
-            csrfInput.value = csrfToken; // Use the CSRF token obtained from the response
+                const div = document.createElement('div');
+                div.className = 'mb-3';
 
-            const div = document.createElement('div');
-            div.className = 'mb-3';
+                const textarea = document.createElement('textarea');
+                textarea.className = 'form-control';
+                textarea.placeholder = 'Write your comment here';
+                textarea.name = 'comment';
 
-            const label = document.createElement('label');
-            label.htmlFor = 'comment';
-            label.className = 'form-label';
-            label.textContent = 'Add a Comment:';
+                const button = document.createElement('button');
+                button.type = 'submit';
+                button.className = 'btn btn-primary';
+                button.id = 'submitButton'
+                button.textContent = 'Submit Comment';
 
-            const textarea = document.createElement('textarea');
-            textarea.className = 'form-control';
-            textarea.placeholder = 'Write your comment here';
-            textarea.name = 'comment';
+                div.appendChild(textarea);
+                form.appendChild(csrfInput);
+                form.appendChild(div);
+                form.appendChild(button);
+                commentsContainer.appendChild(form);
 
-            const button = document.createElement('button');
-            button.type = 'submit';
-            button.className = 'btn btn-primary';
-            button.id = 'submitButton'
-            button.textContent = 'Submit Comment';
+                // Event listener for comment submission
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+                    const formData = new FormData(form);
 
-            div.appendChild(label);
-            div.appendChild(textarea);
-            form.appendChild(csrfInput);
-            form.appendChild(div);
-            form.appendChild(button);
-            commentsContainer.appendChild(form);
-
-            // Add form submission event listener
-            form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent default form submission
-                const formData = new FormData(form);
-
-                // Submit form data asynchronously
-                fetch('/view-comments/' + dealId, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(result => {
-                    loadComments(result.messages, dealId);
-                })
-                .catch(error => console.error('Error submitting comment:', error));
-            });
+                    // Submit form data asynchronously
+                    fetch('/view-comments/' + dealId, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        loadComments(result.messages, dealId);
+                    })
+                    .catch(error => console.error('Error submitting comment:', error));
+                });
+            } else {
+                const loginUrl = "{{ url_for('auth.login') }}";
+                const paragraphElement = document.createElement('p');
+                const linkElement = document.createElement('a');
+                linkElement.href = loginUrl;
+                linkElement.textContent = 'Log in';
+                paragraphElement.appendChild(linkElement);
+                paragraphElement.textContent += ' to leave a comment.';
+                commentsContainer.appendChild(paragraphElement);
+            }
 
             if (comments.length > 0) {
                 comments.forEach(comment => {

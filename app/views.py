@@ -235,7 +235,7 @@ def view_and_add_comments(deal_id):
 
         # Check for profanity using the profanity library
         if profanity.contains_profanity(new_comment_text):
-            flash('Your comment contains profanity and cannot be posted.', 'error')
+            flash('Your comment contains profanity and cannot be posted.', 'danger')
             return jsonify({'messages': get_flashed_messages(with_categories=True)}), 400
 
         new_comment = {
@@ -267,4 +267,5 @@ def view_and_add_comments(deal_id):
 
     # Generate a new CSRF token and include it in the JSON response
     csrf_token = generate_csrf()
-    return jsonify({'title': deal.get('title'), 'comments': formatted_comments, 'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)})
+    return jsonify({'title': deal.get('title'), 'user_authenticated': current_user.is_authenticated, 
+                    'comments': formatted_comments, 'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)})
