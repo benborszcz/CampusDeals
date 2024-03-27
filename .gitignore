@@ -161,3 +161,5 @@ cython_debug/
 
 firebase_service_account.json
 out.txt
+dup testing/
+output/
