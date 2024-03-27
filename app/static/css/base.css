@@ -140,3 +140,19 @@ form.form-inline.mb-4 {
     border-radius: 0px 0px 10px 10px;
     text-align: center;
 }
+
+/*CSS for the profile page*/
+.profile-info {
+    display: flex; 
+    align-items: center; 
+}
+
+.profile-image {
+    width: 200px; 
+    height: 200px; 
+    margin-right: 20px; /* Add space between image and user details */
+}
+
+.user-details {
+    flex-grow: 1; /* Allow user details to take up remaining space */
+}

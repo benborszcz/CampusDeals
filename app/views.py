@@ -355,3 +355,8 @@ def downvote_comment(deal_id, comment_id):
     comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(comment_id)
     comment_ref.update({"downvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
+
+@login_required
+@app.route("/profile")
+def profile():
+    return render_template('profile.html', user_id =current_user.id)
