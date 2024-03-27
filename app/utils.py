@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import NotFoundError, RequestError
 from .agent import Agent
 import datetime
 import json
@@ -45,7 +46,7 @@ Deal Structure
 }
 """
 
-def transform_deal_structure(deal_structure_LLM):
+def transform_deal_structure(deal_structure_LLM, establishments_list):
     # Generate a unique deal_id
     deal_id = str(uuid.uuid4())
 
@@ -63,6 +64,21 @@ def transform_deal_structure(deal_structure_LLM):
     full_deal_structure["upvotes"] = 0
     full_deal_structure["downvotes"] = 0
 
+    full_deal_establishment = next((establishment for establishment in establishments_list if establishment["name"] == full_deal_structure["establishment"]["name"]), None)
+    establishment_hours = full_deal_establishment['hours'][full_deal_structure["deal_details"]["days_active"][0][:3]]
+    print(establishment_hours)
+    if full_deal_structure["deal_details"]["start_time"] == "Open":
+        full_deal_structure["deal_details"]["start_time"] = establishment_hours.split("-")[0]
+    
+    print(full_deal_structure["deal_details"]["days_active"][0])
+    if full_deal_structure["deal_details"]["end_time"] == "Close":
+        full_deal_structure["deal_details"]["end_time"] = establishment_hours.split("-")[1]
+
+    # If time is in format HH:MM, add seconds
+    if len(full_deal_structure["deal_details"]["start_time"]) == 5:
+        full_deal_structure["deal_details"]["start_time"] += ":00"
+    if len(full_deal_structure["deal_details"]["end_time"]) == 5:
+        full_deal_structure["deal_details"]["end_time"] += ":00"
 
     return full_deal_structure
 
@@ -145,50 +161,53 @@ def remove_deal(deal_id):
     response = es.delete(index="deals", id=deal_id)
     return response
 
-def search_deals(query, days):
-    """
-    Search for deals using Elasticsearch across all fields.
-    """
-    # Sets up day elements for filter by day
-    dayElements = ""
-    if days:
-        for day in days:
-            if day != days[len(days)-1]:
-                dayElements += day + ", "
-            else:
-                dayElements += day
-    # If day filter is not specified, search across all days
-    else:
-        dayElements = "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday"
 
-    # If there's no query string, search all results filtered only by day
-    if not query:
-       search_query = {
-            "query" : {
-                "bool" : {
-                    "must" : [
-                    {
-                        "match" : {
-                            "deal_details.days_active": dayElements
-                        }
-                    }
-                    ]
-                }
-            }
-        }
-    # If there's a query string, search results filtered by query string and day
-    else:
-       search_query = {
+def sanitize_input(input_string):
+    """
+    Sanitize input string by removing potentially harmful characters and Elasticsearch query syntax.
+    """
+    # Remove characters that could be used in XSS attacks
+    sanitized_string = re.sub(r'[<>"\'\\]', '', input_string)
+    # Remove characters that could cause parsing errors in Elasticsearch queries
+    sanitized_string = re.sub(r'[$\[\]{}()]', '', sanitized_string)
+    return sanitized_string
+
+def search_deals(query, days, distance, user_lat, user_lng):
+    try:
+        # Check if the query contains the word "kernel" and ban it
+        if 'kernel' in query.lower():
+            # Redirect to the search results page with a message indicating no valid searches
+            print("No valid searches found.")
+            return []
+        if "/foo" in query:
+            return []
+        if "ls -al /" in query:
+            return []
+        if "/" in query:
+            return []
+        if "&" in query:
+            return []
+
+        # Sanitize the query string
+        sanitized_query = sanitize_input(query)
+
+        # Sets up day elements for filter by day
+        dayElements = ""
+        if days:
+            for day in days:
+                if day != days[len(days)-1]:
+                    dayElements += day + ", "
+                else:
+                    dayElements += day
+        # If day filter is not specified, search across all days
+        else:
+            dayElements = "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday"
+
+        # base query structure using dayElements
+        search_query = {
             "query": {
                 "bool": {
-                    "must": [
-                        {
-                            "query_string": {
-                                "query": query,
-                                "fuzziness": "AUTO"
-                            }
-                        }
-                    ],
+                    "must": [],
                     "filter": [
                         {
                             "match": {
@@ -200,19 +219,95 @@ def search_deals(query, days):
             }
         }
 
-    # Perform the search on the 'deals' index
-    response = es.search(index="deals", body=search_query, from_=0, size=10)
+        # Retrieve nearby establishments if distance filtering is applied
+        if distance and user_lat and user_lng:
+            nearby_establishments = get_nearby_establishments(user_lat, user_lng, distance)
+            if not nearby_establishments: 
+                return []
 
-    return response['hits']['hits']
+            # Add filter for establishment names if there are any nearby
+            search_query["query"]["bool"]["filter"].append({
+                "terms": {
+                    "establishment.name.keyword": nearby_establishments
+                }
+            })
 
-def parse_deal_submission(text):
+        # Add sanitized query if present
+        if sanitized_query:
+            search_query["query"]["bool"]["must"].append({
+                "query_string": {
+                    "query": sanitized_query,
+                    "fuzziness": "AUTO"
+                }
+            })
+
+        # Perform the search on the 'deals' index
+        response = es.search(index="deals", body=search_query, from_=0, size=10)
+        hits = response['hits']['hits']
+    except NotFoundError as e:
+        print(f"Elasticsearch error: {e}")
+        hits = []
+    except RequestError as e:
+        if "parse_exception" in str(e):
+            # Log the error along with the problematic input
+            print(f"Parsing error occurred for input: {query}")
+            # Redirect to the search results page without displaying any results
+            return []
+        else:
+            # Handle other RequestError instances
+            # Log the error or perform any necessary actions
+            print(f"Request error occurred: {e}")
+            raise  # Re-raise the exception for further handling
+    except Exception as e:
+        if "%xls -al /" in str(e):
+            print("Invalid search input.")
+            return []
+        else:
+            raise e  
+
+    return hits
+
+def parse_deal_submission(text, establishments_list):
     """
     Use OpenAI's LLM to parse a deal submission text.
     """
     # Call OpenAI's API to parse the text and extract structured data
-    agent = Agent("Deal Parser", "Parse a deal submission into structured data", get_prompt_from_file("deal_parser"))
+    agent = Agent("Deal Parser", "Parse a deal submission into structured data", get_prompt_from_file("deal_parser").replace("{{establishments_list}}", str(establishments_list)))
     response = agent.complete_task(text)
     response = json.loads(response)
     return response
 
+from . import db
+from math import radians, cos, sin, asin, sqrt
 
+def get_nearby_establishments(user_lat, user_lng, distance):
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishments_list = [establishment.to_dict() for establishment in establishments]
+    nearby_establishments = []
+
+    for est in establishments_list:
+        est_lat = est['latitude']
+        est_lng = est['longitude']
+        
+        # only return establishments within distance of user's coordinates
+        if haversine(user_lat, user_lng, est_lat, est_lng) <= float(distance):
+            nearby_establishments.append(est['name'])
+
+    return nearby_establishments
+
+def haversine(lat1, lng1, lat2, lng2):
+    """
+    Calculate the distance in miles between two sets of coordinates on Earth
+    """
+    # Convert decimal degrees to radians 
+    lat1, lng1, lat2, lng2 = map(float, [lat1, lng1, lat2, lng2])
+    lat1, lng1, lat2, lng2 = map(radians, [lat1, lng1, lat2, lng2])
+
+    # Haversine formula 
+    dlon = lng2 - lng1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 3956 # Radius of earth in miles
+    return c * r

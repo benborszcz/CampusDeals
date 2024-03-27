@@ -1,19 +1,22 @@
-function upvote(dealId) {
-    fetch('/deal/' + dealId + '/upvote', {
+function upvote(dealId, commentId) {
+    fetch('/deal/' + dealId + '/comment/' + commentId + '/upvote', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             // Add any other headers your API requires
         },
-        body: JSON.stringify({ 'deal_id': dealId }),
+        body: JSON.stringify({
+            'deal_id': dealId,
+            'comment_id': commentId
+        }),
         // Include credentials if your API requires authentication
         credentials: 'same-origin'
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update the vote count on the page
-            let voteCountElement = document.getElementById('vote-count-' + dealId);
+            // Update the comment's vote count on the page
+            let voteCountElement = document.getElementById('vote-count-' + commentId);
             voteCountElement.textContent = parseInt(voteCountElement.textContent) + 1;
         } else {
             // Handle error
@@ -23,22 +26,26 @@ function upvote(dealId) {
     .catch(error => console.error('Error:', error));
 }
 
-function downvote(dealId) {
-    fetch('/deal/' + dealId + '/downvote', {
+function downvote(dealId, commentId) {
+
+    fetch('/deal/' + dealId + '/comment/' + commentId + '/downvote', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             // Add any other headers your API requires
         },
-        body: JSON.stringify({ 'deal_id': dealId }),
+        body: JSON.stringify({
+            'deal_id': dealId,
+            'comment_id': commentId
+        }),
         // Include credentials if your API requires authentication
         credentials: 'same-origin'
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update the vote count on the page
-            let voteCountElement = document.getElementById('vote-count-' + dealId);
+            // Update the comment's vote count on the page
+            let voteCountElement = document.getElementById('vote-count-' + commentId);
             voteCountElement.textContent = parseInt(voteCountElement.textContent) - 1;
         } else {
             // Handle error
@@ -46,16 +53,4 @@ function downvote(dealId) {
         }
     })
     .catch(error => console.error('Error:', error));
-}
-
-function requestLocation() {
-    if (document.getElementById('distance-input').value !== "" && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            // Populate hidden form fields
-            document.getElementById('userLat').value = position.coords.latitude;
-            document.getElementById('userLng').value = position.coords.longitude;
-        }, function(error) {
-            alert('Unable to retrieve your location. Please check your settings and try again.');
-        });
-    }
 }

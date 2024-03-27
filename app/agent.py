@@ -26,11 +26,6 @@ class Agent:
 
     def generate(self, message: str, persist):
         messages = [{"role": "system", "content": self.system_message}]
-        print("Agent Name: " + self.name)
-        print("System Message: ")
-        print(self.system_message)
-        print("User Message: ")
-        print(message)
         if self.addtional_messages is not None:
             messages.extend(self.addtional_messages)
         if self.history is not None:

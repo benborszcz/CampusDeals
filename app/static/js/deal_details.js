@@ -2,11 +2,13 @@ function convertMilitaryToStandardTime(militaryTime) {
     if (militaryTime.toLowerCase() === "open" || militaryTime.toLowerCase() === "close") {
       return militaryTime;
     }
-
+    console.log(militaryTime);
     // Extract hours and minutes
     var timeArray = militaryTime.split(":");
     var hours = parseInt(timeArray[0]);
-    var minutes = timeArray[1];
+    var minutes = parseInt(timeArray[1]); // Parse minutes as an integer
+
+    console.log(hours);
 
     // Determine AM or PM
     var period = (hours < 12) ? "AM" : "PM";
@@ -15,9 +17,11 @@ function convertMilitaryToStandardTime(militaryTime) {
     hours = (hours > 12) ? hours - 12 : hours;
     hours = (hours == 0) ? 12 : hours;
 
-    // Format the time
-    var standardTime = hours + ":" + minutes + " " + period;
+    console.log(hours);
 
+    // Format the time
+    var standardTime = hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + " " + period;
+    console.log(standardTime);
     return standardTime;
 }
 

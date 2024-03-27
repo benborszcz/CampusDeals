@@ -10,7 +10,7 @@ class MultiCheckboxField(SelectMultipleField):
     option_widget = widgets.CheckboxInput()
 
 class DealSubmissionForm(FlaskForm):
-    establishment_name = StringField('Establishment Name', validators=[DataRequired()])
+    establishment_name = SelectField('Establishment Name', choices=['Midway on High', 'Ethyl & Tank', 'Out R Inn', 'Threes Above High', 'Plaza Mexican Grill'], validators=[DataRequired()])
     establishment_type = SelectField('Establishment Type', choices=[('bar', 'Bar'), ('restaurant', 'Restaurant'), ('other', 'Other')], validators=[DataRequired()])
     deal_name = StringField('Deal Name', validators=[DataRequired()])
     deal_description = TextAreaField('Deal Description', validators=[DataRequired()])

@@ -8,9 +8,148 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Optional: Include custom CSS for additional styling -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='images/campusDealsLogo.png') }}" type="image/png">
 </head>
+<style>
+*,
+*::before,
+*::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: "Helvetica Neue", Arial, sans-serif; /* Modern font stack */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f9f9f9; /* Light gray background */
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+}
+
+.navbar {
+    background-color: #3aafa9; /* Turquoise navbar background */
+}
+
+.navbar-brand {
+    font-family: 'YourFont', sans-serif; /* Change the font style */
+}
+
+.navbar-nav .nav-link {
+    color: #fff;
+    font-weight: bold; /* Bold text */
+}
+
+.navbar-collapse {
+    justify-content: flex-end;
+}
+
+.navbar-toggler {
+    border-color: #fff;
+}
+
+.navbar-nav .nav-item {
+    margin-right: 1rem;
+}
+
+.navbar-nav .nav-link {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px; /* Slightly smaller font size */
+    padding: 1rem 2rem;
+    position: relative;
+}
+
+.navbar-nav .nav-link::before,
+.navbar-nav .nav-link::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: #fff;
+    transform: scaleX(0);
+    transition: all 0.3s ease; /* Faster transition */
+}
+
+.navbar-nav .nav-link::before {
+    top: 0;
+    left: 0;
+    transform-origin: left;
+}
+
+.navbar-nav .nav-link::after {
+    bottom: 0;
+    left: 0;
+    transform-origin: right;
+}
+
+.navbar-nav .nav-link:hover::before,
+.navbar-nav .nav-link:hover::after {
+    transform: scaleX(1);
+}
+
+.footer {
+    background-color: #3aafa9;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 4rem;
+}
+
+    .gear-icon {
+    display: inline-block;
+    position: relative; /* Ensure proper positioning of pseudo-elements */
+}
+
+.bi-gear path {
+    transition: transform 0.3s ease;
+}
+
+.bi-gear:hover path:first-of-type,
+.bi-gear:hover path:last-of-type {
+    transform: none; /* Prevent transformation of pseudo-elements on hover */
+}
+
+.bi-gear:hover::before,
+.bi-gear:hover::after {
+    content: ""; /* Remove content of pseudo-elements on hover */
+}
+
+.bi-gear:hover {
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.nav-link.dropdown-toggle:hover .bi-gear::before,
+.nav-link.dropdown-toggle:hover .bi-gear::after {
+    content: none;
+}
+
+</style>
 <body>
     <header>
         <!-- Bootstrap Navigation Bar -->
@@ -25,26 +164,30 @@
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('daily_deals') }}">Today's Deals</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('submit_deal') }}">Submit Deal</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('deal_dashboard') }}">Deal Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('establishments') }}">Establishments</a></li>
             </ul>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
+
                     <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4">
                         <input type="text" name="query" class="form-control mr-2 search-input" placeholder="Search for deals...">
                     </form>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSettings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div class = "gear-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
                                 <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
                                 <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52z"/>
                             </svg>
+                            </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownSettings">
                             {% if current_user.is_authenticated %}
                                 <a class="dropdown-item" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Welcome {{ current_user.id }}
+                                    Welcome {{ current_user.username }}
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
