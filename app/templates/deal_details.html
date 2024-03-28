@@ -7,7 +7,9 @@
         </div>
         <div class="card-body">
             <a href="{{ url_for('establishment_details', establishment_name=deal.establishment.name)}}"> <h3 class="card-text">{{ deal.establishment.name }}</h3></a>
-            <h4 class="card-text text-muted">{{ deal.establishment.address }}</h4>
+            <div class="google-maps-link">
+                <a href="https://www.google.com/maps/dir/?api=1&destination={{ deal.establishment.latitude }},{{ deal.establishment.longitude }}" target="_blank" style="font-size: 18px;">{{ deal.establishment.address }} (Directions)</a>
+            </div>
             <h5 class="card-text text-muted"><c>{{ deal.deal_details.days_active | join(", ") }},</c> <c id="start-time">{{ deal.deal_details.start_time }} - </c><c id="end-time">{{ deal.deal_details.end_time }}</c></h5>
             <div class="map-container">
                 <div class="shadow" style="border-radius: 10px;">
@@ -35,6 +37,7 @@
                     </c>
                 {% endfor %}
             </div>
+            <!-- Google Maps Link -->
         </div>
         <div class="card-footer text-muted">
             Posted on {{ deal.created_at }}
