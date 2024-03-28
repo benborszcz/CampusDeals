@@ -220,7 +220,11 @@ def establishment_details(establishment_name):
             end_time = datetime.strptime(end_time, '%H:%M').strftime('%I:%M %p')
             print(f"Start time: {start_time}, End time: {end_time}")
             establishment_dict['hours'][day] = f"{start_time} - {end_time}"
+    
+    # put the hours in a list for easier iteration in the template called hours_list, also sort them by day of the week, the structure is a list of tuples with the day of the week[0] and the hours[1]
+    establishment_dict['hours_list'] = sorted(establishment_dict['hours'].items(), key=lambda x: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].index(x[0]))
 
+    print(establishment_dict['hours_list'])
 
     # create list of deals for the establishment
     deal_list = [deal for deal in deal_list if deal['establishment']['name'] == establishment_dict['name'] or deal['establishment']['name'] in establishment_dict['shortname']]
