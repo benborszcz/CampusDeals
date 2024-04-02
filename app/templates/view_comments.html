@@ -56,15 +56,15 @@
         {% for comment in comments|reverse %}
             <div class="card mb-3">
                 <div class="card-body">
-                    {% if comment is mapping %}
+                    {% if comment[0] is mapping %}
                         <!-- Voting Column -->
                         <div class="col-1 d-flex flex-column align-items-center justify-content-center" style="float:right;">
                             {% if current_user.is_authenticated %}
-                                <button type="button" class="btn btn-link p-0 mb-0" onclick="upvote('{{ deal_id }}', '{{ comment['comment_id'] }}')">
+                                <button type="button" class="btn btn-link p-0 mb-0" onclick="upvote('{{ deal_id }}', '{{ comment[0]['comment_id'] }}')">
                                     <b>▲</b>
                                 </button>
-                                <span id="vote-count-{{ comment['comment_id'] }}">{{ comment.get('upvotes', 0) - comment.get('downvotes', 0) }}</span>
-                                <button type="button" class="btn btn-link p-0 mt-0" onclick="downvote('{{ deal_id }}', '{{ comment['comment_id'] }}')">
+                                <span id="vote-count-{{ comment[0]['comment_id'] }}">{{ comment[0].get('upvotes', 0) - comment[0].get('downvotes', 0) }}</span>
+                                <button type="button" class="btn btn-link p-0 mt-0" onclick="downvote('{{ deal_id }}', '{{ comment[0]['comment_id'] }}')">
                                     <b>▼</b>
                                 </button>
                             {% else %}
@@ -73,7 +73,7 @@
                                     <b>🔒</b>
                                 </a>
                                 <br> <!-- New line for separation -->
-                                <span id="vote-count-{{ comment['comment_id'] }}">{{ comment.get('upvotes', 0) - comment.get('downvotes', 0) }}</span>
+                                <span id="vote-count-{{ comment[0]['comment_id'] }}">{{ comment[0].get('upvotes', 0) - comment[0].get('downvotes', 0) }}</span>
                                 <br> <!-- New line for separation -->
                                 <a href="{{ url_for('auth.login') }}" class="btn btn-link p-0 mt-0">
                                     <b>🔒</b>
@@ -82,11 +82,63 @@
 
                             {% endif %}
                         </div>
-                        <p><strong>{{ comment.get('username', 'Unknown User') }}</strong> said:</p>
-                        <p>{{ comment.get('text', '') }}</p>
-                        <small class="text-muted">Posted on {{ comment.get('time', 'Unknown Time') }}</small>
+                        <p><strong>{{ comment[0].get('username', 'Unknown User') }}</strong> said:</p>
+                        <p>{{ comment[0].get('text', '') }}</p>
+                        <small class="text-muted">Posted on {{ comment[0].get('time', 'Unknown Time') }}</small>
                     {% else %}
                         <p>{{ comment }}</p>
+                    {% endif %}
+
+                    {% if comment[1]|length > 0 %}
+                        {% for subcomment in comment[1] %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    {% if subcomment is mapping %}
+                                        <!-- Voting Column -->
+                                        <div class="col-1 d-flex flex-column align-items-center justify-content-center" style="float:right;">
+                                            {% if current_user.is_authenticated %}
+                                                <button type="button" class="btn btn-link p-0 mb-0" onclick="upvoteSubcomment('{{ deal_id }}', '{{ comment[0]['comment_id'] }}', '{{ subcomment['comment_id'] }}')">
+                                                    <b>▲</b>
+                                                </button>
+                                                <span id="vote-count-{{ subcomment['comment_id'] }}">{{ subcomment.get('upvotes', 0) - subcomment.get('downvotes', 0) }}</span>
+                                                <button type="button" class="btn btn-link p-0 mt-0" onclick="downvoteSubcomment('{{ deal_id }}', '{{ comment[0]['comment_id'] }}', '{{ subcomment['comment_id'] }}')">
+                                                    <b>▼</b>
+                                                </button>
+                                            {% else %}
+                                            <div class="text-center">
+                                                <a href="{{ url_for('auth.login') }}" class="btn btn-link p-0 mb-0">
+                                                    <b>🔒</b>
+                                                </a>
+                                                <br> <!-- New line for separation -->
+                                                <span id="vote-count-{{ subcomment['comment_id'] }}">{{ subcomment.get('upvotes', 0) - subcomment.get('downvotes', 0) }}</span>
+                                                <br> <!-- New line for separation -->
+                                                <a href="{{ url_for('auth.login') }}" class="btn btn-link p-0 mt-0">
+                                                    <b>🔒</b>
+                                                </a>
+                                            </div>
+
+                                            {% endif %}
+                                        </div>
+                                        <p><strong>{{ subcomment.get('username', 'Unknown User') }}</strong> said:</p>
+                                        <p>{{ subcomment.get('text', '') }}</p>
+                                        <small class="text-muted">Posted on {{ subcomment.get('time', 'Unknown Time') }}</small>
+                                    {% else %}
+                                        <p>{{ subcomment }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if current_user.is_authenticated %}
+                        <form action="{{ url_for('add_subcomments', deal_id=deal_id, parent_id=comment[0]['comment_id']) }}" method="post">
+                            {{ comment_form.csrf_token }}
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Add a Comment:</label>
+                                {{ comment_form.comment(class="form-control", placeholder="Write your comment here") }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit Comment</button>
+                        </form>
                     {% endif %}
                 </div>
             </div>
