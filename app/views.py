@@ -18,6 +18,7 @@ from profanity import profanity
 from .moderation import Moderator
 import json
 import uuid
+import logging
 
 
 
@@ -78,49 +79,25 @@ def index():
 
     return render_template('index.html', popular_deals=deal_list, deals_json=json.dumps(deal_list))
 
-# @app.route('/deal_dashboard')
-# def deal_dashboard():
-#     """
-#     Dashboard page that shows all deals in database with filters
-#     """
-#     # load all deals from firestore
-#     deals = db.collection(config.DEAL_COLLECTION).stream()
-#     deal_list = [deal.to_dict() for deal in deals]
-
-#     # load all establishments from firestore
-#     establishments = db.collection('establishments').stream()
-#     establishment_list = [establishment.to_dict() for establishment in establishments]
-
-#     # link deals to establishments
-#     for deal in deal_list:
-#         for establishment in establishment_list:
-#             if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
-#                 deal['establishment'] = establishment
-
-#     # index all deals in elasticsearch
-#     if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
-#         reset_elasticsearch()
-#         for deal in deal_list:
-#             index_deal(deal)
-
-#     for deal in deal_list:
-#         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
-#         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
-#         deal['url'] = url_for('deal_details', deal_id=deal['deal_id']) # Assuming url_for is defined elsewhere
-#         deal['lat'] = deal['establishment']['latitude']
-#         deal['lng'] = deal['establishment']['longitude']
-#     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
-
-#     return render_template('index.html', popular_deals=deal_list)
-
 @app.route('/deal_dashboard')
 def deal_dashboard():
     """
     Dashboard page that shows all deals in database with filters
     """
     # load all deals from firestore
-    deals = db.collection('deals').stream()
+    deals = db.collection(config.DEAL_COLLECTION).stream()
     deal_list = [deal.to_dict() for deal in deals]
+
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
+
+    # link deals to establishments
+    for deal in deal_list:
+        for establishment in establishment_list:
+            if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
+                deal['establishment'] = establishment
+
     # index all deals in elasticsearch
     if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
         reset_elasticsearch()
@@ -130,10 +107,52 @@ def deal_dashboard():
     for deal in deal_list:
         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
-
+        deal['url'] = url_for('deal_details', deal_id=deal['deal_id']) # Assuming url_for is defined elsewhere
+        deal['lat'] = deal['establishment']['latitude']
+        deal['lng'] = deal['establishment']['longitude']
     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
 
-    return render_template('deal_dashboard.html', popular_deals=deal_list)
+    # Function to slightly adjust coordinates
+    def adjust_coords(lat, lng, count):
+        # Define how much to adjust. These values can be very small.
+        lat_adj = -0.00000
+        lng_adj = -0.00007
+        return lat + (lat_adj * count), lng + (lng_adj * count)
+
+    # Group deals by their coordinates
+    sorted_deals = sorted(deal_list, key=itemgetter('lat', 'lng'))
+    for _, group in groupby(sorted_deals, key=itemgetter('lat', 'lng')):
+        duplicates = list(group)
+        if len(duplicates) > 1:
+            for i, deal in enumerate(duplicates):
+                # Adjust coordinates starting from the second item
+                if i > 0:
+                    print(f"Adjusting coordinates for {deal['title']}")
+                    deal['lat'], deal['lng'] = adjust_coords(deal['lat'], deal['lng'], i)
+
+    return render_template('deal_dashboard.html', popular_deals=deal_list, deals_json=json.dumps(deal_list))
+
+# @app.route('/deal_dashboard')
+# def deal_dashboard():
+#     """
+#     Dashboard page that shows all deals in database with filters
+#     """
+#     # load all deals from firestore
+#     deals = db.collection('deals').stream()
+#     deal_list = [deal.to_dict() for deal in deals]
+#     # index all deals in elasticsearch
+#     if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
+#         reset_elasticsearch()
+#         for deal in deal_list:
+#             index_deal(deal)
+
+#     for deal in deal_list:
+#         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
+#         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
+
+#     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
+
+#     return render_template('deal_dashboard.html', popular_deals=deal_list)
 
 @app.route('/submit-deal', methods=['POST', 'GET'])
 def submit_deal():
@@ -303,9 +322,20 @@ def deal_details(deal_id):
 
 @app.route('/deal_details_dashboard/<deal_id>', methods=['GET'])
 def deal_details_dashboard(deal_id):
-    deal = db.collection('deals').document(deal_id).get().to_dict()
-    return jsonify(deal)
+    # Retrieve the document from the Firestore collection
+    deal = db.collection(config.DEAL_COLLECTION).document(deal_id).get()
+    deal_dict = deal.to_dict()
 
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
+
+    # link deal to establishment
+    for establishment in establishment_list:
+        if deal_dict['establishment']['name'] == establishment['name'] or deal_dict['establishment']['name'] in establishment['shortname']:
+            deal_dict['establishment'] = establishment
+
+    return jsonify(deal_dict)
 
 @app.route('/deal/<deal_id>/upvote', methods=['POST'])
 @login_required
@@ -351,9 +381,9 @@ def daily_deals():
 
 @app.route('/view-comments-dashboard/<deal_id>', methods=['GET', 'POST'])
 def view_and_add_comments_dashboard(deal_id):
-    deal_ref = db.collection('deals').document(deal_id)
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     deal = deal_ref.get().to_dict()
-    comments = deal.get('comments', [])
+    comments_ref = deal_ref.collection("comments").stream()
     
     # Handle comment submission
     comment_form = CommentForm(request.form)
@@ -366,10 +396,13 @@ def view_and_add_comments_dashboard(deal_id):
             return jsonify({'messages': get_flashed_messages(with_categories=True)}), 400
 
         new_comment = {
+            'comment_id': str(uuid.uuid4()),
             'user_id': current_user.id,
             'username': current_user.username,
             'text': new_comment_text,
-            'time': datetime.now().isoformat()
+            'time': datetime.now().isoformat(),
+            'upvotes': 0,
+            'downvotes': 0
         }
 
         # Add new comment document to comments collection
@@ -380,20 +413,30 @@ def view_and_add_comments_dashboard(deal_id):
         flash('Comment added successfully!', 'success')
         return jsonify({'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)}), 201
 
-    # Return comments for the deal
+    # Format dates before passing comments array to template
+    comments = []
+    for comment in comments_ref:
+        comments.append(comment.to_dict())
+
     formatted_comments = [
         {
             **comment,
-            'time': datetime.strptime(comment['time'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+            'time': datetime.strptime(comment.get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
         }
-        if 'time' in comment else comment
+        if comment.get('time') else comment
         for comment in comments
     ]
+
+    # Sort comments based on votes or other criteria if needed
+    sorted_comments = sorted(formatted_comments, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0))
+
+    # return render_template('view_comments.html', deal_name=deal.get('title', 'Unknown Deal'),
+    #                        deal_id=deal_id, comments=sorted_comments, comment_form=comment_form, current_user=current_user)
 
     # Generate a new CSRF token and include it in the JSON response
     csrf_token = generate_csrf()
     return jsonify({'title': deal.get('title'), 'user_authenticated': current_user.is_authenticated, 
-                    'comments': formatted_comments, 'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)})
+                    'comments': sorted_comments, 'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)})
 
 @app.route('/view-comments/<deal_id>', methods=['GET', 'POST'])
 def view_and_add_comments(deal_id):
