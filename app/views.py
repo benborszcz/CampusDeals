@@ -1,6 +1,6 @@
 from itertools import groupby
 from operator import itemgetter
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, get_flashed_messages
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from . import app, db
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
@@ -18,7 +18,6 @@ from profanity import profanity
 from .moderation import Moderator
 import json
 import uuid
-import logging
 
 
 
@@ -213,11 +212,6 @@ def search():
     distance = request.args.get('distance')
     userLat = request.args.get('userLat')
     userLng = request.args.get('userLng')
-    print("query " + str(query))
-    print("days " + str(days))
-    print("distance " + str(distance))
-    print("userLat " + str(userLat))
-    print("userLng " + str(userLng))
     if query or days or distance:
         # Assuming search_deals returns a list of Firestore documents
         hits = search_deals(query, days, distance, userLat, userLng)
@@ -277,6 +271,10 @@ def establishment_details(establishment_name):
             print(f"Start time: {start_time}, End time: {end_time}")
             establishment_dict['hours'][day] = f"{start_time} - {end_time}"
 
+    # put the hours in a list for easier iteration in the template called hours_list, also sort them by day of the week, the structure is a list of tuples with the day of the week[0] and the hours[1]
+    establishment_dict['hours_list'] = sorted(establishment_dict['hours'].items(), key=lambda x: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].index(x[0]))
+
+    print(establishment_dict['hours_list'])
 
     # create list of deals for the establishment
     deal_list = [deal for deal in deal_list if deal['establishment']['name'] == establishment_dict['name'] or deal['establishment']['name'] in establishment_dict['shortname']]
@@ -431,8 +429,8 @@ def view_and_add_comments(deal_id):
 
         # Check for profanity using the profanity library
         if profanity.contains_profanity(new_comment_text):
-            flash('Your comment contains profanity and cannot be posted.', 'danger')
-            return jsonify({'messages': get_flashed_messages(with_categories=True)}), 400
+            flash('Your comment contains profanity and cannot be posted.', 'error')
+            return redirect(url_for('view_and_add_comments', deal_id=deal_id))
 
         new_comment = {
             'comment_id': str(uuid.uuid4()),
@@ -447,26 +445,87 @@ def view_and_add_comments(deal_id):
         # Add new comment document to comments collection
         deal_ref.collection("comments").document(new_comment['comment_id']).set(new_comment)
 
-        # Generate a new CSRF token and include it in the JSON response
-        csrf_token = generate_csrf()
         flash('Comment added successfully!', 'success')
-        return jsonify({'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)}), 201
+        return redirect(url_for('view_and_add_comments', deal_id=deal_id))
 
-    # Format dates before passing comments array to template
+    # Put comments into array for template
     comments = []
     for comment in comments_ref:
-        comments.append(comment.to_dict())
-    formatted_comments = [
-        {
-            **comment,
-            'time': datetime.strptime(comment.get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
-        }
-        if comment.get('time') else comment
-        for comment in comments
-    ]
+        subcomments = []
+        comment_contents = comment.to_dict()
+        subcomments_ref = deal_ref.collection("comments").document(comment_contents['comment_id']).collection("comments").stream()
+        for subcomment in subcomments_ref:
+            subcomments.append(subcomment.to_dict())
+        commentAsDict = [comment_contents, subcomments]
+        comments.append(commentAsDict)
+
+    # Format dates before passing comments array to template
+    for comment in comments:
+        comment[0]['time'] = datetime.strptime(comment[0].get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+        for subcomment in comment[1]:
+            subcomment['time'] = datetime.strptime(subcomment.get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+
 
     # Sort comments based on votes or other criteria if needed
-    sorted_comments = sorted(formatted_comments, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0))
+    sorted_comments = sorted(comments, key=lambda k: k[0].get('upvotes', 0) - k[0].get('downvotes', 0))
 
     return render_template('view_comments.html', deal_name=deal.get('title', 'Unknown Deal'),
                            deal_id=deal_id, comments=sorted_comments, comment_form=comment_form, current_user=current_user)
+
+
+@app.route('/view-comments/<deal_id>/<parent_id>', methods=['GET', 'POST'])
+def add_subcomments(deal_id, parent_id):
+    comment_form = CommentForm()
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
+
+    # Handle new subcomments
+    if comment_form.validate_on_submit() and current_user.is_authenticated:
+        new_comment_text = comment_form.comment.data
+
+        # Check for profanity using the profanity library
+        if profanity.contains_profanity(new_comment_text):
+            flash('Your comment contains profanity and cannot be posted.', 'error')
+            return redirect(url_for('view_and_add_comments', deal_id=deal_id))
+
+        new_comment = {
+            'comment_id': str(uuid.uuid4()),
+            'user_id': current_user.id,
+            'username': current_user.username,
+            'text': new_comment_text,
+            'time': datetime.now().isoformat(),
+            'upvotes': 0,
+            'downvotes': 0
+        }
+
+        # Add new subcomment document to comments collection under the parent comment document
+        deal_ref.collection("comments").document(parent_id).collection("comments").document(new_comment['comment_id']).set(new_comment)
+        flash('Comment added successfully!', 'success')
+        return redirect(url_for('view_and_add_comments', deal_id=deal_id))
+
+@login_required
+@app.route('/deal/<deal_id>/comment/<parent_id>/subcomment/<comment_id>/upvote', methods=['POST'])
+def upvote_subcomment(deal_id, parent_id, comment_id):
+    comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(parent_id).collection("comments").document(comment_id)
+    comment_ref.update({"upvotes": firestore.Increment(1)})
+    return jsonify(success=True), 200
+
+@login_required
+@app.route('/deal/<deal_id>/comment/<parent_id>/subcomment/<comment_id>/downvote', methods=['POST'])
+def downvote_subcomment(deal_id, parent_id, comment_id):
+    comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(parent_id).collection("comments").document(comment_id)
+    comment_ref.update({"downvotes": firestore.Increment(1)})
+    return jsonify(success=True), 200
+
+@login_required
+@app.route('/deal/<deal_id>/comment/<comment_id>/upvote', methods=['POST'])
+def upvote_comment(deal_id,  comment_id):
+    comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(comment_id)
+    comment_ref.update({"upvotes": firestore.Increment(1)})
+    return jsonify(success=True), 200
+
+@login_required
+@app.route('/deal/<deal_id>/comment/<comment_id>/downvote', methods=['POST'])
+def downvote_comment(deal_id, comment_id):
+    comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(comment_id)
+    comment_ref.update({"downvotes": firestore.Increment(1)})
+    return jsonify(success=True), 200

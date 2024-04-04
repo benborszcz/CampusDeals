@@ -9,9 +9,9 @@
         <div class="card-body">
             <h5>Hours</h5>
             <ul class="list-group list-group-flush">
-                {% for day, hours in establishment.hours.items() %}
+                {% for entry in establishment.hours_list %}
                     <li class="list-group-item">
-                        <strong>{{ day }}</strong> - {{ hours }}
+                        <strong>{{ entry[0] }}</strong> - {{ entry[1] }}
                     </li>
                 {% endfor %}
             </ul>
