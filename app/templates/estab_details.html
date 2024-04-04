@@ -4,7 +4,9 @@
     <div class="card mb-4">
         <div class="card-header">
             <h2 class="card-title">{{ establishment.name }}</h2>
-            <p class="card-text text-muted">{{ establishment.address }}</p>
+            <div class="google-maps-link">
+                <a href="https://www.google.com/maps/dir/?api=1&destination={{ establishment.latitude }},{{ establishment.longitude }}" target="_blank" style="font-size: 18px;">{{ establishment.address }} (Directions)</a>
+            </div>
         </div>
         <div class="card-body">
             <h5>Hours</h5>
