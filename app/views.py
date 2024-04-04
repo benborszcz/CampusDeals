@@ -132,28 +132,6 @@ def deal_dashboard():
 
     return render_template('deal_dashboard.html', popular_deals=deal_list, deals_json=json.dumps(deal_list))
 
-# @app.route('/deal_dashboard')
-# def deal_dashboard():
-#     """
-#     Dashboard page that shows all deals in database with filters
-#     """
-#     # load all deals from firestore
-#     deals = db.collection('deals').stream()
-#     deal_list = [deal.to_dict() for deal in deals]
-#     # index all deals in elasticsearch
-#     if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
-#         reset_elasticsearch()
-#         for deal in deal_list:
-#             index_deal(deal)
-
-#     for deal in deal_list:
-#         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
-#         deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
-
-#     deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
-
-#     return render_template('deal_dashboard.html', popular_deals=deal_list)
-
 @app.route('/submit-deal', methods=['POST', 'GET'])
 def submit_deal():
 
@@ -235,6 +213,11 @@ def search():
     distance = request.args.get('distance')
     userLat = request.args.get('userLat')
     userLng = request.args.get('userLng')
+    print("query " + str(query))
+    print("days " + str(days))
+    print("distance " + str(distance))
+    print("userLat " + str(userLat))
+    print("userLng " + str(userLng))
     if query or days or distance:
         # Assuming search_deals returns a list of Firestore documents
         hits = search_deals(query, days, distance, userLat, userLng)
@@ -429,9 +412,6 @@ def view_and_add_comments_dashboard(deal_id):
 
     # Sort comments based on votes or other criteria if needed
     sorted_comments = sorted(formatted_comments, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0))
-
-    # return render_template('view_comments.html', deal_name=deal.get('title', 'Unknown Deal'),
-    #                        deal_id=deal_id, comments=sorted_comments, comment_form=comment_form, current_user=current_user)
 
     # Generate a new CSRF token and include it in the JSON response
     csrf_token = generate_csrf()
