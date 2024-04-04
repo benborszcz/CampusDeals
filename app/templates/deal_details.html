@@ -1,16 +1,44 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<style>
+    .address-time-wrapper {
+        flex: 1; /* Allow address and time to take remaining space */
+    }
+
+    .logo-wrapper {
+        float: right; /* Align logo to the right */
+    }
+</style>
     <div class="card mb-4">
         <div class="card-header">
             <h2 class="card-title">{{ deal.title }}</h2>
         </div>
         <div class="card-body">
             <a href="{{ url_for('establishment_details', establishment_name=deal.establishment.name)}}"> <h3 class="card-text">{{ deal.establishment.name }}</h3></a>
-            <div class="google-maps-link">
-                <a href="https://www.google.com/maps/dir/?api=1&destination={{ deal.establishment.latitude }},{{ deal.establishment.longitude }}" target="_blank" style="font-size: 18px;">{{ deal.establishment.address }} (Directions)</a>
+            <div class="address-time-wrapper">
+                <div class="google-maps-link">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ deal.establishment.latitude }},{{ deal.establishment.longitude }}" target="_blank" style="font-size: 18px;">{{ deal.establishment.address }} (Directions)</a>
+                </div>
+                <h5 class="card-text text-muted">
+                    <c>{{ deal.deal_details.days_active | join(", ") }},</c> 
+                    <c id="start-time">{{ deal.deal_details.start_time }} - </c>
+                    <c id="end-time">{{ deal.deal_details.end_time }}</c>
+                </h5>
+                
             </div>
-            <h5 class="card-text text-muted"><c>{{ deal.deal_details.days_active | join(", ") }},</c> <c id="start-time">{{ deal.deal_details.start_time }} - </c><c id="end-time">{{ deal.deal_details.end_time }}</c></h5>
+            <div class="logo-wrapper">
+                {% if deal.establishment.name == "Midway on High" %}
+                    <img src="{{ url_for('static', filename='images/midway.png') }}" alt="Midway Logo" class="img-fluid">
+                {% endif %} 
+                {% if deal.establishment.name == "Ethyl & Tank" %}
+                    <img src="{{ url_for('static', filename='images/ethyl.png') }}" alt="Ethyl Logo" class="img-fluid">
+                {% endif %} 
+                {% if deal.establishment.name == "Plaza Mexican Grill" %}
+                    <img src="{{ url_for('static', filename='images/plaza.png') }}" alt="Plaza Logo" class="img-fluid">
+                {% endif %} 
+            </div>
             <div class="map-container">
                 <div class="shadow" style="border-radius: 10px;">
                     <div id="map"></div>
