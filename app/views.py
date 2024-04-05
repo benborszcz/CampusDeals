@@ -1,6 +1,6 @@
 from itertools import groupby
 from operator import itemgetter
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, get_flashed_messages
 from . import app, db
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
@@ -394,22 +394,24 @@ def view_and_add_comments_dashboard(deal_id):
         flash('Comment added successfully!', 'success')
         return jsonify({'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)}), 201
 
-    # Format dates before passing comments array to template
+    # Put comments into array for template
     comments = []
     for comment in comments_ref:
-        comments.append(comment.to_dict())
+        subcomments = []
+        comment_contents = comment.to_dict()
+        subcomments_ref = deal_ref.collection("comments").document(comment_contents['comment_id']).collection("comments").stream()
+        for subcomment in subcomments_ref:
+            subcomments.append(subcomment.to_dict())
+        commentAsDict = [comment_contents, subcomments]
+        comments.append(commentAsDict)
 
-    formatted_comments = [
-        {
-            **comment,
-            'time': datetime.strptime(comment.get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
-        }
-        if comment.get('time') else comment
-        for comment in comments
-    ]
+    for comment in comments:
+        comment[0]['time'] = datetime.strptime(comment[0].get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+        for subcomment in comment[1]:
+            subcomment['time'] = datetime.strptime(subcomment.get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
 
     # Sort comments based on votes or other criteria if needed
-    sorted_comments = sorted(formatted_comments, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0))
+    sorted_comments = sorted(comments, key=lambda k: k[0].get('upvotes', 0) - k[0].get('downvotes', 0), reverse=True)
 
     # Generate a new CSRF token and include it in the JSON response
     csrf_token = generate_csrf()
