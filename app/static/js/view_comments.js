@@ -24,8 +24,9 @@ function loadComments(messages, dealId) {
                 alertDiv.textContent = message[1]; // alert message
                 commentsContainer.appendChild(alertDiv);
             });
+
+            // creates add comment form if user is logged in
             if (data.user_authenticated) {
-                // Create and append the comment form
                 const form = document.createElement('form');
                 form.action = 'javascript:void(0)'; // avoids page reload
                 form.method = 'post';
@@ -96,55 +97,7 @@ function loadComments(messages, dealId) {
                     const cardBody = document.createElement('div');
                     cardBody.className = 'card-body';
 
-                    const strong = document.createElement('strong');
-                    strong.textContent = comment[0].username || 'Unknown User';
-                    const p1 = document.createElement('p');
-                    p1.appendChild(strong);
-                    p1.textContent += ' said:';
-
-                    const p2 = document.createElement('p');
-                    p2.textContent = comment[0].text || '';
-
-                    const small = document.createElement('small');
-                    small.className = 'text-muted';
-                    small.textContent = 'Posted on ' + (comment[0].time || 'Unknown Time');
-
-                    // the whole div on the right side of the comments
-                    const voteDiv = document.createElement('div');
-                    voteDiv.className = 'col-1 d-flex flex-column align-items-center justify-content-center';
-                    voteDiv.style.cssFloat = 'right';
-
-                    // Upvote button
-                    const upvoteButton = document.createElement('button');
-                    upvoteButton.className = 'btn btn-link p-0 mb-0';
-                    upvoteButton.innerHTML = '<b>▲</b>';
-                    upvoteButton.onclick = () => upvote(dealId, comment[0]['comment_id']);
-
-                    const lockedIcon = document.createElement('a');
-                    lockedIcon.href = '/login';
-                    lockedIcon.className = 'btn btn-link p-0 mb-0';
-                    lockedIcon.innerHTML = '<b>🔒</b>';
-
-                    // Vote count
-                    const voteCount = document.createElement('span');
-                    voteCount.id = `vote-count-${comment[0]['comment_id']}`;
-                    voteCount.textContent = comment[0].upvotes - comment[0].downvotes;
-
-                    // Downvote button
-                    const downvoteButton = document.createElement('button');
-                    downvoteButton.className = 'btn btn-link p-0 mt-0';
-                    downvoteButton.innerHTML = '<b>▼</b>';
-                    downvoteButton.onclick = () => downvote(dealId, comment[0]['comment_id']);
-
-                    // Append the voting buttons and count to the voteDiv
-                    data.user_authenticated ? voteDiv.appendChild(upvoteButton) : voteDiv.appendChild(lockedIcon);
-                    voteDiv.appendChild(voteCount);
-                    data.user_authenticated ? voteDiv.appendChild(downvoteButton) : voteDiv.appendChild(lockedIcon.cloneNode(true));
-                    
-                    cardBody.appendChild(voteDiv);
-                    cardBody.appendChild(p1);
-                    cardBody.appendChild(p2);
-                    cardBody.appendChild(small);
+                    createCommentElement(cardBody, comment[0], data);
 
                     if (comment[1].length > 0) {
                         comment[1].forEach(subComment => {
@@ -153,56 +106,7 @@ function loadComments(messages, dealId) {
                             subCard.className = 'card mb-3';
                             const subCardBody = document.createElement('div');
                             subCardBody.className = 'card-body';
-
-                            const subID = document.createElement('strong');
-                            subID.textContent = subComment.username || 'Unknown User';
-                            const subP1 = document.createElement('p');
-                            subP1.appendChild(subID);
-                            subP1.textContent += ' said:';
-
-                            const subP2 = document.createElement('p');
-                            subP2.textContent = subComment.text || '';
-
-                            const subSmall = document.createElement('small');
-                            subSmall.className = 'text-muted';
-                            subSmall.textContent = 'Posted on ' + (subComment.time || 'Unknown Time');
-
-                            // the whole div on the right side of the comments
-                            const subVoteDiv = document.createElement('div');
-                            subVoteDiv.className = 'col-1 d-flex flex-column align-items-center justify-content-center';
-                            subVoteDiv.style.cssFloat = 'right';
-
-                            // Upvote button
-                            const subUpvoteButton = document.createElement('button');
-                            subUpvoteButton.className = 'btn btn-link p-0 mb-0';
-                            subUpvoteButton.innerHTML = '<b>▲</b>';
-                            subUpvoteButton.onclick = () => upvote(dealId, subComment['comment_id']);
-
-                            const subLockedIcon = document.createElement('a');
-                            subLockedIcon.href = '/login';
-                            subLockedIcon.className = 'btn btn-link p-0 mb-0';
-                            subLockedIcon.innerHTML = '<b>🔒</b>';
-
-                            // Vote count
-                            const subVoteCount = document.createElement('span');
-                            subVoteCount.id = `vote-count-${subComment['comment_id']}`;
-                            subVoteCount.textContent = subComment.upvotes - subComment.downvotes;
-
-                            // Downvote button
-                            const subDownvoteButton = document.createElement('button');
-                            subDownvoteButton.className = 'btn btn-link p-0 mt-0';
-                            subDownvoteButton.innerHTML = '<b>▼</b>';
-                            subDownvoteButton.onclick = () => downvote(dealId, subComment['comment_id']);
-
-                            // Append the voting buttons and count to the voteDiv
-                            data.user_authenticated ? subVoteDiv.appendChild(subUpvoteButton) : subVoteDiv.appendChild(subLockedIcon);
-                            subVoteDiv.appendChild(subVoteCount);
-                            data.user_authenticated ? subVoteDiv.appendChild(subDownvoteButton) : subVoteDiv.appendChild(subLockedIcon.cloneNode(true));
-                            
-                            subCardBody.appendChild(subVoteDiv);
-                            subCardBody.appendChild(subP1);
-                            subCardBody.appendChild(subP2);
-                            subCardBody.appendChild(subSmall);
+                            createCommentElement(subCardBody, subComment, data);
                             subCard.appendChild(subCardBody);
                             cardBody.appendChild(subCard);
                         });
@@ -224,6 +128,62 @@ function loadComments(messages, dealId) {
             document.getElementById('comments-container').style.display = 'block';
         })
         .catch(error => console.error('Error fetching comments:', error));
+}
+
+function createCommentElement (cardBody, comment, data) {
+    // Username
+    const strong = document.createElement('strong');
+    strong.textContent = comment.username || 'Unknown User';
+    const p1 = document.createElement('p');
+    p1.appendChild(strong);
+    p1.textContent += ' said:';
+
+    // The actual comment text
+    const p2 = document.createElement('p');
+    p2.textContent = comment.text || '';
+
+    // Post time
+    const small = document.createElement('small');
+    small.className = 'text-muted';
+    small.textContent = 'Posted on ' + (comment.time || 'Unknown Time');
+
+    // The whole div for voting on the right side of the comments
+    const voteDiv = document.createElement('div');
+    voteDiv.className = 'col-1 d-flex flex-column align-items-center justify-content-center';
+    voteDiv.style.cssFloat = 'right';
+
+    // Upvote button
+    const upvoteButton = document.createElement('button');
+    upvoteButton.className = 'btn btn-link p-0 mb-0';
+    upvoteButton.innerHTML = '<b>▲</b>';
+    upvoteButton.onclick = () => upvote(dealId, comment['comment_id']);
+
+    // Locked icon if not logged in
+    const lockedIcon = document.createElement('a');
+    lockedIcon.href = '/login';
+    lockedIcon.className = 'btn btn-link p-0 mb-0';
+    lockedIcon.innerHTML = '<b>🔒</b>';
+
+    // Vote count
+    const voteCount = document.createElement('span');
+    voteCount.id = `vote-count-${comment['comment_id']}`;
+    voteCount.textContent = comment.upvotes - comment.downvotes;
+
+    // Downvote button
+    const downvoteButton = document.createElement('button');
+    downvoteButton.className = 'btn btn-link p-0 mt-0';
+    downvoteButton.innerHTML = '<b>▼</b>';
+    downvoteButton.onclick = () => downvote(dealId, comment['comment_id']);
+
+    // Append the voting buttons and count to the voteDiv
+    data.user_authenticated ? voteDiv.appendChild(upvoteButton) : voteDiv.appendChild(lockedIcon);
+    voteDiv.appendChild(voteCount);
+    data.user_authenticated ? voteDiv.appendChild(downvoteButton) : voteDiv.appendChild(lockedIcon.cloneNode(true));
+    
+    cardBody.appendChild(voteDiv);
+    cardBody.appendChild(p1);
+    cardBody.appendChild(p2);
+    cardBody.appendChild(small);
 }
 
 function upvote(dealId, commentId) {
