@@ -97,7 +97,7 @@ function loadComments(messages, dealId) {
                     const cardBody = document.createElement('div');
                     cardBody.className = 'card-body';
 
-                    createCommentElement(cardBody, comment[0], data);
+                    createCommentElement(cardBody, comment[0], data, dealId, null);
 
                     if (comment[1].length > 0) {
                         comment[1].forEach(subComment => {
@@ -106,7 +106,7 @@ function loadComments(messages, dealId) {
                             subCard.className = 'card mb-3';
                             const subCardBody = document.createElement('div');
                             subCardBody.className = 'card-body';
-                            createCommentElement(subCardBody, subComment, data);
+                            createCommentElement(subCardBody, subComment, data, dealId, comment[0]['comment_id']);
                             subCard.appendChild(subCardBody);
                             cardBody.appendChild(subCard);
                         });
@@ -130,7 +130,7 @@ function loadComments(messages, dealId) {
         .catch(error => console.error('Error fetching comments:', error));
 }
 
-function createCommentElement (cardBody, comment, data) {
+function createCommentElement (cardBody, comment, data, dealId, parentId) {
     // Username
     const strong = document.createElement('strong');
     strong.textContent = comment.username || 'Unknown User';
@@ -156,7 +156,7 @@ function createCommentElement (cardBody, comment, data) {
     const upvoteButton = document.createElement('button');
     upvoteButton.className = 'btn btn-link p-0 mb-0';
     upvoteButton.innerHTML = '<b>▲</b>';
-    upvoteButton.onclick = () => upvote(dealId, comment['comment_id']);
+    upvoteButton.onclick = () => voteComment(dealId, comment['comment_id'], true, parentId);
 
     // Locked icon if not logged in
     const lockedIcon = document.createElement('a');
@@ -173,7 +173,7 @@ function createCommentElement (cardBody, comment, data) {
     const downvoteButton = document.createElement('button');
     downvoteButton.className = 'btn btn-link p-0 mt-0';
     downvoteButton.innerHTML = '<b>▼</b>';
-    downvoteButton.onclick = () => downvote(dealId, comment['comment_id']);
+    downvoteButton.onclick = () => voteComment(dealId, comment['comment_id'], false, parentId);
 
     // Append the voting buttons and count to the voteDiv
     data.user_authenticated ? voteDiv.appendChild(upvoteButton) : voteDiv.appendChild(lockedIcon);
@@ -186,117 +186,21 @@ function createCommentElement (cardBody, comment, data) {
     cardBody.appendChild(small);
 }
 
-function upvote(dealId, commentId) {
-    fetch('/deal/' + dealId + '/comment/' + commentId + '/upvote', {
+function voteComment(dealId, commentId, isUpvote, parentId) {
+    fetch('/deal/' + dealId + '/comment/' + (parentId ? parentId + '/subcomment/' : '') + commentId + (isUpvote ? '/upvote' : '/downvote'), {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // Add any other headers your API requires
-        },
-        body: JSON.stringify({
-            'deal_id': dealId,
-            'comment_id': commentId
-        }),
-        // Include credentials if your API requires authentication
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 'deal_id': dealId, 'comment_id': commentId, ...(parentId && { 'parent_id': parentId }) }),
         credentials: 'same-origin'
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update the comment's vote count on the page
-            let voteCountElement = document.getElementById('vote-count-' + commentId);
-            voteCountElement.textContent = parseInt(voteCountElement.textContent) + 1;
+            const voteDirection = isUpvote ? 1 : -1;
+            const voteCountElement = document.getElementById('vote-count-' + commentId);
+            voteCountElement.textContent = parseInt(voteCountElement.textContent) + voteDirection;
         } else {
-            // Handle error
-            console.error('Failed to upvote');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-function downvote(dealId, commentId) {
-
-    fetch('/deal/' + dealId + '/comment/' + commentId + '/downvote', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // Add any other headers your API requires
-        },
-        body: JSON.stringify({
-            'deal_id': dealId,
-            'comment_id': commentId
-        }),
-        // Include credentials if your API requires authentication
-        credentials: 'same-origin'
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update the comment's vote count on the page
-            let voteCountElement = document.getElementById('vote-count-' + commentId);
-            voteCountElement.textContent = parseInt(voteCountElement.textContent) - 1;
-        } else {
-            // Handle error
-            console.error('Failed to downvote');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-function upvoteSubcomment(dealId, parentId, commentId) {
-    fetch('/deal/' + dealId + '/comment/' + parentId + '/subcomment/' + commentId + '/upvote', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // Add any other headers your API requires
-        },
-        body: JSON.stringify({
-            'deal_id': dealId,
-            'parent_id': parentId,
-            'comment_id': commentId
-        }),
-        // Include credentials if your API requires authentication
-        credentials: 'same-origin'
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update the comment's vote count on the page
-            let voteCountElement = document.getElementById('vote-count-' + commentId);
-            voteCountElement.textContent = parseInt(voteCountElement.textContent) + 1;
-        } else {
-            // Handle error
-            console.error('Failed to upvote');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-function downvoteSubcomment(dealId, parentId, commentId) {
-
-    fetch('/deal/' + dealId + '/comment/' + parentId + '/subcomment/' + commentId + '/downvote', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // Add any other headers your API requires
-        },
-        body: JSON.stringify({
-            'deal_id': dealId,
-            'parent_id': parentId,
-            'comment_id': commentId
-        }),
-        // Include credentials if your API requires authentication
-        credentials: 'same-origin'
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update the comment's vote count on the page
-            let voteCountElement = document.getElementById('vote-count-' + commentId);
-            voteCountElement.textContent = parseInt(voteCountElement.textContent) - 1;
-        } else {
-            // Handle error
-            console.error('Failed to downvote');
+            console.error(`Failed to ${isUpvote ? 'upvote' : 'downvote'}`);
         }
     })
     .catch(error => console.error('Error:', error));

@@ -1,3 +1,25 @@
+function voteDeal(dealId, isUpvote) {
+    fetch('/deal/' + dealId + (isUpvote ? '/upvote' : '/downvote'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 'deal_id': dealId }),
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update the vote count on the page
+            const voteDirection = isUpvote ? 1 : -1;
+            const voteCountElement = document.getElementById('vote-count-' + dealId);
+            voteCountElement.textContent = parseInt(voteCountElement.textContent) + voteDirection;
+        } else {
+            // Handle error
+            console.error(`Failed to ${isUpvote ? 'upvote' : 'downvote'}`);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
 function upvote(dealId) {
     fetch('/deal/' + dealId + '/upvote', {
         method: 'POST',
