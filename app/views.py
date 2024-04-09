@@ -503,6 +503,36 @@ def add_subcomments(deal_id, parent_id):
         deal_ref.collection("comments").document(parent_id).collection("comments").document(new_comment['comment_id']).set(new_comment)
         flash('Comment added successfully!', 'success')
         return redirect(url_for('view_and_add_comments', deal_id=deal_id))
+    
+@app.route('/view-comments-dashboard/<deal_id>/<parent_id>', methods=['GET', 'POST'])
+def add_subcomments_dashboard(deal_id, parent_id):
+    comment_form = CommentForm()
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
+
+    # Handle new subcomments
+    if comment_form.validate_on_submit() and current_user.is_authenticated:
+        new_comment_text = comment_form.comment.data
+
+        # Check for profanity using the profanity library
+        if profanity.contains_profanity(new_comment_text):
+            flash('Your comment contains profanity and cannot be posted.', 'danger')
+            return jsonify({'messages': get_flashed_messages(with_categories=True)}), 400
+
+        new_comment = {
+            'comment_id': str(uuid.uuid4()),
+            'user_id': current_user.id,
+            'username': current_user.username,
+            'text': new_comment_text,
+            'time': datetime.now().isoformat(),
+            'upvotes': 0,
+            'downvotes': 0
+        }
+
+        # Add new subcomment document to comments collection under the parent comment document
+        deal_ref.collection("comments").document(parent_id).collection("comments").document(new_comment['comment_id']).set(new_comment)
+        csrf_token = generate_csrf()
+        flash('Comment added successfully!', 'success')
+        return jsonify({'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)}), 201
 
 @login_required
 @app.route('/deal/<deal_id>/comment/<parent_id>/subcomment/<comment_id>/upvote', methods=['POST'])

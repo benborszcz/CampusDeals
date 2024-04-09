@@ -26,68 +26,7 @@ function loadComments(messages, dealId) {
             });
 
             // creates add comment form if user is logged in
-            if (data.user_authenticated) {
-                const form = document.createElement('form');
-                form.action = 'javascript:void(0)'; // avoids page reload
-                form.method = 'post';
-
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = 'csrf_token';
-                csrfInput.value = csrfToken; // use the CSRF token obtained from the response
-
-                const div = document.createElement('div');
-                div.className = 'mb-3';
-
-                const textarea = document.createElement('textarea');
-                textarea.className = 'form-control';
-                textarea.placeholder = 'Write your comment here';
-                textarea.name = 'comment';
-
-                const button = document.createElement('button');
-                button.type = 'submit';
-                button.className = 'btn btn-primary';
-                button.id = 'submitButton'
-                button.textContent = 'Submit Comment';
-
-                div.appendChild(textarea);
-                form.appendChild(csrfInput);
-                form.appendChild(div);
-                form.appendChild(button);
-                commentsContainer.appendChild(form);
-
-                // Event listener for comment submission
-                form.addEventListener('submit', function(event) {
-                    event.preventDefault(); // Prevent default form submission
-                    const formData = new FormData(form);
-
-                    // Submit form data asynchronously
-                    fetch('/view-comments/' + dealId, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        loadComments(result.messages, dealId);
-                    })
-                    .catch(error => console.error('Error submitting comment:', error));
-                });
-            } else {
-                const paragraphElement = document.createElement('p');
-
-                // Create and append the link element
-                const linkElement = document.createElement('a');
-                linkElement.href = '/login'; // Ensure the path is correct
-                linkElement.textContent = 'Log in';
-                paragraphElement.appendChild(linkElement);
-
-                // Create a text node for the part before the link
-                const textNodeBeforeLink = document.createTextNode(' to leave a comment.');
-                paragraphElement.appendChild(textNodeBeforeLink);
-
-                // Append the paragraph to the container
-                commentsContainer.appendChild(paragraphElement);
-            }
+            commentSubmission(csrfToken, commentsContainer, dealId, null, data.user_authenticated);
 
             if (comments.length > 0) {
                 comments.forEach(comment => {
@@ -107,10 +46,13 @@ function loadComments(messages, dealId) {
                             const subCardBody = document.createElement('div');
                             subCardBody.className = 'card-body';
                             createCommentElement(subCardBody, subComment, data, dealId, comment[0]['comment_id']);
+                            // creates add comment form if user is logged in
                             subCard.appendChild(subCardBody);
                             cardBody.appendChild(subCard);
                         });
                     }
+                    // creates add reply form if user is logged in
+                    commentSubmission(csrfToken, cardBody, dealId, comment[0]['comment_id'], data.user_authenticated);
                     card.appendChild(cardBody);
                     commentsContainer.appendChild(card);
                 });
@@ -204,4 +146,71 @@ function voteComment(dealId, commentId, isUpvote, parentId) {
         }
     })
     .catch(error => console.error('Error:', error));
+}
+
+function commentSubmission(csrfToken, container, dealId, parentId, user_authenticated) {
+    if (user_authenticated) {
+        const form = document.createElement('form');
+        form.action = 'javascript:void(0)'; // avoids page reload
+        form.method = 'post';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = csrfToken; // use the CSRF token obtained from the response
+
+        const div = document.createElement('div');
+        div.className = 'mb-3';
+
+        const textarea = document.createElement('textarea');
+        textarea.className = 'form-control';
+        textarea.placeholder = 'Write your ' + (parentId ? 'reply' : 'comment') + ' here';
+        textarea.name = 'comment';
+
+        const button = document.createElement('button');
+        button.type = 'submit';
+        button.className = 'btn btn-primary';
+        button.id = 'submitButton'
+        button.textContent = 'Submit ' + (parentId ? 'Reply' : 'Comment');
+
+        div.appendChild(textarea);
+        form.appendChild(csrfInput);
+        form.appendChild(div);
+        form.appendChild(button);
+        container.appendChild(form);
+
+        // Event listener for comment submission
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            const formData = new FormData(form);
+
+            // Submit form data asynchronously
+            fetch('/view-comments-dashboard/' + dealId + (parentId ? '/' + parentId : ''), {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                loadComments(result.messages, dealId);
+            })
+            .catch(error => console.error('Error submitting ' + (parentId ? 'reply' : 'comment') + ':', error));
+        });
+    } else {
+        // only appends log in for the first comment form
+        if (!parentId) {
+            const paragraphElement = document.createElement('p');
+            // Create and append the link element
+            const linkElement = document.createElement('a');
+            linkElement.href = '/login'; // Ensure the path is correct
+            linkElement.textContent = 'Log in';
+            paragraphElement.appendChild(linkElement);
+
+            // Create a text node for the part before the link
+            const textNodeBeforeLink = document.createTextNode(' to leave a comment.');
+            paragraphElement.appendChild(textNodeBeforeLink);
+
+            // Append the paragraph to the container
+            container.appendChild(paragraphElement);
+        }
+    }
 }
