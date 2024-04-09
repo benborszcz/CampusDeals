@@ -14,7 +14,7 @@
     top: 150px; /* Adjust the top position as needed */
     right: -300px; /* Initially hide the popup outside the viewport */
     width: 300px;
-    height: 28vh;
+    height: 25vh;
     background-color: #fff;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
     transition: right 0.3s ease-in-out;
@@ -100,6 +100,21 @@
                 {% endif %} 
                 {% if deal.establishment.name == "Plaza Mexican Grill" %}
                     <img src="{{ url_for('static', filename='images/plaza.png') }}" alt="Plaza Logo" class="img-fluid">
+                {% endif %} 
+                {% if deal.establishment.name == "Gaswerks" %}
+                    <img src="{{ url_for('static', filename='images/Gaswerks.png') }}" alt="Gaswerks Logo" class="img-fluid">
+                {% endif %} 
+                {% if deal.establishment.name == "Standard Hall" %}
+                    <img src="{{ url_for('static', filename='images/standard.png') }}" alt="Standard Logo" class="img-fluid">
+                {% endif %} 
+                {% if deal.establishment.name == "Bristol Republic" %}
+                    <img src="{{ url_for('static', filename='images/bristol.png') }}" alt="Bristol Logo" class="img-fluid">
+                {% endif %} 
+                {% if deal.establishment.name == "BrewDog Short North" %}
+                    <img src="{{ url_for('static', filename='images/dog.png') }}" alt="BrewDog Logo" class="img-fluid">
+                {% endif %} 
+                {% if deal.establishment.name == "Ugly Tuna Saloona 2" %}
+                    <img src="{{ url_for('static', filename='images/tuna.png') }}" alt="Tuna Logo" class="img-fluid">
                 {% endif %} 
             </div>
             <div class="map-container">
