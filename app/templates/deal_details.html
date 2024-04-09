@@ -7,7 +7,25 @@
 </div>
 
 
+
 <style>
+
+#downloadButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #3aafa9;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the button */
+#downloadButton:hover {
+    background-color: #2e807f;
+}
 
 .weather-popup {
     position: absolute;
@@ -143,6 +161,8 @@
                     </c>
                 {% endfor %}
             </div>
+            <br>
+            <button id="downloadButton">Save Deal Details</button>
             <!-- Google Maps Link -->
         </div>
         <div class="card-footer text-muted">
@@ -320,5 +340,56 @@ function toTitleCase(str) {
         toggleWeatherPopup(); // Show the weather popup when the page loads
     });
 </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Function to handle download when button is clicked
+        document.getElementById("downloadButton").addEventListener("click", function() {
+            // Extract the deal details to be saved
+            var dealDetails = generateDealDetails(); // Function to generate deal details as a string
+            
+            // Create a Blob containing the deal details as plain text
+            var blob = new Blob([dealDetails], { type: "text/plain" });
+
+            // Create a link element to trigger the download
+            var downloadLink = document.createElement("a");
+            downloadLink.href = URL.createObjectURL(blob);
+            
+            // Get establishment name from the deal data
+            var establishmentName = "{{ deal.establishment.name }}";
+
+            // Set the file name for the download using the establishment name
+            downloadLink.download = establishmentName + ".txt";
+
+            // Append the link to the document body and trigger the download
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+
+            // Clean up by removing the link element
+            document.body.removeChild(downloadLink);
+        });
+
+        // Function to generate deal details as a string
+        function generateDealDetails() {
+            var details = "";
+            details += "Title: " + "{{ deal.title }}" + "\n";
+            details += "Establishment: " + "{{ deal.establishment.name }}" + "\n";
+            details += "Address: " + "{{ deal.establishment.address }}" + "\n";
+            details += "Days Active: " + "{{ deal.deal_details.days_active | join(', ') }}" + "\n";
+            details += "Time: " + "{{ deal.deal_details.start_time }}" + " - " + "{{ deal.deal_details.end_time }}" + "\n";
+            details += "Deal Items:\n";
+            
+            {% for item in deal.deal_details.deal_items %}
+                details += "  - {{ item.item }}: ";
+                details += "{% if item.pricing.discount == 'N/A' %}{{ item.pricing.price }}{% else %}{{ item.pricing.discount }}{% endif %}";
+                details += "\n";
+            {% endfor %}
+            
+            return details;
+        }
+    });
+</script>
+
 
 {% endblock %}
