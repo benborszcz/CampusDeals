@@ -2,15 +2,77 @@
 
 {% block content %}
 
+<div class="weather-popup" id="weatherPopup">
+    <div id="weatherContent"></div>
+</div>
+
+
 <style>
+
+.weather-popup {
+    position: absolute;
+    top: 150px; /* Adjust the top position as needed */
+    right: -300px; /* Initially hide the popup outside the viewport */
+    width: 300px;
+    height: 28vh;
+    background-color: #fff;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: right 0.3s ease-in-out;
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    z-index: 999; /* Ensure the popup is above other content */
+}
+
+
+
+
+    #weatherContent {
+        padding: 20px;
+    }
+
     .address-time-wrapper {
         flex: 1; /* Allow address and time to take remaining space */
     }
 
     .logo-wrapper {
-        float: right; /* Align logo to the right */
+        float: left; /* Align logo to the right */
     }
+
+    .address-time-wrapper {
+        flex: 1;
+    }
+
+    .logo-wrapper {
+        float: right;
+    }
+
+    .establishment-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .weather-details {
+        display: flex;
+        flex-direction: column; /* Display weather details in a column */
+        align-items: flex-end; /* Align weather details to the right within the container */
+        margin-left: 20px; /* Adjust the left margin to create space between directions link and weather details */
+    }
+
+    #weather-icon img {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 5px; /* Add bottom margin to separate weather details */
+        margin-right: 20px;
+    }
+
+    #weather-description,
+    #weather-temperature {
+        margin-bottom: 0px; /* Add bottom margin to separate weather details */
+        margin-right: 20px;
+    }
+
 </style>
+
     <div class="card mb-4">
         <div class="card-header">
             <h2 class="card-title">{{ deal.title }}</h2>
@@ -18,15 +80,16 @@
         <div class="card-body">
             <a href="{{ url_for('establishment_details', establishment_name=deal.establishment.name)}}"> <h3 class="card-text">{{ deal.establishment.name }}</h3></a>
             <div class="address-time-wrapper">
-                <div class="google-maps-link">
-                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ deal.establishment.latitude }},{{ deal.establishment.longitude }}" target="_blank" style="font-size: 18px;">{{ deal.establishment.address }} (Directions)</a>
-                </div>
+                <div class="establishment-details">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ deal.establishment.latitude }},{{ deal.establishment.longitude }}" target="_blank" style="font-size: 18px;">
+                        {{ deal.establishment.address }} (Directions)
+                    </a>
+                </div
                 <h5 class="card-text text-muted">
                     <c>{{ deal.deal_details.days_active | join(", ") }},</c> 
                     <c id="start-time">{{ deal.deal_details.start_time }} - </c>
                     <c id="end-time">{{ deal.deal_details.end_time }}</c>
                 </h5>
-                
             </div>
             <div class="logo-wrapper">
                 {% if deal.establishment.name == "Midway on High" %}
@@ -141,4 +204,106 @@
             endTimeElement.innerHTML = convertMilitaryToStandardTime("{{ deal.deal_details.end_time }}");
         });
     </script>
+
+    <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var latitude = {{ deal.establishment.latitude }};
+                var longitude = {{ deal.establishment.longitude }};
+                var apiKey = 'cf1def3bdcfc237cf125607725bcec5b';
+                var weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${apiKey}`;
+
+            fetch(weatherUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Extract weather details
+                    var weatherIcon = data.weather[0].icon;
+                    var weatherDescription = data.weather[0].description;
+                    var temperature = data.main.temp;
+
+                    // Display weather icon
+                    var iconUrl = `http://openweathermap.org/img/wn/${weatherIcon}.png`;
+                    document.getElementById('weather-icon').innerHTML = `<img src="${iconUrl}" alt="Weather Icon">`;
+
+                    // Display weather description and temperature
+                    document.getElementById('weather-description').textContent = toTitleCase(weatherDescription);
+                    document.getElementById('weather-temperature').textContent = `${temperature.toFixed(1)} °F`;
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    // Handle error (e.g., display a fallback message)
+                    document.getElementById('weather-icon').textContent = 'Weather unavailable';
+                });
+        });
+
+        function toTitleCase(str) {
+        return str.toLowerCase().replace(/(?:^|\s)\w/g, function(match) {
+            return match.toUpperCase();
+        });
+    }
+
+    </script>
+
+    <script>
+        // JavaScript (inside <script> tag or external JS file)
+
+   // Function to toggle weather popup visibility
+    function toggleWeatherPopup() {
+    var weatherPopup = document.getElementById('weatherPopup');
+
+    if (weatherPopup.style.right === '0px') {
+        weatherPopup.style.right = '-300px'; // Slide out to the right to hide
+        weatherArrow.style.left = '-30px'; // Move the arrow outside the viewport on the left
+    } else {
+        weatherPopup.style.right = '0px'; // Slide in from the right to show
+        weatherArrow.style.left = '270px'; // Position the arrow horizontally next to the popup
+    }
+    }
+
+document.addEventListener("DOMContentLoaded", function() {
+    var latitude = {{ deal.establishment.latitude }};
+    var longitude = {{ deal.establishment.longitude }};
+    var apiKey = 'cf1def3bdcfc237cf125607725bcec5b';
+    var weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${apiKey}`;
+
+    fetch(weatherUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Extract weather details
+            var weatherIcon = data.weather[0].icon;
+            var weatherDescription = data.weather[0].description;
+            var temperature = data.main.temp;
+
+            // Display weather content inside the popup
+            var weatherContent = document.getElementById('weatherContent');
+            weatherContent.innerHTML = `
+                <p><strong>Weather Details</strong></p>
+                <img src="http://openweathermap.org/img/wn/${weatherIcon}.png" alt="Weather Icon">
+                <p><strong>Description:</strong> ${toTitleCase(weatherDescription)}</p>
+                <p><strong>Temperature:</strong> ${temperature.toFixed(1)} °F</p>
+            `;
+        })
+        .catch(error => {
+            console.error('Error fetching weather data:', error);
+            // Display error message inside the popup
+            var weatherContent = document.getElementById('weatherContent');
+            weatherContent.innerHTML = 'Weather data unavailable';
+        });
+});
+
+// Function to convert string to title case
+function toTitleCase(str) {
+    return str.toLowerCase().replace(/(?:^|\s)\w/g, function(match) {
+        return match.toUpperCase();
+    });
+}
+
+    </script>
+
+<script>
+    // Call toggleWeatherPopup() to show or hide the weather popup
+    document.addEventListener("DOMContentLoaded", function() {
+        toggleWeatherPopup(); // Show the weather popup when the page loads
+    });
+</script>
+
 {% endblock %}

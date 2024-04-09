@@ -76,7 +76,7 @@ def index():
                     print(f"Adjusting coordinates for {deal['title']}")
                     deal['lat'], deal['lng'] = adjust_coords(deal['lat'], deal['lng'], i)
 
-    return render_template('index.html', popular_deals=deal_list, deals_json=json.dumps(deal_list))
+    return render_template('index.html', popular_deals=deal_list, deals_json=json.dumps(deal_list), enumerate=enumerate, len=len)
 
 from flask import request, jsonify
 from . import app, db
@@ -88,7 +88,7 @@ def submit_deal():
     establishments = db.collection('establishments').stream()
     establishment_list = [establishment.to_dict() for establishment in establishments]
 
-    form = DealSubmissionForm()
+    form = DealSubmissionForm(establishments=establishment_list)
     if request.method == 'POST':
         # Conditionally adjust validators based on "All Day" checkbox
         if 'all_day' in request.form and request.form['all_day'] == 'y':
@@ -184,7 +184,17 @@ def search():
         for result in deal_results:
             print(f"Deal: {result['title']}, Score: {result['_score']}")
 
-        return render_template('search_results.html', results=deal_results)
+        # load all establishments from firestore
+        establishments = db.collection('establishments').stream()
+        establishment_list = [establishment.to_dict() for establishment in establishments]
+
+        # link deals to establishments
+        for deal in deal_results:
+            for establishment in establishment_list:
+                if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
+                    deal['establishment'] = establishment
+
+        return render_template('search_results.html', results=deal_results, enumerate=enumerate, len=len)
     return redirect(url_for('index'))
 
 @app.route('/establishment_details/<establishment_name>', methods=['GET'])
@@ -291,8 +301,19 @@ def daily_deals():
     # Sort deals based on votes or other criteria if needed
     daily_deals = sorted(daily_deals, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0), reverse=True)
 
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
+
+    # link deals to establishments
+    for deal in daily_deals:
+        for establishment in establishment_list:
+            if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
+                deal['establishment'] = establishment
+
+
     # Render the 'daily_deals.html' template
-    return render_template('daily_deals.html', daily_deals=daily_deals)
+    return render_template('daily_deals.html', daily_deals=daily_deals, enumerate=enumerate, len=len)
 
 
 @app.route('/view-comments/<deal_id>', methods=['GET', 'POST'])
