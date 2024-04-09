@@ -21,12 +21,12 @@
         margin: 0;
         box-sizing: border-box;
     }
-    
+
     html, body {
         height: 100%;
         margin: 0;
     }
-    
+
     body {
         font-family: "Helvetica Neue", Arial, sans-serif; /* Modern font stack */
         height: 100vh;
@@ -34,42 +34,42 @@
         flex-direction: column;
         background: #f9f9f9; /* Light gray background */
     }
-    
+
     main {
         flex: 1 0 auto;
     }
-    
+
     footer {
         flex-shrink: 0;
     }
-    
+
     .navbar {
         background-color: #3aafa9; /* Turquoise navbar background */
         padding-top: 60px; /* Add padding-top to create space for the football */
         position: relative; /* Make the navbar position relative */
     }
-    
+
     .navbar-brand {
         font-family: 'YourFont', sans-serif; /* Change the font style */
     }
-    
+
     .navbar-nav .nav-link {
         color: #fff;
         font-weight: bold; /* Bold text */
     }
-    
+
     .navbar-collapse {
         justify-content: flex-end;
     }
-    
+
     .navbar-toggler {
         border-color: #fff;
     }
-    
+
     .navbar-nav .nav-item {
         margin-right: 1rem;
     }
-    
+
     .navbar-nav .nav-link {
         text-decoration: none;
         color: #fff;
@@ -77,7 +77,7 @@
         padding: 1rem 2rem;
         position: relative;
     }
-    
+
     .navbar-nav .nav-link::before,
     .navbar-nav .nav-link::after {
         content: "";
@@ -88,24 +88,24 @@
         transform: scaleX(0);
         transition: all 0.3s ease; /* Faster transition */
     }
-    
+
     .navbar-nav .nav-link::before {
         top: 0;
         left: 0;
         transform-origin: left;
     }
-    
+
     .navbar-nav .nav-link::after {
         bottom: 0;
         left: 0;
         transform-origin: right;
     }
-    
+
     .navbar-nav .nav-link:hover::before,
     .navbar-nav .nav-link:hover::after {
         transform: scaleX(1);
     }
-    
+
     .footer {
         background-color: #3aafa9;
         color: #fff;
@@ -113,30 +113,30 @@
         padding: 1rem;
         margin-top: 4rem;
     }
-    
+
     .gear-icon {
         display: inline-block;
         position: relative; /* Ensure proper positioning of pseudo-elements */
     }
-    
+
     .bi-gear path {
         transition: transform 0.3s ease;
     }
-    
+
     .bi-gear:hover path:first-of-type,
     .bi-gear:hover path:last-of-type {
         transform: none; /* Prevent transformation of pseudo-elements on hover */
     }
-    
+
     .bi-gear:hover::before,
     .bi-gear:hover::after {
         content: ""; /* Remove content of pseudo-elements on hover */
     }
-    
+
     .bi-gear:hover {
         animation: spin 1s infinite linear;
     }
-    
+
     @keyframes spin {
         0% {
             transform: rotate(0deg);
@@ -145,12 +145,12 @@
             transform: rotate(360deg);
         }
     }
-    
+
     .nav-link.dropdown-toggle:hover .bi-gear::before,
     .nav-link.dropdown-toggle:hover .bi-gear::after {
         content: none;
     }
-    
+
     .burger {
     position: absolute;
     top: 0; /* Adjust as needed */
@@ -290,6 +290,22 @@
     }
   }
 
+  .footer-column {
+    float: left;
+    width: 33.33%;
+    padding: 10px;
+  }
+
+  .footer-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.footer-img {
+    width: 50px;
+    height: auto;
+}
 
 </style>
 
@@ -375,15 +391,45 @@
     </main>
 
     <footer class="footer bg-dark text-white mt-4 py-3 text-center">
+      <div class="footer-row">
+        <div class="footer-column">
+          <h1>Contact</h1>
+          <img src="{{ url_for('static', filename='images/campusDealsLogo.png') }}" href="{{ url_for('index') }}" alt="Campus Deals Logo" class="CampusDealsLogo" style="width: 100px; height: auto;"/>
+          <p style="margin-bottom: 0px">140 W 18th Ave #053</p>
+          <p style="margin-top: 0px">Columbus, OH 43210</p>
+        </div>
+        <div class="footer-column">
+          <h1>Menu</h1>
+          <h5 class="footer-nav"><a href="{{ url_for('index') }}">Home</a></h1>
+          <h5 class="footer-nav"><a href="{{ url_for('daily_deals') }}">Today's Deals</a></h1>
+          <h5 class="footer-nav"><a href="{{ url_for('submit_deal') }}">Submit Deal</a></h1>
+          <h5 class="footer-nav"><a href="{{ url_for('establishments') }}">Establishments</a></h1>
+        </div>
+        <div class="footer-column">
+          <h1>Follow Us</h1>
+          <form action="{{ url_for('newsletter') }}" method="get" class="form-inline mb-4" style="display:block;">
+            <label for="newsletter" class="form-label">Join our newsletter!</label>
+            <input type="text" name="email" class="form-control mr-2" placeholder="Your Email Address">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+          <div style="padding-top: 15px;">
+            <a href="https://www.facebook.com"><img src="{{ url_for('static', filename='images/facebook.png') }}" alt="Facebook" class="footer-img" href="https://www.facebook.com"></a>
+            <a href="https://www.twitter.com"><img src="{{ url_for('static', filename='images/x.png') }}" alt="X" class="footer-img" href="https://www.twitter.com"></a>
+            <a href="https://www.instagram.com"><img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram" class="footer-img" href="https://www.instagram.com"></a>
+            <a href="https://www.linkedin.com"><img src="{{ url_for('static', filename='images/linkedin.png') }}" alt="LinkedIn" class="footer-img" href="https://www.linkedin.com"></a>
+            <a href="https://www.tiktok.com"><img src="{{ url_for('static', filename='images/tiktok.png') }}" alt="TikTok" class="footer-img" href="https://www.tiktok.com"></a>
+          </div>
+        </div>
+      </div>
         <p>&copy; 2024 CampusDeals</p>
     </footer>
-    
+
     <!-- Include Bootstrap JS and its dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.9/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Optional: Include custom JS for additional interactivity -->
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
-    
+
 </body>
 </html>

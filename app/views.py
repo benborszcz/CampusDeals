@@ -408,3 +408,7 @@ def downvote_comment(deal_id, comment_id):
     comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(comment_id)
     comment_ref.update({"downvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
+
+@app.route('/newsletter', methods=['GET'])
+def newsletter():
+    return render_template('newsletter.html')
