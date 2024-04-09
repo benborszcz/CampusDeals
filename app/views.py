@@ -88,7 +88,7 @@ def submit_deal():
     establishments = db.collection('establishments').stream()
     establishment_list = [establishment.to_dict() for establishment in establishments]
 
-    form = DealSubmissionForm()
+    form = DealSubmissionForm(establishments=establishment_list)
     if request.method == 'POST':
         # Conditionally adjust validators based on "All Day" checkbox
         if 'all_day' in request.form and request.form['all_day'] == 'y':

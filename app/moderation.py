@@ -15,7 +15,8 @@ class Moderator:
         output_o = response.results[0]
 
         # Profanity filter
-        output_p = profanity.contains_profanity(text)
+        #output_p = profanity.contains_profanity(text)
+        output_p = False
 
         # Return the flagged status
         return output_o.flagged or output_p
