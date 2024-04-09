@@ -413,3 +413,7 @@ def downvote_comment(deal_id, comment_id):
 @app.route("/profile")
 def profile():
     return render_template('profile.html', user_id =current_user.id)
+
+@app.route('/newsletter', methods=['GET'])
+def newsletter():
+    return render_template('newsletter.html')
