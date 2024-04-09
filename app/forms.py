@@ -10,7 +10,8 @@ class MultiCheckboxField(SelectMultipleField):
     option_widget = widgets.CheckboxInput()
 
 class DealSubmissionForm(FlaskForm):
-    establishment_name = SelectField('Establishment Name', choices=['Midway on High', 'Ethyl & Tank', 'Out R Inn', 'Threes Above High', 'Plaza Mexican Grill'], validators=[DataRequired()])
+    
+    establishment_name = SelectField('Establishment Name', validators=[DataRequired()])
     establishment_type = SelectField('Establishment Type', choices=[('bar', 'Bar'), ('restaurant', 'Restaurant'), ('other', 'Other')], validators=[DataRequired()])
     deal_name = StringField('Deal Name', validators=[DataRequired()])
     deal_description = TextAreaField('Deal Description', validators=[DataRequired()])
@@ -20,3 +21,9 @@ class DealSubmissionForm(FlaskForm):
     days_active = MultiCheckboxField('Days Active:\n', choices=[('mon', 'Monday'), ('tue', 'Tuesday'), ('wed', 'Wednesday'), ('thu', 'Thursday'), ('fri', 'Friday'), ('sat', 'Saturday'), ('sun', 'Sunday')], validators=[])
     repeat = BooleanField('Recurring Deal?')
     submit = SubmitField('Submit')
+
+    def __init__(self, establishments):
+        super(DealSubmissionForm, self).__init__()
+        establishment_choices = [establishment['name'] for establishment in establishments]
+        self.establishment_name.choices = establishment_choices
+                                    
