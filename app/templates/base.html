@@ -10,6 +10,7 @@
     <!-- Optional: Include custom CSS for additional styling -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='images/campusDealsLogo.png') }}" type="image/png">
 </head>
@@ -307,6 +308,29 @@
     height: auto;
 }
 
+#back-to-top-btn {
+        display: none; /* Hide the button by default */
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 99;
+        font-size: 34px;
+        width: 60px;
+        height: 60px;
+        border: none;
+        outline: none;
+        background-color: #3aafa9;
+        color: #ffffff;
+        cursor: pointer;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s, transform 0.3s;
+    }
+
+    #back-to-top-btn:hover {
+        opacity: 0.8;
+    }
+
 </style>
 
 <body>
@@ -338,6 +362,32 @@
                 }, 5000);
             });
         </script>
+
+        <!-- Inside the <body> section of base.html, before the closing </body> tag -->
+<script>
+  // JavaScript function to scroll back to the top of the page
+  function scrollToTop() {
+      window.scrollTo({
+          top: 0,
+          behavior: 'smooth' // Smooth scroll behavior
+      });
+  }
+
+  // Show or hide the "Back to Top" button based on scroll position
+  window.onscroll = function() {
+      toggleBackToTopButton();
+  };
+
+  function toggleBackToTopButton() {
+      const backToTopButton = document.getElementById('back-to-top-btn');
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+          backToTopButton.style.display = 'block';
+      } else {
+          backToTopButton.style.display = 'none';
+      }
+  }
+</script>
+
     </div> <!-- White strip above the navbar -->
     <header>
         <!-- Bootstrap Navigation Bar -->
@@ -431,5 +481,6 @@
     <!-- Optional: Include custom JS for additional interactivity -->
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
 
+    <button onclick="scrollToTop()" id="back-to-top-btn" title="Go to top">&#8593;</button>
 </body>
 </html>
