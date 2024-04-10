@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var suggestionsList = document.getElementById('suggestions');
     var searchForm = document.querySelector('form'); // Select the form
 
+    console.log("Search Input: ", searchInput);
+    console.log("Suggestions List: ", suggestionsList);
+    console.log("Search Form: ", searchForm);
     searchInput.addEventListener('input', function() {
         var query = this.value;
         if(query.length > 1) {
