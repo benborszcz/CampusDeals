@@ -430,7 +430,8 @@ clear: both;
 }
 
 .footer-img {
-width: 50px;
+width: 30px;
+padding-top: 0px;
 height: auto;
 }
 
