@@ -96,7 +96,7 @@
                         </div>
                     </div>
                     <div class="card-footer text-muted">
-                        Posted on <span id="created-at"></span>
+                        Posted <span id="created-at"></span>
                     </div>
                 </div>
             </div>
@@ -127,23 +127,13 @@
                     {% endif %}
                 {% endwith %}
             
+                <div class="map-container">
+                    <div class="shadow" style="border-radius: 10px;">
+                        <div id="map"></div>
+                    </div>
+                </div>
                 <!-- Display form for adding a comment (only for logged-in users) -->
-                {% if current_user.is_authenticated %}
-                    {% if comment_form %}
-                        <form action="{{ url_for('view_and_add_comments', deal_id=deal_id) }}" method="post">
-                            {{ comment_form.csrf_token }}
-                            <div class="mb-3">
-                                <label for="comment" class="form-label">Add a Comment:</label>
-                                {{ comment_form.comment(class="form-control", placeholder="Write your comment here") }}
-                            </div>
-                            <button type="submit" class="btn btn-primary">Submit Comment</button>
-                        </form>
-                    {% else %}
-                        <p>Click on a view comments button to see comments!</p>
-                    {% endif %}
-                {% else %}
-                    <p><a href="{{ url_for('auth.login') }}">Log in</a> to leave a comment.</p>
-                {% endif %}
+                
             </div>
         </div>
     </div>
@@ -151,8 +141,8 @@
     <script>
         var deals = {{ deals_json|safe }};
         var map = L.map('map', {
-            center: [deals[0].establishment.latitude, deals[0].establishment.longitude],
-            zoom: 18,
+            center: [40.0022, -83.0075],
+            zoom: 15,
             maxZoom: 19, // Global maximum zoom level for the map
             minZoom: 10
         });
@@ -165,15 +155,15 @@
 
         // Add markers and popups with URLs
         deals.forEach(function(deal) {
-            L.marker([deal.establishment.latitude, deal.establishment.longitude]).addTo(map)
+            L.marker([deal.lat, deal.lng]).addTo(map)
                 .bindPopup(`
-                <c style="text-decoration: none;">
+                <a href="${deal.url}" style="text-decoration: none;">
                     <b>${deal.establishment.shortname}</b> - <d style="font-size: smaller;">${deal.deal_details.deal_name}</d>
                     <br>
                     <div>
                         <d style="font-size: x-small;">${deal.deal_details.deal_description}</d>
                     </div>
-                </c>
+                </a>
                 `, {maxWidth: "200"});
         });
     </script>

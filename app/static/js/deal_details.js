@@ -17,9 +17,49 @@ function convertMilitaryToStandardTime(militaryTime) {
 
     // Format the time
     var standardTime = hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + " " + period;
-    console.log(standardTime);
     return standardTime;
 }
+
+function toRelativeTime(utcString) {
+    const currentTime = new Date();
+    const givenTime = new Date(utcString);
+    const timeDifference = currentTime - givenTime; // Difference in milliseconds
+  
+    const minute = 60 * 1000; // milliseconds
+    const hour = 60 * minute;
+    const day = 24 * hour;
+    const month = 30 * day; // Approximation
+    const year = 365.25 * day;
+  
+    let relativeTime = '';
+    let timeUnit = 0;
+    let timeLabel = '';
+  
+    if (Math.abs(timeDifference) < hour) {
+      timeUnit = Math.round(Math.abs(timeDifference) / minute);
+      timeLabel = 'minute';
+    } else if (Math.abs(timeDifference) < day) {
+      timeUnit = Math.round(Math.abs(timeDifference) / hour);
+      timeLabel = 'hour';
+    } else if (Math.abs(timeDifference) < month) {
+      timeUnit = Math.round(Math.abs(timeDifference) / day);
+      timeLabel = 'day';
+    } else if (Math.abs(timeDifference) < year) {
+      timeUnit = Math.round(Math.abs(timeDifference) / month);
+      timeLabel = 'month';
+    } else {
+      timeUnit = Math.round(Math.abs(timeDifference) / year);
+      timeLabel = 'year';
+    }
+  
+    // Pluralize label
+    if (timeUnit !== 1) {
+      timeLabel += 's';
+    }
+    relativeTime = `${timeUnit} ${timeLabel} ago`;
+  
+    return relativeTime;
+  }
 
 document.addEventListener("DOMContentLoaded", function() {
     // Replace military time with standard time for Start Time
@@ -82,11 +122,8 @@ function loadDeal(dealId) {
                 itemDetail.textContent = `${item.item} - ${item.pricing.discount === 'N/A' ? item.pricing.price : item.pricing.discount}`;
                 dealItemsDetails.appendChild(itemDetail);
             });
-
-            // const relativeTime = dateFns.formatDistanceToNow(dateFns.parseISO(data.created_at), { addSuffix: true });
-            document.getElementById('created-at').textContent = data.created_at;
-
-            // console.log(relativeTime);  // e.g., "2 days ago" (depending on the current date when you run this)
+            
+            document.getElementById('created-at').textContent = toRelativeTime(data.created_at);
 
             // Initialize the map with the deal location
             // initializeMap(data.establishment.latitude, data.establishment.longitude);
