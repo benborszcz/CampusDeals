@@ -101,8 +101,78 @@ def remove_comments_with_profanity(source_collection_name):
                 deal_ref = deals_ref.document(deal['deal_id'])
                 deal_ref.update({'comments': deal['comments']})
 
+# If tags is outside deal_details move it inside
+def move_tags_inside_deal_details(source_collection_name):
+    # Initialize Firestore
+    if not firebase_admin._apps:
+        cred = credentials.Certificate('app/firebase_service_account.json')
+        firebase_admin.initialize_app(cred)
+
+    db = firestore.client()
+
+    # Reference to the deals collection
+    deals_ref = db.collection(source_collection_name)
+    deals = deals_ref.stream()
+    deals = [deal.to_dict() for deal in deals]
+
+    # Move tags inside deal_details
+    for deal in deals:
+        if 'tags' in deal:
+            deal_details = deal.get('deal_details', {})
+            deal_details['tags'] = deal['tags']
+            deal['deal_details'] = deal_details
+            del deal['tags']
+            # Update the deal in Firestore
+            deal_ref = deals_ref.document(deal['deal_id'])
+            deal_ref.update(deal)
+    
+    # If tags does not exist at all put it inside deal_details
+    for deal in deals:
+        if 'tags' not in deal:
+            deal_details = deal.get('deal_details', {})
+            deal_details['tags'] = ['Bar']
+            deal['deal_details'] = deal_details
+            # Update the deal in Firestore
+            deal_ref = deals_ref.document(deal['deal_id'])
+            deal_ref.update(deal)
+
+
+# If tags is inside deal_details move it outside
+def move_tags_outside_deal_details(source_collection_name):
+    # Initialize Firestore
+    if not firebase_admin._apps:
+        cred = credentials.Certificate('app/firebase_service_account.json')
+        firebase_admin.initialize_app(cred)
+
+    db = firestore.client()
+
+    # Reference to the deals collection
+    deals_ref = db.collection(source_collection_name)
+    deals = deals_ref.stream()
+    deals = [deal.to_dict() for deal in deals]
+
+    # Move tags outside deal_details
+    for deal in deals:
+        deal_details = deal.get('deal_details', {})
+        if 'tags' in deal_details:
+            deal['tags'] = deal_details['tags']
+            del deal_details['tags']
+            deal['deal_details'] = deal_details
+            # Update the deal in Firestore
+            deal_ref = deals_ref.document(deal['deal_id'])
+            deal_ref.update(deal)
+
+    # If tags does not exist at all put it outside deal_details
+    for deal in deals:
+        deal_details = deal.get('deal_details', {})
+        if 'tags' not in deal and 'tags' not in deal_details:
+            deal['tags'] = ['Bar']
+            # Update the deal in Firestore
+            deal_ref = deals_ref.document(deal['deal_id'])
+            deal_ref.update(deal)
 
 if __name__ == "__main__":
-    source_collection_name = 'deals'
+    source_collection_name = 'deals2'
     destination_collection_name = 'deals_backup_'+datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    #remove_comments_with_profanity(source_collection_name)
+    duplicate_collection(source_collection_name, destination_collection_name)
+    move_tags_outside_deal_details(source_collection_name)

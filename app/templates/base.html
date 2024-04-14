@@ -10,147 +10,67 @@
     <!-- Optional: Include custom CSS for additional styling -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='images/campusDealsLogo.png') }}" type="image/png">
 </head>
-<style>
-*,
-*::before,
-*::after {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
 
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
-body {
-    font-family: "Helvetica Neue", Arial, sans-serif; /* Modern font stack */
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: #f9f9f9; /* Light gray background */
-}
-
-main {
-    flex: 1 0 auto;
-}
-
-footer {
-    flex-shrink: 0;
-}
-
-.navbar {
-    background-color: #3aafa9; /* Turquoise navbar background */
-}
-
-.navbar-brand {
-    font-family: 'YourFont', sans-serif; /* Change the font style */
-}
-
-.navbar-nav .nav-link {
-    color: #fff;
-    font-weight: bold; /* Bold text */
-}
-
-.navbar-collapse {
-    justify-content: flex-end;
-}
-
-.navbar-toggler {
-    border-color: #fff;
-}
-
-.navbar-nav .nav-item {
-    margin-right: 1rem;
-}
-
-.navbar-nav .nav-link {
-    text-decoration: none;
-    color: #fff;
-    font-size: 18px; /* Slightly smaller font size */
-    padding: 1rem 2rem;
-    position: relative;
-}
-
-.navbar-nav .nav-link::before,
-.navbar-nav .nav-link::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    background: #fff;
-    transform: scaleX(0);
-    transition: all 0.3s ease; /* Faster transition */
-}
-
-.navbar-nav .nav-link::before {
-    top: 0;
-    left: 0;
-    transform-origin: left;
-}
-
-.navbar-nav .nav-link::after {
-    bottom: 0;
-    left: 0;
-    transform-origin: right;
-}
-
-.navbar-nav .nav-link:hover::before,
-.navbar-nav .nav-link:hover::after {
-    transform: scaleX(1);
-}
-
-.footer {
-    background-color: #3aafa9;
-    color: #fff;
-    text-align: center;
-    padding: 1rem;
-    margin-top: 4rem;
-}
-
-    .gear-icon {
-    display: inline-block;
-    position: relative; /* Ensure proper positioning of pseudo-elements */
-}
-
-.bi-gear path {
-    transition: transform 0.3s ease;
-}
-
-.bi-gear:hover path:first-of-type,
-.bi-gear:hover path:last-of-type {
-    transform: none; /* Prevent transformation of pseudo-elements on hover */
-}
-
-.bi-gear:hover::before,
-.bi-gear:hover::after {
-    content: ""; /* Remove content of pseudo-elements on hover */
-}
-
-.bi-gear:hover {
-    animation: spin 1s infinite linear;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-.nav-link.dropdown-toggle:hover .bi-gear::before,
-.nav-link.dropdown-toggle:hover .bi-gear::after {
-    content: none;
-}
-
-</style>
 <body>
+    <div class="white-strip">
+        <img src="{{ url_for('static', filename='images/burger.gif') }}" alt="Burger" class="burger">
+        <img src="{{ url_for('static', filename='images/beer.gif') }}" alt="Beer" class="beer">
+        <img src="{{ url_for('static', filename='images/pizza.gif') }}" alt="Pizza" class="pizza">
+        <img src="{{ url_for('static', filename='images/wine.gif') }}" alt="Wine" class="wine">
+        <img src="{{ url_for('static', filename='images/fries.gif') }}" alt="Fries" class="fries">
+        <img src="{{ url_for('static', filename='images/alc.gif') }}" alt="Alc" class="alc">
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                setTimeout(function() {
+                    document.querySelector('.beer').style.opacity = '1';
+                }, 1250); // 1000 milliseconds = 1 seconds delay
+
+                setTimeout(function() {
+                    document.querySelector('.pizza').style.opacity = '1';
+                }, 2000); // 2000 milliseconds = 2 second delay for taco
+
+                setTimeout(function() {
+                    document.querySelector('.wine').style.opacity = '1';
+                }, 3000);
+                setTimeout(function() {
+                    document.querySelector('.fries').style.opacity = '1';
+                }, 4000);
+                setTimeout(function() {
+                    document.querySelector('.alc').style.opacity = '1';
+                }, 5000);
+            });
+        </script>
+
+        <!-- Inside the <body> section of base.html, before the closing </body> tag -->
+<script>
+  // JavaScript function to scroll back to the top of the page
+  function scrollToTop() {
+      window.scrollTo({
+          top: 0,
+          behavior: 'smooth' // Smooth scroll behavior
+      });
+  }
+
+  // Show or hide the "Back to Top" button based on scroll position
+  window.onscroll = function() {
+      toggleBackToTopButton();
+  };
+
+  function toggleBackToTopButton() {
+      const backToTopButton = document.getElementById('back-to-top-btn');
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+          backToTopButton.style.display = 'block';
+      } else {
+          backToTopButton.style.display = 'none';
+      }
+  }
+</script>
+
+    </div> <!-- White strip above the navbar -->
     <header>
         <!-- Bootstrap Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -159,8 +79,6 @@ footer {
             </a>
             <a class="navbar-brand" href="{{ url_for('index') }}">CampusDeals</a>
             <ul class="navbar-nav">
-                <!-- Add Home and Submit Deal links here -->
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('daily_deals') }}">Today's Deals</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('submit_deal') }}">Submit Deal</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('establishments') }}">Establishments</a></li>
@@ -208,15 +126,46 @@ footer {
     </main>
 
     <footer class="footer bg-dark text-white mt-4 py-3 text-center">
+      <div class="footer-row">
+        <div class="footer-column">
+          <h4>Contact</h4>
+          <img src="{{ url_for('static', filename='images/campusDealsLogo.png') }}" href="{{ url_for('index') }}" alt="Campus Deals Logo" class="CampusDealsLogo" style="padding-top: 0px; width: 70px; height: auto;"/>
+          <p style="margin-bottom: 0px; font-size: 10px;">140 W 18th Ave #053</p>
+          <p style="margin-top: 0px; font-size: 10px;">Columbus, OH 43210</p>
+        </div>
+        <div class="footer-column">
+          <h4>Menu</h4>
+          <h7 class="footer-nav"><a href="{{ url_for('index') }}">Home</a></h7><br>
+          <h7 class="footer-nav"><a href="{{ url_for('daily_deals') }}">Today's Deals</a></h7><br>
+          <h7 class="footer-nav"><a href="{{ url_for('submit_deal') }}">Submit Deal</a></h7><br>
+          <h7 class="footer-nav"><a href="{{ url_for('establishments') }}">Establishments</a></h7>
+        </div>
+        <div class="footer-column">
+          <h4>Follow Us</h4>
+          <form action="{{ url_for('newsletter') }}" method="get" class="form-inline mb-4" style="display:block;">
+            <label for="newsletter" class="form-label" style="font-size:12px;">Join our newsletter!</label>
+            <input type="text" name="email" class="form-control mr-2" placeholder="Your Email Address" style="height: 20px; font-size: 10px;">
+            <button type="submit" class="btn btn-primary" style="height: 20px; font-size: 10px; padding-top: 2px; padding-bottom: 2px;">Submit</button>
+          </form>
+          <div style="padding-top: 15px;">
+            <a href="https://www.facebook.com"><img src="{{ url_for('static', filename='images/facebook.png') }}" alt="Facebook" class="footer-img" href="https://www.facebook.com"></a>
+            <a href="https://www.twitter.com"><img src="{{ url_for('static', filename='images/x.png') }}" alt="X" class="footer-img" href="https://www.twitter.com"></a>
+            <a href="https://www.instagram.com"><img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram" class="footer-img" href="https://www.instagram.com"></a>
+            <a href="https://www.linkedin.com"><img src="{{ url_for('static', filename='images/linkedin.png') }}" alt="LinkedIn" class="footer-img" href="https://www.linkedin.com"></a>
+            <a href="https://www.tiktok.com"><img src="{{ url_for('static', filename='images/tiktok.png') }}" alt="TikTok" class="footer-img" href="https://www.tiktok.com"></a>
+          </div>
+        </div>
+      </div>
         <p>&copy; 2024 CampusDeals</p>
     </footer>
-    
+
     <!-- Include Bootstrap JS and its dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.9/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Optional: Include custom JS for additional interactivity -->
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
-    
+
+    <button onclick="scrollToTop()" id="back-to-top-btn" title="Go to top">&#8593;</button>
 </body>
 </html>
