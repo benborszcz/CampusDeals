@@ -21,6 +21,7 @@ import uuid
 import os
 from werkzeug.utils import secure_filename
 from app import db
+import shutil
 
 
 
@@ -270,6 +271,11 @@ def deal_details(deal_id):
 def upvote_deal(deal_id):
     deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     deal_ref.update({"upvotes": firestore.Increment(1)})
+
+    user_ref = db.collection('users').document(current_user.id)
+    user_ref.update({
+        'upvoted_deals': firestore.ArrayUnion([deal_id])
+    })
     return jsonify(success=True), 200
 
 @login_required
@@ -277,6 +283,11 @@ def upvote_deal(deal_id):
 def downvote_deal(deal_id):
     deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     deal_ref.update({"downvotes": firestore.Increment(1)})
+
+    user_ref = db.collection('users').document(current_user.id)
+    user_ref.update({
+        'upvoted_deals': firestore.ArrayRemove([deal_id])
+    })
     return jsonify(success=True), 200
 
 @app.route('/daily-deals')
@@ -436,16 +447,53 @@ def downvote_comment(deal_id, comment_id):
 @login_required
 @app.route("/profile")
 def profile():
-    return render_template('profile.html', user_id =current_user.id)
+    user_ref = db.collection('users').document(current_user.id)
+
+    user_doc = user_ref.get()
+
+    if not user_doc.exists:
+        flash("User not found.", "error")
+        return redirect(url_for('index'))
+    
+    # Retrieve the list of upvoted deals
+    user_data = user_doc.to_dict()
+    upvoted_deals = user_data.get('upvoted_deals', [])
+    
+    # Initialize a list to hold the details of the upvoted deals
+    upvoted_deal_details = []
+    
+    # Fetch the details of each upvoted deal
+    for deal_id in upvoted_deals:
+        deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
+        
+        deal_doc = deal_ref.get()
+        
+        if deal_doc.exists:
+            upvoted_deal_details.append(deal_doc.to_dict())
+    
+    return render_template('profile.html', user_id=current_user.id, upvoted_deals=upvoted_deal_details, enumerate=enumerate, len=len)
 
 @app.route('/update_profile', methods=['POST'])
 def update_profile():
-
-    #Update the username and email
+    # Update the username and email
     new_username = request.form.get('username')
     new_email = request.form.get('email')
 
     user_ref = db.collection('users').document(current_user.id)
+
+   #check for duplicate emails
+   #email_ref = db.collection('users').where('email', '==', new_email).limit(1).get()
+   #if email_ref:
+   #    flash('Email is already in use by another user. Please use a different email.', 'danger')
+   #    return redirect(url_for('edit_profile'))
+   #
+   ##check for duplicate usernames
+   #username_ref = db.collection('users').document(new_username)
+   #if username_ref.get().exists:
+   #    flash('Username already taken by another user. Please choose another.', 'danger')
+   #    return redirect(url_for('edit_profile'))
+    
+    #update user info
     user_ref.update({
         'username': new_username,
         'email': new_email,
@@ -455,21 +503,26 @@ def update_profile():
     app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
     os.makedirs(app.config['UPLOADS_FOLDER'], exist_ok=True)
 
-    #Check for the file upload
+    # Check for the file upload
     file = request.files.get('profile_picture')
     if file and file.filename:
-            
-            #Check for PNGs and JPGs
-            if not (file.filename.lower().endswith('jpg') or file.filename.lower().endswith('png') or file.filename.lower().endswith('jpeg')):
-                flash('Only JPG and PNG files are allowed for the profile picture.', 'error')
-                return render_template('edit_profile.html')
+        # Check for PNGs and JPGs
+        if not (file.filename.lower().endswith('jpg') or file.filename.lower().endswith('png') or file.filename.lower().endswith('jpeg')):
+            flash('Only JPG and PNG files are allowed for the profile picture.', 'error')
+            return render_template('edit_profile.html')
 
-            file_path = os.path.join(app.config['UPLOADS_FOLDER'], f"{current_user.id}.jpg")
-            file.save(file_path)
-
-            #save file path to user
-            user_ref = db.collection('users').document(current_user.id)
-            user_ref.update({'profile_picture_url': file_path})
+        # Save the file and construct the file path
+        file_path = os.path.join(app.config['UPLOADS_FOLDER'], f"{current_user.id}.jpg")
+        file.save(file_path)
+        # Convert file path to URL format
+        profile_picture_url = url_for('static', filename=f"uploads/{current_user.id}.jpg")
+        
+        # Log the file path and URL for debugging
+        #print(f"Saved profile picture to: {file_path}")
+        #print(f"Profile picture URL: {profile_picture_url}")
+        
+        # Update the user's profile picture URL in the database
+        user_ref.update({'profile_picture_url': profile_picture_url})
 
     flash('Profile updated successfully!')
     return redirect(url_for('profile'))
