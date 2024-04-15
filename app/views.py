@@ -18,6 +18,9 @@ from profanity import profanity
 from .moderation import Moderator
 import json
 import uuid
+import os
+from werkzeug.utils import secure_filename
+from app import db
 
 
 
@@ -434,6 +437,47 @@ def downvote_comment(deal_id, comment_id):
 @app.route("/profile")
 def profile():
     return render_template('profile.html', user_id =current_user.id)
+
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+
+    #Update the username and email
+    new_username = request.form.get('username')
+    new_email = request.form.get('email')
+
+    user_ref = db.collection('users').document(current_user.id)
+    user_ref.update({
+        'username': new_username,
+        'email': new_email,
+    })
+
+    UPLOADS_FOLDER = os.path.join(os.path.dirname(__file__), 'static/uploads')
+    app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
+    os.makedirs(app.config['UPLOADS_FOLDER'], exist_ok=True)
+
+    #Check for the file upload
+    file = request.files.get('profile_picture')
+    if file and file.filename:
+            
+            #Check for PNGs and JPGs
+            if not (file.filename.lower().endswith('jpg') or file.filename.lower().endswith('png') or file.filename.lower().endswith('jpeg')):
+                flash('Only JPG and PNG files are allowed for the profile picture.', 'error')
+                return render_template('edit_profile.html')
+
+            file_path = os.path.join(app.config['UPLOADS_FOLDER'], f"{current_user.id}.jpg")
+            file.save(file_path)
+
+            #save file path to user
+            user_ref = db.collection('users').document(current_user.id)
+            user_ref.update({'profile_picture_url': file_path})
+
+    flash('Profile updated successfully!')
+    return redirect(url_for('profile'))
+
+@login_required
+@app.route("/edit_profile")
+def edit_profile():
+    return render_template('edit_profile.html', user_id = current_user.id)
 
 @app.route('/newsletter', methods=['GET'])
 def newsletter():
