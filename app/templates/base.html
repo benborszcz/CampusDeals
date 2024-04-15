@@ -82,9 +82,6 @@
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('daily_deals') }}">Today's Deals</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('submit_deal') }}">Submit Deal</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('establishments') }}">Establishments</a></li>
-                {% if current_user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Profile</a></li>
-                {% endif %}
             </ul>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -97,6 +94,7 @@
                     </form>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSettings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="{{ url_for('static', filename = 'uploads/' + current_user.id + '.jpg') }}" alt="Profile Picture" class="profile-pic-small">
                             <div class = "gear-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
                                 <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
@@ -106,9 +104,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownSettings">
                             {% if current_user.is_authenticated %}
-                                <a class="dropdown-item" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Welcome {{ current_user.username }}
-                                </a>
+                                <a class="dropdown-item" href="{{ url_for('profile') }}">Welcome, {{ current_user.username }}!</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
                             {% else %}

@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>User Profile</h2>
+    <div class = "profile-header">
+        <h2>User Profile</h2>
+        <a href="{{ url_for('edit_profile') }}" class="btn btn-secondary">Edit Profile</a>
+    </div>
     <div class="profile-info">
-        <img src="{{ url_for('static', filename='images/userprofile.png') }}" alt="User Profile Image" class="profile-image">
+        <!--{% set profile_picture_url = url_for('static', filename = 'uploads/' + current_user.id + '.jpg') if current_user.profile_picture_url else url_for('static', filename = 'images/default_profile.png') %} -->
+        <img src="{{ url_for('static', filename = 'uploads/' + current_user.id + '.jpg')}}" alt="User Profile Image" class="profile-image">
         <div class="user-details">
             <p><strong>Username:</strong> {{ current_user.username }}</p>
             <p><strong>Email:</strong> {{ current_user.email }}</p>
@@ -11,5 +15,4 @@
         </div>
     </div>
 
-    
 {% endblock %}
