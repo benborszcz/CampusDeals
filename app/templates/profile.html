@@ -6,13 +6,22 @@
         <a href="{{ url_for('edit_profile') }}" class="btn btn-secondary">Edit Profile</a>
     </div>
     <div class="profile-info">
-        <!--{% set profile_picture_url = url_for('static', filename = 'uploads/' + current_user.id + '.jpg') if current_user.profile_picture_url else url_for('static', filename = 'images/default_profile.png') %} -->
-        <img src="{{ url_for('static', filename = 'uploads/' + current_user.id + '.jpg')}}" alt="User Profile Image" class="profile-image">
-        <div class="user-details">
-            <p><strong>Username:</strong> {{ current_user.username }}</p>
-            <p><strong>Email:</strong> {{ current_user.email }}</p>
-            <p><strong>Favorite Deals:</strong></p>
+        {% if current_user.is_authenticated %}
+            <!--<img src="{{ current_user.profile_picture_url }}" alt="Profile Picture" class="profile-image">-->
+            <img src="{{url_for('static', filename='uploads/'+current_user.id+'.jpg') }}" alt="Profile Picture" class="profile-image">
+            <div class="user-details">
+                <p><strong>Username:</strong> {{ current_user.username }}</p>
+                <p><strong>Email:</strong> {{ current_user.email }}</p>
+                <h2><strong>Favorite Deals:</strong></h2>
+                <div class = "row">
+                    {% for deal in upvoted_deals %}
+                    <div class="col-md-4 mb-3">
+                        {% include 'deal_card.html' %}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
+        {% endif %}
     </div>
 
 {% endblock %}

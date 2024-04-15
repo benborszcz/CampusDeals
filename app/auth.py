@@ -64,7 +64,9 @@ def register():
         user_ref.set({
             'username': username,
             'email': email,
-            'password': hashed_password
+            'password': hashed_password,
+            'profile_picture_url': 'images/default_profile.png',
+            'upvoted_deals': []
         })
 
         flash('Account created successfully. You can now log in.', 'success')
