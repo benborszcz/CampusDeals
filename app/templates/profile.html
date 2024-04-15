@@ -1,27 +1,42 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class = "profile-header">
+    <div class="profile-header">
         <h2>User Profile</h2>
         <a href="{{ url_for('edit_profile') }}" class="btn btn-secondary">Edit Profile</a>
     </div>
-    <div class="profile-info">
-        {% if current_user.is_authenticated %}
-            <!--<img src="{{ current_user.profile_picture_url }}" alt="Profile Picture" class="profile-image">-->
-            <img src="{{url_for('static', filename='uploads/'+current_user.id+'.jpg') }}" alt="Profile Picture" class="profile-image">
-            <div class="user-details">
-                <p><strong>Username:</strong> {{ current_user.username }}</p>
-                <p><strong>Email:</strong> {{ current_user.email }}</p>
-                <h2><strong>Favorite Deals:</strong></h2>
-                <div class = "row">
-                    {% for deal in upvoted_deals %}
+
+    <!-- Row for profile picture and user details -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            {% if current_user.is_authenticated %}
+                <div class="profile-picture-container">
+                    <img src="{{url_for('static', filename='uploads/'+current_user.id+'.jpg') }}" class="profile-image">
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-9">
+            {% if current_user.is_authenticated %}
+                <div class="user-details" style="font-size: 24px">
+                    <p><strong>Username:</strong> {{ current_user.username }}</p>
+                    <p><strong>Email:</strong> {{ current_user.email }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Full-width row for favorite deals -->
+    <div class="row">
+        <div class="col-12">
+            <h2><strong>Favorite Deals:</strong></h2>
+            <div class="row">
+                {% for deal in upvoted_deals %}
                     <div class="col-md-4 mb-3">
                         {% include 'deal_card.html' %}
                     </div>
                 {% endfor %}
             </div>
         </div>
-        {% endif %}
     </div>
 
 {% endblock %}
