@@ -5,7 +5,7 @@ from . import app, db
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
-from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
+from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty, get_active_deals, get_time_until_deals_end, get_time_until_deals_start, autocomplete_deals
 import config
 from firebase_admin import firestore
 from datetime import datetime
@@ -76,7 +76,34 @@ def index():
                     print(f"Adjusting coordinates for {deal['title']}")
                     deal['lat'], deal['lng'] = adjust_coords(deal['lat'], deal['lng'], i)
 
-    return render_template('index.html', popular_deals=deal_list, deals_json=json.dumps(deal_list))
+    # Find the time_until_start and for time_until_end for each deal
+    until_starts = get_time_until_deals_start(deal_list)
+    until_ends = get_time_until_deals_end(deal_list)
+    print(len(deal_list), len(until_starts), len(until_ends))
+    for i, deal in enumerate(deal_list):
+        # Convert the timedelta to string for display
+        deal['time_until_start'] = until_starts[i].days * 24 + until_starts[i].seconds // 3600
+        deal['time_until_end'] = until_ends[i].days * 24 + until_ends[i].seconds // 3600
+
+    # Create a list of active deals
+    active_deals = get_active_deals(deal_list)
+
+    # Sort active deals by time until end
+    active_deals = sorted(active_deals, key=lambda k: k['time_until_end'])
+
+    # Create a list of upcoming deals
+    upcoming_deals = [deal for deal in deal_list if deal not in active_deals]
+
+    # Sort upcoming deals by time until start
+    upcoming_deals = sorted(upcoming_deals, key=lambda k: k['time_until_start'])
+
+    for deal in upcoming_deals:
+        print(f"Deal: {deal['title']}, Time until start: {deal['time_until_start']}, Time until end: {deal['time_until_end']}")
+
+    # Create list of Active deals and next 10 upcoming deals
+    map_deals = active_deals + upcoming_deals[:10]
+
+    return render_template('index.html', popular_deals=deal_list[:6], deals_json=json.dumps(map_deals), active_deals=active_deals, upcoming_deals=upcoming_deals, enumerate=enumerate, len=len)
 
 @app.route('/deal_dashboard')
 def deal_dashboard():
@@ -138,7 +165,7 @@ def submit_deal():
     establishments = db.collection('establishments').stream()
     establishment_list = [establishment.to_dict() for establishment in establishments]
 
-    form = DealSubmissionForm()
+    form = DealSubmissionForm(establishments=establishment_list)
     if request.method == 'POST':
         # Conditionally adjust validators based on "All Day" checkbox
         if 'all_day' in request.form and request.form['all_day'] == 'y':
@@ -234,7 +261,17 @@ def search():
         for result in deal_results:
             print(f"Deal: {result['title']}, Score: {result['_score']}")
 
-        return render_template('search_results.html', results=deal_results)
+        # load all establishments from firestore
+        establishments = db.collection('establishments').stream()
+        establishment_list = [establishment.to_dict() for establishment in establishments]
+
+        # link deals to establishments
+        for deal in deal_results:
+            for establishment in establishment_list:
+                if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
+                    deal['establishment'] = establishment
+
+        return render_template('search_results.html', results=deal_results, enumerate=enumerate, len=len)
     return redirect(url_for('index'))
     
 @app.route('/establishment_details/<establishment_name>', methods=['GET'])
@@ -357,8 +394,19 @@ def daily_deals():
     # Sort deals based on votes or other criteria if needed
     daily_deals = sorted(daily_deals, key=lambda k: k.get('upvotes', 0) - k.get('downvotes', 0), reverse=True)
 
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
+
+    # link deals to establishments
+    for deal in daily_deals:
+        for establishment in establishment_list:
+            if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
+                deal['establishment'] = establishment
+
+
     # Render the 'daily_deals.html' template
-    return render_template('daily_deals.html', daily_deals=daily_deals)
+    return render_template('daily_deals.html', daily_deals=daily_deals, enumerate=enumerate, len=len)
 
 @app.route('/view-comments-dashboard/<deal_id>', methods=['GET', 'POST'])
 def view_and_add_comments_dashboard(deal_id):
@@ -561,3 +609,15 @@ def downvote_comment(deal_id, comment_id):
     comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(comment_id)
     comment_ref.update({"downvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
+
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    query = request.args.get('query', '')
+    suggestions = autocomplete_deals(query)
+    return jsonify(suggestions)
+
+@app.route('/newsletter', methods=['GET'])
+def newsletter():
+    return render_template('newsletter.html')
+

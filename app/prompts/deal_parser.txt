@@ -1,42 +1,67 @@
-Given a bar deal submission, parse it into structured JSON data.
+**Task Description: JSON Parsing for Bar Deal Submissions**
 
-Deal Submission Structure:
+**Objective:** Convert a raw bar deal submission into a structured JSON format that clearly represents the deal's details, including the establishment, deal specifics, and applicable tags. Ensure that the tags are included at the root level of the JSON structure to maintain clarity and accessibility.
+
+**Input Structure:**
+The input is a dictionary representing a bar deal submission with the following keys:
+- `establishment_name`: Name of the bar or establishment.
+- `establishment_type`: Type of establishment (e.g., bar, pub).
+- `deal_name`: Title of the deal.
+- `deal_description`: Detailed description of the deal.
+- `all_day`: Boolean indicating if the deal is valid all day.
+- `start_time`: Starting time of the deal (None if `all_day` is True).
+- `end_time`: Ending time of the deal (None if `all_day` is True).
+- `days_active`: List of abbreviated weekdays when the deal is active.
+- `repeat`: Boolean indicating if the deal repeats weekly.
+- `submit`: Boolean to confirm submission.
+- `csrf_token`: Security token for the transaction.
+
+**Output Structure:**
+The output should be a JSON object with the following structure:
+- `title`: Concatenation of the establishment name and deal name.
+- `description`: A user-friendly description combining the deal and timing details.
+- `establishment`: An object containing:
+  - `name`: Full name of the establishment.
+  - `type`: Type of establishment, capitalized.
+- `deal_details`: An object containing:
+  - `deal_type`: Type of deal (e.g., "Percentage Off", "Set Price").
+  - `deal_name`: A concise name for the deal.
+  - `deal_description`: A brief description of what the deal includes.
+  - `deal_items`: A list of items included in the deal, each being an object with:
+    - `item`: Name of the item.
+    - `item_type`: Type of the item (e.g., "Alcohol", "Mixed").
+    - `pricing`: An object with:
+      - `price`: Set price if applicable, otherwise "N/A".
+      - `discount`: Discount percentage if applicable, otherwise "N/A".
+  - `start_time`: Start time in "HH:MM:SS" format, or "Open" if all day.
+  - `end_time`: End time in "HH:MM:SS" format, or "Close" if all day.
+  - `days_active`: List of full weekday names.
+  - `exclusions`: Any exclusions to the deal, or "N/A" if none.
+- `tags`: A list of relevant tags at the root level, derived from the deal details, establishment type, and active days.
+
+**Examples:**
+1. 
+**Input:**
+```json
 {
-  "title": "Quick Deal Title",
-  "description": "Description of the deal that people can tell everything from",
-  "establishment": {
-    "name": "Name",
-    "type": "Type",
-  },
-  "deal_details": {
-    "deal_type": "Type",
-    "deal_name": "Name of the deal",
-    "deal_description": "Description of the Deal Items",
-    "deal_items": [
-        {
-            "item": "Item Name",
-            "item_type": "Type of Item",
-            "pricing": {"price": "# if price deal like $1 wells else N/A", "discount": "# if deal like 50% off or $2 off else N/A"}
-        },
-    ],
-    "start_time": "HH:MM:SS" or "Open",
-    "end_time": "HH:MM:SS" or "Close",
-    "days_active": ["Weekday 1", "Weekday 2", "etc"],
-    "exclusions": "any exclusions, if none put N/A",
-  },
-  "tags": ["tag1", "tag2", "etc"],
+  "establishment_name": "Joe's",
+  "establishment_type": "bar",
+  "deal_name": "50% off Friday",
+  "deal_description": "All drinks 50% off",
+  "all_day": true,
+  "start_time": null,
+  "end_time": null,
+  "days_active": ["fri"],
+  "repeat": true,
+  "submit": true,
+  "csrf_token": "token"
 }
-
-The establishment.name MUST be one of the following:
-{{establishment_list}}
-
-Example bar deal submission 1:
-{'establishment_name': 'Joe's', 'establishment_type': 'bar', 'deal_name': '50% off Friday', 'deal_description': 'ALl drinks 50% off', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['fri'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
-
-Expected parsed deal submission 1:
+```
+**Expected Output:**
+```json
 {
   "title": "Joe's Bar, 50% off Friday",
-  "description": "50% off all drinks at Joe's Bar Friday Night",
+  "description": "50% off all drinks at Joe's Bar on Friday night",
   "establishment": {
     "name": "Joe's Bar",
     "type": "Bar"
@@ -57,55 +82,72 @@ Expected parsed deal submission 1:
     ],
     "start_time": "Open",
     "end_time": "Close",
-    "days_active": [
-      "Friday"
-    ],
-    "exclusions": "N/A",
+    "days_active": ["Friday"],
+    "exclusions": "N/A"
   },
   "tags": ["Drinks", "Bar", "Friday Night"]
 }
-
-Example bar deal submission 2:
-{'establishment_name': 'Midway', 'establishment_type': 'bar', 'deal_name': 'Wednesday Madness', 'deal_description': '$1 Wells and Bombs all night', 'all_day': True, 'start_time': None, 'end_time': None, 'days_active': ['wed'], 'repeat': True, 'submit': True, 'csrf_token': 'IjljM2I1Y2I2MTIwYjg0MzBjYjAzMGU4YjE2N2MwNGY5M2UyNGIwZGQi.ZaHOtA.9zy5C7DA5qE-qFlqKbD-3NRkqdw'}  
-
-Expected parsed deal submission 2:
+```
+2. 
+**Input:**
+```json
 {
-  "title": "Midway Madness, Wednesday",
-  "description": "Madness at Midway on Wednesday, $1 wells and bombs from 2pm-6pm",
+  "establishment_name": "Midway on High",
+  "establishment_type": "bar",
+  "deal_name": "Thirsty Thursday",
+  "deal_description": "Half-price appetizers and $3 beers after 8 PM",
+  "all_day": false,
+  "start_time": "20:00:00",
+  "end_time": "23:59:00",
+  "days_active": ["thu"],
+  "repeat": true,
+  "submit": true,
+  "csrf_token": "token"
+}
+```
+**Expected Output:**
+```json
+{
+  "title": "Midway on High, Thirsty Thursday",
+  "description": "Join us at Midway on High for Thirsty Thursday! Enjoy half-price appetizers and $3 beers starting at 8 PM until midnight.",
   "establishment": {
-    "name": "Midway",
+    "name": "Midway on High",
     "type": "Bar"
   },
   "deal_details": {
-    "deal_type": "Set Price",
-    "deal_name": "Madness",
-    "deal_description": "$1 Wells & Bombs",
+    "deal_type": "Discount and Set Price",
+    "deal_name": "Thirsty Thursday",
+    "deal_description": "Half-Price Appetizers and $3 Beers",
     "deal_items": [
       {
-        "item": "Wells",
-        "item_type": "Mixed"
+        "item": "Appetizers",
+        "item_type": "Food",
         "pricing": {
-          "price": "$1",
-          "discount": "N/A"
+          "price": "N/A",
+          "discount": "50%"
         }
       },
       {
-        "item": "Bombs",
-        "item_type": "Shot"
+        "item": "Beers",
+        "item_type": "Drink",
         "pricing": {
-          "price": "$1",
+          "price": "$3",
           "discount": "N/A"
         }
       }
     ],
-    "start_time": "14:00:00",
-    "end_time": "18:00:00",
-    "days_active": [
-      "Wednesday"
-    ],
-    "exclusions": "N/A",
+    "start_time": "20:00:00",
+    "end_time": "23:59:00",
+    "days_active": ["Thursday"],
+    "exclusions": "N/A"
   },
-  "tags": ["Madness", "Wednesday Afternoon", "Bar", "Wells", "Bombs"]
+  "tags": ["Thirsty Thursday", "Bar", "Discounts", "Appetizers", "Beers", "Night Deals"]
 }
+```
 
-Remember to include relevant tags, those are very important.
+**Instructions:**
+- Ensure all establishment names are correctly formatted and capitalized.
+- Convert abbreviated days to their full names.
+- Tags should be descriptive and relevant to the deal, and they must be placed at the root level of the JSON object.
+- Use clear and concise language for deal descriptions and names to enhance readability and user understanding.
+- Make sure all different deal items are seperated, for example "half off beer and whiskey" should be an beer - 50% and whiskey - 50%, they should not be conjoined into one item.
