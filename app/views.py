@@ -19,9 +19,8 @@ from .moderation import Moderator
 import json
 import uuid
 import os
-from werkzeug.utils import secure_filename
 from app import db
-import shutil
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 
@@ -498,6 +497,27 @@ def update_profile():
         'username': new_username,
         'email': new_email,
     })
+
+    # Update the password
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    confirm_new_password = request.form.get('confirm_new_password')
+
+    if current_password and new_password and confirm_new_password:
+        # Verify current password
+        user_data = user_ref.get().to_dict()
+        if not check_password_hash(user_data['password'], current_password):
+            flash('Current password is incorrect.', 'danger')
+            return redirect(url_for('edit_profile'))
+
+        # Check if new passwords match
+        if new_password != confirm_new_password:
+            flash('New passwords do not match.', 'danger')
+            return redirect(url_for('edit_profile'))
+
+        # Update password in database
+        hashed_new_password = generate_password_hash(new_password, method='pbkdf2:sha256')
+        user_ref.update({'password': hashed_new_password})
 
     UPLOADS_FOLDER = os.path.join(os.path.dirname(__file__), 'static/uploads')
     app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
