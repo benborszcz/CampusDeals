@@ -6,7 +6,6 @@ import json
 import uuid
 import config
 import re
-import arrow
 
 def get_prompt_from_file(name):
     try:
