@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/deal_details.css') }}">
+</head>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/deal_details.css') }}">
 <div class="weather-popup" id="weatherPopup">
     <div id="weatherContent"></div>
 </div>
