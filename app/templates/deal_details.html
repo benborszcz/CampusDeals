@@ -2,94 +2,10 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/deal_details.css') }}">
 <div class="weather-popup" id="weatherPopup">
     <div id="weatherContent"></div>
 </div>
-
-
-
-<style>
-
-#downloadButton {
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #3aafa9;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-/* Hover effect for the button */
-#downloadButton:hover {
-    background-color: #2e807f;
-}
-
-.weather-popup {
-    position: absolute;
-    top: 100px; /* Adjust the top position as needed */
-    right: -300px; /* Initially hide the popup outside the viewport */
-    width: 300px;
-    height: 25vh;
-    background-color: #fff;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-    transition: right 0.3s ease-in-out;
-    overflow-y: auto; /* Enable vertical scrolling if needed */
-    z-index: 999; /* Ensure the popup is above other content */
-}
-
-
-
-
-    #weatherContent {
-        padding: 20px;
-    }
-
-    .address-time-wrapper {
-        flex: 1; /* Allow address and time to take remaining space */
-    }
-
-    .logo-wrapper {
-        float: left; /* Align logo to the right */
-    }
-
-    .address-time-wrapper {
-        flex: 1;
-    }
-
-    .logo-wrapper {
-        float: right;
-    }
-
-    .establishment-details {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .weather-details {
-        display: flex;
-        flex-direction: column; /* Display weather details in a column */
-        align-items: flex-end; /* Align weather details to the right within the container */
-        margin-left: 20px; /* Adjust the left margin to create space between directions link and weather details */
-    }
-
-    #weather-icon img {
-        width: 50px;
-        height: 50px;
-        margin-bottom: 5px; /* Add bottom margin to separate weather details */
-        margin-right: 20px;
-    }
-
-    #weather-description,
-    #weather-temperature {
-        margin-bottom: 0px; /* Add bottom margin to separate weather details */
-        margin-right: 20px;
-    }
-
-</style>
 
     <div class="card mb-4">
         <div class="card-header">
@@ -104,7 +20,7 @@
                     </a>
                 </div
                 <h5 class="card-text text-muted">
-                    <c>{{ deal.deal_details.days_active | join(", ") }},</c> 
+                    <c>{{ deal.deal_details.days_active | join(", ") }},</c>
                     <c id="start-time">{{ deal.deal_details.start_time }} - </c>
                     <c id="end-time">{{ deal.deal_details.end_time }}</c>
                 </h5>
@@ -112,28 +28,28 @@
             <div class="logo-wrapper">
                 {% if deal.establishment.name == "Midway on High" %}
                     <img src="{{ url_for('static', filename='images/midway.png') }}" alt="Midway Logo" class="img-fluid">
-                {% endif %} 
+                {% endif %}
                 {% if deal.establishment.name == "Ethyl & Tank" %}
                     <img src="{{ url_for('static', filename='images/ethyl.png') }}" alt="Ethyl Logo" class="img-fluid">
-                {% endif %} 
+                {% endif %}
                 {% if deal.establishment.name == "Plaza Mexican Grill" %}
                     <img src="{{ url_for('static', filename='images/plaza.png') }}" alt="Plaza Logo" class="img-fluid">
-                {% endif %} 
+                {% endif %}
                 {% if deal.establishment.name == "Gaswerks" %}
                     <img src="{{ url_for('static', filename='images/Gaswerks.png') }}" alt="Gaswerks Logo" class="img-fluid">
-                {% endif %} 
+                {% endif %}
                 {% if deal.establishment.name == "Standard Hall" %}
                     <img src="{{ url_for('static', filename='images/standard.png') }}" alt="Standard Logo" class="img-fluid">
-                {% endif %} 
+                {% endif %}
                 {% if deal.establishment.name == "Bristol Republic" %}
                     <img src="{{ url_for('static', filename='images/bristol.png') }}" alt="Bristol Logo" class="img-fluid">
-                {% endif %} 
+                {% endif %}
                 {% if deal.establishment.name == "BrewDog Short North" %}
                     <img src="{{ url_for('static', filename='images/dog.png') }}" alt="BrewDog Logo" class="img-fluid">
-                {% endif %} 
+                {% endif %}
                 {% if deal.establishment.name == "Ugly Tuna Saloona 2" %}
                     <img src="{{ url_for('static', filename='images/tuna.png') }}" alt="Tuna Logo" class="img-fluid">
-                {% endif %} 
+                {% endif %}
             </div>
             <div class="map-container">
                 <div class="shadow" style="border-radius: 10px;">
@@ -351,14 +267,14 @@ function toTitleCase(str) {
         document.getElementById("downloadButton").addEventListener("click", function() {
             // Extract the deal details to be saved
             var dealDetails = generateDealDetails(); // Function to generate deal details as a string
-            
+
             // Create a Blob containing the deal details as plain text
             var blob = new Blob([dealDetails], { type: "text/plain" });
 
             // Create a link element to trigger the download
             var downloadLink = document.createElement("a");
             downloadLink.href = URL.createObjectURL(blob);
-            
+
             // Get establishment name from the deal data
             var establishmentName = "{{ deal.establishment.name }}";
 
@@ -382,13 +298,13 @@ function toTitleCase(str) {
             details += "Days Active: " + "{{ deal.deal_details.days_active | join(', ') }}" + "\n";
             details += "Time: " + "{{ deal.deal_details.start_time }}" + " - " + "{{ deal.deal_details.end_time }}" + "\n";
             details += "Deal Items:\n";
-            
+
             {% for item in deal.deal_details.deal_items %}
                 details += "  - {{ item.item }}: ";
                 details += "{% if item.pricing.discount == 'N/A' %}{{ item.pricing.price }}{% else %}{{ item.pricing.discount }}{% endif %}";
                 details += "\n";
             {% endfor %}
-            
+
             return details;
         }
     });
