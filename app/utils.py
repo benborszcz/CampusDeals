@@ -312,6 +312,34 @@ def haversine(lat1, lng1, lat2, lng2):
     r = 3956 # Radius of earth in miles
     return c * r
 
+def autocomplete_deals(query):
+    """
+    Simplified search function for autocomplete suggestions.
+    """
+    if not query:
+        return []
+
+    # Simplified Elasticsearch query focusing on deal titles or relevant fields
+    autocomplete_query = {
+        "query": {
+            "multi_match": {
+                "query": query,
+                "fields": ["title^2", "description"],  # Boost title field, include description
+                "type": "bool_prefix"  # Use bool_prefix for autocomplete scenarios
+            }
+        },
+        "_source": ["title"],  # Only return the title field to minimize data transfer
+        "size": 5  # Limit the number of suggestions
+    }
+
+    # Perform the search on the 'deals' index
+    response = es.search(index="deals", body=autocomplete_query)
+
+    # Extract titles from hits
+    suggestions = [hit['_source']['title'] for hit in response['hits']['hits']]
+
+    return suggestions
+
 def get_active_deals(deals_list):
     """
     Filter out deals that are currently active.
@@ -427,3 +455,4 @@ def get_time_until_deals_end(deal_list):
         time_until_deal_end.append(time_until_end)
 
     return time_until_deal_end
+

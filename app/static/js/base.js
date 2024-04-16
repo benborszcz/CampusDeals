@@ -17,3 +17,36 @@ checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
     else
         checkList.classList.add('visible');
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var searchInput = document.querySelector('.search-input');
+    var suggestionsList = document.getElementById('suggestions');
+    var searchForm = document.querySelector('form'); // Select the form
+
+    console.log("Search Input: ", searchInput);
+    console.log("Suggestions List: ", suggestionsList);
+    console.log("Search Form: ", searchForm);
+    searchInput.addEventListener('input', function() {
+        var query = this.value;
+        if(query.length > 1) {
+            fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsList.innerHTML = ''; // Clear existing suggestions
+                    data.forEach(function(item) {
+                        var li = document.createElement('li');
+                        li.textContent = item;
+                        li.addEventListener('click', function() {
+                            searchInput.value = item; // Fill input with clicked suggestion
+                            suggestionsList.innerHTML = ''; // Clear suggestions
+                            searchForm.submit(); // Submit the form
+                        });
+                        suggestionsList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        } else {
+            suggestionsList.innerHTML = '';  // Clear suggestions if input is too short
+        }
+    });
+});
