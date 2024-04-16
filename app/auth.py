@@ -8,7 +8,8 @@ from .models import User, login_manager  # Import User directly from models, not
 import os
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
-from flask import url_for, redirect, session, request
+from flask import url_for, redirect, session, request, Flask
+import shutil
 
 load_dotenv()
 
@@ -60,12 +61,24 @@ def register():
         # Hash the password before storing it
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
+        app = Flask(__name__)
+        current_app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
+        current_app.config['DEFAULT_PROFILE_PIC'] = os.path.join(app.root_path, 'static', 'images', 'default_profile.png')
+
+        #Define the profile picture path
+        uploads_folder = current_app.config['UPLOAD_FOLDER']
+        default_profile_pic_path = current_app.config['DEFAULT_PROFILE_PIC']
+        user_profile_pic_path = f"{uploads_folder}/{username}.jpg"
+
+        #copy default profile picture to the user's profile picture path
+        shutil.copy(default_profile_pic_path, user_profile_pic_path)
+
         # Create a new user document in Firestore
         user_ref.set({
             'username': username,
             'email': email,
             'password': hashed_password,
-            'profile_picture_url': 'images/default_profile.png',
+            'profile_picture_url': user_profile_pic_path,
             'upvoted_deals': []
         })
 
