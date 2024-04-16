@@ -5,7 +5,8 @@ from . import app
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
-from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty, get_active_deals, get_time_until_deals_end, get_time_until_deals_start, autocomplete_deals
+from .utils import parse_deal_submission, transform_deal_structure, get_active_deals, get_time_until_deals_end, get_time_until_deals_start
+from .elastic_utils import check_index, reset_index, search_deals
 import config
 from firebase_admin import firestore
 from datetime import datetime
@@ -45,10 +46,8 @@ def index():
                 deal['establishment'] = establishment
 
     # index all deals in elasticsearch
-    if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
-        reset_elasticsearch()
-        for deal in deal_list:
-            index_deal(deal)
+    if check_index(deal_list) or True:
+        reset_index(deal_list)
 
     for deal in deal_list:
         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
@@ -154,8 +153,6 @@ def submit_deal():
 
         # Add a new document to the Firestore collection with the specified deal_id
         db.collection(config.DEAL_COLLECTION).document(deal_data['deal_id']).set(deal_data)
-        # Index the new deal in Elasticsearch
-        index_deal(deal_data)
         return redirect(url_for('index'))
 
     return render_template('submit_deal.html', form=form, popup=None)
@@ -191,9 +188,10 @@ def search():
     userLng = request.args.get('userLng')
     if query or days or distance:
         # Assuming search_deals returns a list of Firestore documents
-        hits = search_deals(query, days, distance, userLat, userLng)
+        #hits = search_deals(query, days, distance, userLat, userLng)
+        hits = search_deals(query, days, distance, userLat, userLng)["hits"]["hits"]
         results = []
-        print(hits)
+
         for hit in hits:
             hit['_source']['_score'] = hit['_score']
             results.append(hit['_source'])
@@ -207,9 +205,6 @@ def search():
             for result in results:
                 if deal['deal_id'] == result['deal_id']:
                     deal['_score'] = result['_score']
-
-        for result in deal_results:
-            print(f"Deal: {result['title']}, Score: {result['_score']}")
 
         # load all establishments from firestore
         establishments = db.collection('establishments').stream()
