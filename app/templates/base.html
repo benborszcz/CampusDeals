@@ -46,8 +46,9 @@
 
     .navbar {
         background-color: #3aafa9; /* Turquoise navbar background */
-        padding-top: 60px; /* Add padding-top to create space for the football */
+        padding-top: 5px; /* Add padding-top to create space for the football */
         position: relative; /* Make the navbar position relative */
+        margin-bottom: 0px;
     }
 
     .navbar-brand {
@@ -334,61 +335,6 @@
 </style>
 
 <body>
-    <div class="white-strip">
-        <img src="{{ url_for('static', filename='images/burger.gif') }}" alt="Burger" class="burger">
-        <img src="{{ url_for('static', filename='images/beer.gif') }}" alt="Beer" class="beer">
-        <img src="{{ url_for('static', filename='images/pizza.gif') }}" alt="Pizza" class="pizza">
-        <img src="{{ url_for('static', filename='images/wine.gif') }}" alt="Wine" class="wine">
-        <img src="{{ url_for('static', filename='images/fries.gif') }}" alt="Fries" class="fries">
-        <img src="{{ url_for('static', filename='images/alc.gif') }}" alt="Alc" class="alc">
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                setTimeout(function() {
-                    document.querySelector('.beer').style.opacity = '1';
-                }, 1250); // 1000 milliseconds = 1 seconds delay
-
-                setTimeout(function() {
-                    document.querySelector('.pizza').style.opacity = '1';
-                }, 2000); // 2000 milliseconds = 2 second delay for taco
-
-                setTimeout(function() {
-                    document.querySelector('.wine').style.opacity = '1';
-                }, 3000);
-                setTimeout(function() {
-                    document.querySelector('.fries').style.opacity = '1';
-                }, 4000);
-                setTimeout(function() {
-                    document.querySelector('.alc').style.opacity = '1';
-                }, 5000);
-            });
-        </script>
-
-        <!-- Inside the <body> section of base.html, before the closing </body> tag -->
-<script>
-  // JavaScript function to scroll back to the top of the page
-  function scrollToTop() {
-      window.scrollTo({
-          top: 0,
-          behavior: 'smooth' // Smooth scroll behavior
-      });
-  }
-
-  // Show or hide the "Back to Top" button based on scroll position
-  window.onscroll = function() {
-      toggleBackToTopButton();
-  };
-
-  function toggleBackToTopButton() {
-      const backToTopButton = document.getElementById('back-to-top-btn');
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-          backToTopButton.style.display = 'block';
-      } else {
-          backToTopButton.style.display = 'none';
-      }
-  }
-</script>
-
-    </div> <!-- White strip above the navbar -->
     <header>
         <!-- Bootstrap Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -436,7 +382,7 @@
             </div>
         </nav>
     </header>
-    <main class="container mt-4">
+    <main class="container mt-3">
         {% block content %}{% endblock %}
     </main>
 

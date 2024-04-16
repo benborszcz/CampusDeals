@@ -113,13 +113,13 @@ form.form-inline.mb-4 {
 }
 
 #map { 
-    height: 400px; 
+    height: 350px; 
     border-radius: 10px 10px 0px 0px;
 }
 
 .map-container { 
-    padding-top: 20px;
-    margin-bottom: 20px;
+    padding-top: 10px;
+    margin-bottom: 10px;
     border-radius: 10px;
 }
 

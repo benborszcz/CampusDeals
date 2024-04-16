@@ -171,8 +171,51 @@ def move_tags_outside_deal_details(source_collection_name):
             deal_ref = deals_ref.document(deal['deal_id'])
             deal_ref.update(deal)
 
+def change_upvotes_to_random_number(source_collection_name):
+    # Initialize Firestore
+    if not firebase_admin._apps:
+        cred = credentials.Certificate('app/firebase_service_account.json')
+        firebase_admin.initialize_app(cred)
+
+    db = firestore.client()
+
+    # Reference to the deals collection
+    deals_ref = db.collection(source_collection_name)
+    deals = deals_ref.stream()
+    deals = [deal.to_dict() for deal in deals]
+
+    # Change upvotes to random number
+    import random
+    for deal in deals:
+        deal['upvotes'] = random.randint(0, 150)
+        # Update the deal in Firestore
+        deal_ref = deals_ref.document(deal['deal_id'])
+        deal_ref.update(deal)
+
+def change_downvotes_to_random_number(source_collection_name):
+    # Initialize Firestore
+    if not firebase_admin._apps:
+        cred = credentials.Certificate('app/firebase_service_account.json')
+        firebase_admin.initialize_app(cred)
+
+    db = firestore.client()
+
+    # Reference to the deals collection
+    deals_ref = db.collection(source_collection_name)
+    deals = deals_ref.stream()
+    deals = [deal.to_dict() for deal in deals]
+
+    # Change downvotes to random number
+    import random
+    for deal in deals:
+        deal['downvotes'] = random.randint(0, 50)
+        # Update the deal in Firestore
+        deal_ref = deals_ref.document(deal['deal_id'])
+        deal_ref.update(deal)
+
 if __name__ == "__main__":
     source_collection_name = 'deals2'
     destination_collection_name = 'deals_backup_'+datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     duplicate_collection(source_collection_name, destination_collection_name)
-    move_tags_outside_deal_details(source_collection_name)
+    change_downvotes_to_random_number(source_collection_name)
+    change_upvotes_to_random_number(source_collection_name)
