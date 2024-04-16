@@ -46,7 +46,7 @@ def index():
                 deal['establishment'] = establishment
 
     # index all deals in elasticsearch
-    if check_index(deal_list) or True:
+    if check_index(deal_list):
         reset_index(deal_list)
 
     for deal in deal_list:
