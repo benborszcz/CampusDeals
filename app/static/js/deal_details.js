@@ -93,7 +93,7 @@ function loadDeal(dealId) {
             // Populate establishment details as a clickable link
             const establishmentLink = document.getElementById('establishment-link');
             establishmentLink.href = `/establishment_details/${data.establishment.name}`;
-            establishmentLink.textContent = data.establishment.name;
+            document.getElementById('establishment-name').textContent = data.establishment.name;
 
             // Google Maps directions link
             const googleMapsLink = document.getElementById('google-maps-link');
@@ -136,22 +136,32 @@ function loadDeal(dealId) {
 
             // Populate tags
             const tagsContainer = document.getElementById('tags-container');
+            const c = document.createElement('c');
             tagsContainer.innerHTML = '';
             if (data.tags) {
                 data.tags.forEach(tag => {  // Adjusted here
                     const span = document.createElement('span');
                     span.className = 'badge badge-secondary';
+                    span.id = 'badge';
                     span.textContent = tag;
-                    tagsContainer.appendChild(span);
+                    c.appendChild(span);
                 });
             }
+            tagsContainer.appendChild(c);
             // Populate deal items
             const dealItemsDetails = document.getElementById('deal-items-details');
             dealItemsDetails.innerHTML = ''; // Clear existing items
             data.deal_details.deal_items.forEach(item => {
-                const itemDetail = document.createElement('div');
-                itemDetail.textContent = `${item.item} - ${item.pricing.discount === 'N/A' ? item.pricing.price : item.pricing.discount}`;
-                dealItemsDetails.appendChild(itemDetail);
+                const c1 = document.createElement('c');
+                const bItem = document.createElement('b');
+                bItem.textContent = item.item + ' - ';
+                c1.appendChild(bItem);
+                const bPriceOrDiscount = document.createElement('b');
+                bPriceOrDiscount.id = 'priceOrDiscount';
+                bPriceOrDiscount.textContent = item.pricing.discount === 'N/A' ? item.pricing.price : item.pricing.discount;
+                c1.appendChild(bPriceOrDiscount);
+                c1.appendChild(document.createElement('br'))
+                dealItemsDetails.appendChild(c1);
             });
 
             document.getElementById('created-at').textContent = toRelativeTime(data.created_at);

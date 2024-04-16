@@ -182,3 +182,11 @@ form.form-inline.mb-4 {
     border-radius: 0px 0px 10px 10px;
     text-align: center;
 }
+
+#badge {
+    margin-right: 3px !important;
+}
+
+#priceOrDiscount {
+    color: green;
+}
