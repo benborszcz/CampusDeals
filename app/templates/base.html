@@ -15,62 +15,327 @@
     <link rel="icon" href="{{ url_for('static', filename='images/campusDealsLogo.png') }}" type="image/png">
 </head>
 
+<style>
+    *,
+    *::before,
+    *::after {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        font-family: "Helvetica Neue", Arial, sans-serif; /* Modern font stack */
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: #f9f9f9; /* Light gray background */
+    }
+
+    main {
+        flex: 1 0 auto;
+    }
+
+    footer {
+        flex-shrink: 0;
+    }
+
+    .navbar {
+        background-color: #3aafa9; /* Turquoise navbar background */
+        padding-top: 5px; /* Add padding-top to create space for the football */
+        position: relative; /* Make the navbar position relative */
+        margin-bottom: 0px;
+    }
+
+    .navbar-brand {
+        font-family: 'YourFont', sans-serif; /* Change the font style */
+    }
+
+    .navbar-nav .nav-link {
+        color: #fff;
+        font-weight: bold; /* Bold text */
+    }
+
+    .navbar-collapse {
+        justify-content: flex-end;
+    }
+
+    .navbar-toggler {
+        border-color: #fff;
+    }
+
+    .navbar-nav .nav-item {
+        margin-right: 1rem;
+    }
+
+    .navbar-nav .nav-link {
+        text-decoration: none;
+        color: #fff;
+        font-size: 18px; /* Slightly smaller font size */
+        padding: 1rem 2rem;
+        position: relative;
+    }
+
+    .navbar-nav .nav-link::before,
+    .navbar-nav .nav-link::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: #fff;
+        transform: scaleX(0);
+        transition: all 0.3s ease; /* Faster transition */
+    }
+
+    .navbar-nav .nav-link::before {
+        top: 0;
+        left: 0;
+        transform-origin: left;
+    }
+
+    .navbar-nav .nav-link::after {
+        bottom: 0;
+        left: 0;
+        transform-origin: right;
+    }
+
+    .navbar-nav .nav-link:hover::before,
+    .navbar-nav .nav-link:hover::after {
+        transform: scaleX(1);
+    }
+
+    .footer {
+        background-color: #3aafa9;
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+        margin-top: 4rem;
+    }
+
+    .gear-icon {
+        display: inline-block;
+        position: relative; /* Ensure proper positioning of pseudo-elements */
+    }
+
+    .bi-gear path {
+        transition: transform 0.3s ease;
+    }
+
+    .bi-gear:hover path:first-of-type,
+    .bi-gear:hover path:last-of-type {
+        transform: none; /* Prevent transformation of pseudo-elements on hover */
+    }
+
+    .bi-gear:hover::before,
+    .bi-gear:hover::after {
+        content: ""; /* Remove content of pseudo-elements on hover */
+    }
+
+    .bi-gear:hover {
+        animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .nav-link.dropdown-toggle:hover .bi-gear::before,
+    .nav-link.dropdown-toggle:hover .bi-gear::after {
+        content: none;
+    }
+
+    .burger {
+    position: absolute;
+    top: 0; /* Adjust as needed */
+    left: 0; /* Start from the top left */
+    z-index: 999; /* Ensure it appears above other elements */
+    height: 60px; /* Adjust the height as needed */
+    width: auto; /* Maintain aspect ratio */
+    background-color: transparent;
+    animation: moveBurger 10s linear infinite; /* Adjust duration as needed */
+  }
+
+  @keyframes moveBurger {
+    0% {
+      left: 0; /* Start from the top left */
+    }
+    50% {
+      left: calc(50% - 30px); /* Move to the middle */
+    }
+    100% {
+      left: calc(100% - 60px); /* Move to the top right */
+    }
+  }
+
+
+  .beer {
+    position: absolute;
+    opacity: 0; /* Initially hide the element */
+    top: 0; /* Start from the top */
+    left: 0; /* Start from the top right */
+    transform: translate(50%, 0); /* Center the image */
+    height: 60px; /* Adjust the height as needed */
+    z-index: 999; /* Ensure it appears below the football */
+    animation: moveBeer 10s linear infinite 1s; /* Adjust duration as needed */
+  }
+
+  @keyframes moveBeer {
+    0% {
+      right: 0; /* Start from the top right */
+    }
+    50% {
+      left: calc(50% - 30px); /* Move to the middle */
+    }
+    100% {
+      left: calc(100% - 60px); /* Move to the top left */
+    }
+  }
+
+  .pizza {
+    position: absolute;
+    opacity: 0; /* Initially hide the element */
+    top: 0; /* Start from the top */
+    left: 0; /* Start from the top right */
+    transform: translate(50%, 0); /* Center the image */
+    height: 60px; /* Adjust the height as needed */
+    z-index: 999; /* Ensure it appears below the football */
+    animation: movePizza 10s linear infinite 2s; /* Adjust duration as needed */
+  }
+
+  @keyframes movePizza {
+    0% {
+      right: 0; /* Start from the top right */
+    }
+    50% {
+      left: calc(50% - 30px); /* Move to the middle */
+    }
+    100% {
+      left: calc(100% - 60px); /* Move to the top left */
+    }
+  }
+
+  .wine {
+    position: absolute;
+    opacity: 0; /* Initially hide the element */
+    top: 0; /* Start from the top */
+    left: 0; /* Start from the top right */
+    transform: translate(50%, 0); /* Center the image */
+    height: 60px; /* Adjust the height as needed */
+    z-index: 999; /* Ensure it appears below the football */
+    animation: moveWine 10s linear infinite 3s; /* Adjust duration as needed */
+  }
+
+  @keyframes moveWine {
+    0% {
+      right: 0; /* Start from the top right */
+    }
+    50% {
+      left: calc(50% - 30px); /* Move to the middle */
+    }
+    100% {
+      left: calc(100% - 60px); /* Move to the top left */
+    }
+  }
+
+  .fries {
+    position: absolute;
+    opacity: 0; /* Initially hide the element */
+    top: 0; /* Start from the top */
+    left: 0; /* Start from the top right */
+    transform: translate(50%, 0); /* Center the image */
+    height: 60px; /* Adjust the height as needed */
+    z-index: 999; /* Ensure it appears below the football */
+    animation: moveFries 10s linear infinite 4s; /* Adjust duration as needed */
+  }
+
+  @keyframes moveFries {
+    0% {
+      right: 0; /* Start from the top right */
+    }
+    50% {
+      left: calc(50% - 30px); /* Move to the middle */
+    }
+    100% {
+      left: calc(100% - 60px); /* Move to the top left */
+    }
+  }
+
+  .alc {
+    position: absolute;
+    opacity: 0; /* Initially hide the element */
+    top: 0; /* Start from the top */
+    left: 0; /* Start from the top right */
+    transform: translate(50%, 0); /* Center the image */
+    height: 60px; /* Adjust the height as needed */
+    z-index: 999; /* Ensure it appears below the football */
+    animation: moveAlc 10s linear infinite 5s; /* Adjust duration as needed */
+  }
+
+  @keyframes moveAlc {
+    0% {
+      right: 0; /* Start from the top right */
+    }
+    50% {
+      left: calc(50% - 30px); /* Move to the middle */
+    }
+    100% {
+      left: calc(100% - 60px); /* Move to the top left */
+    }
+  }
+
+  .footer-column {
+    float: left;
+    width: 33.33%;
+    padding: 10px;
+  }
+
+  .footer-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.footer-img {
+    width: 50px;
+    height: auto;
+}
+
+#back-to-top-btn {
+        display: none; /* Hide the button by default */
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 99;
+        font-size: 34px;
+        width: 60px;
+        height: 60px;
+        border: none;
+        outline: none;
+        background-color: #3aafa9;
+        color: #ffffff;
+        cursor: pointer;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s, transform 0.3s;
+    }
+
+    #back-to-top-btn:hover {
+        opacity: 0.8;
+    }
+
+</style>
+
 <body>
-    <div class="white-strip">
-        <img src="{{ url_for('static', filename='images/burger.gif') }}" alt="Burger" class="burger">
-        <img src="{{ url_for('static', filename='images/beer.gif') }}" alt="Beer" class="beer">
-        <img src="{{ url_for('static', filename='images/pizza.gif') }}" alt="Pizza" class="pizza">
-        <img src="{{ url_for('static', filename='images/wine.gif') }}" alt="Wine" class="wine">
-        <img src="{{ url_for('static', filename='images/fries.gif') }}" alt="Fries" class="fries">
-        <img src="{{ url_for('static', filename='images/alc.gif') }}" alt="Alc" class="alc">
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                setTimeout(function() {
-                    document.querySelector('.beer').style.opacity = '1';
-                }, 1250); // 1000 milliseconds = 1 seconds delay
-
-                setTimeout(function() {
-                    document.querySelector('.pizza').style.opacity = '1';
-                }, 2000); // 2000 milliseconds = 2 second delay for taco
-
-                setTimeout(function() {
-                    document.querySelector('.wine').style.opacity = '1';
-                }, 3000);
-                setTimeout(function() {
-                    document.querySelector('.fries').style.opacity = '1';
-                }, 4000);
-                setTimeout(function() {
-                    document.querySelector('.alc').style.opacity = '1';
-                }, 5000);
-            });
-        </script>
-
-        <!-- Inside the <body> section of base.html, before the closing </body> tag -->
-<script>
-  // JavaScript function to scroll back to the top of the page
-  function scrollToTop() {
-      window.scrollTo({
-          top: 0,
-          behavior: 'smooth' // Smooth scroll behavior
-      });
-  }
-
-  // Show or hide the "Back to Top" button based on scroll position
-  window.onscroll = function() {
-      toggleBackToTopButton();
-  };
-
-  function toggleBackToTopButton() {
-      const backToTopButton = document.getElementById('back-to-top-btn');
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-          backToTopButton.style.display = 'block';
-      } else {
-          backToTopButton.style.display = 'none';
-      }
-  }
-</script>
-
-    </div> <!-- White strip above the navbar -->
     <header>
         <!-- Bootstrap Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -118,7 +383,7 @@
             </div>
         </nav>
     </header>
-    <main class="container mt-4">
+    <main class="container mt-3">
         {% block content %}{% endblock %}
     </main>
 

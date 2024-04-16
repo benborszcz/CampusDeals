@@ -112,14 +112,14 @@ form.form-inline.mb-4 {
     font-weight: bold;
 }
 
-#map {
-    height: 400px;
+#map { 
+    height: 350px; 
     border-radius: 10px 10px 0px 0px;
 }
 
-.map-container {
-    padding-top: 20px;
-    margin-bottom: 20px;
+.map-container { 
+    padding-top: 10px;
+    margin-bottom: 10px;
     border-radius: 10px;
 }
 

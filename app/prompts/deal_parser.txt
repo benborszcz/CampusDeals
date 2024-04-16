@@ -109,3 +109,4 @@ Expected parsed deal submission 2:
 }
 
 Remember to include relevant tags, those are very important.
+tags MUST be at the root level, NOT in deal_details

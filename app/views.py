@@ -5,7 +5,7 @@ from . import app
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
-from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
+from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty, get_active_deals, get_time_until_deals_end, get_time_until_deals_start
 import config
 from firebase_admin import firestore
 from datetime import datetime
@@ -76,7 +76,34 @@ def index():
                     print(f"Adjusting coordinates for {deal['title']}")
                     deal['lat'], deal['lng'] = adjust_coords(deal['lat'], deal['lng'], i)
 
-    return render_template('index.html', popular_deals=deal_list, deals_json=json.dumps(deal_list), enumerate=enumerate, len=len)
+    # Find the time_until_start and for time_until_end for each deal
+    until_starts = get_time_until_deals_start(deal_list)
+    until_ends = get_time_until_deals_end(deal_list)
+    print(len(deal_list), len(until_starts), len(until_ends))
+    for i, deal in enumerate(deal_list):
+        # Convert the timedelta to string for display
+        deal['time_until_start'] = until_starts[i].days * 24 + until_starts[i].seconds // 3600
+        deal['time_until_end'] = until_ends[i].days * 24 + until_ends[i].seconds // 3600
+
+    # Create a list of active deals
+    active_deals = get_active_deals(deal_list)
+
+    # Sort active deals by time until end
+    active_deals = sorted(active_deals, key=lambda k: k['time_until_end'])
+
+    # Create a list of upcoming deals
+    upcoming_deals = [deal for deal in deal_list if deal not in active_deals]
+
+    # Sort upcoming deals by time until start
+    upcoming_deals = sorted(upcoming_deals, key=lambda k: k['time_until_start'])
+
+    for deal in upcoming_deals:
+        print(f"Deal: {deal['title']}, Time until start: {deal['time_until_start']}, Time until end: {deal['time_until_end']}")
+
+    # Create list of Active deals and next 10 upcoming deals
+    map_deals = active_deals + upcoming_deals[:10]
+
+    return render_template('index.html', popular_deals=deal_list[:6], deals_json=json.dumps(map_deals), active_deals=active_deals, upcoming_deals=upcoming_deals, enumerate=enumerate, len=len)
 
 from flask import request, jsonify
 from . import app, db
