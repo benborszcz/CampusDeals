@@ -84,7 +84,7 @@
                         <h5 id="deal-time-details" class="card-text text-muted"></h5>
                         <div id="map-container" class="map-container">
                             <div class="shadow" style="border-radius: 10px;">
-                                <div id="map"></div>
+                                <div id="map2"></div>
                             </div>
                         </div>
                         <div class="tags">
@@ -129,7 +129,7 @@
             
                 <div class="map-container">
                     <div class="shadow" style="border-radius: 10px;">
-                        <div id="map"></div>
+                        <div id="map1"></div>
                     </div>
                 </div>
                 <!-- Display form for adding a comment (only for logged-in users) -->
@@ -140,7 +140,7 @@
 
     <script>
         var deals = {{ deals_json|safe }};
-        var map = L.map('map', {
+        var map1 = L.map('map1', {
             center: [40.0022, -83.0075],
             zoom: 15,
             maxZoom: 19, // Global maximum zoom level for the map
@@ -150,12 +150,12 @@
             attribution: '© OpenStreetMap contributors',
             maxZoom: 19,
             minZoom: 10
-        }).addTo(map);
+        }).addTo(map1);
 
 
         // Add markers and popups with URLs
         deals.forEach(function(deal) {
-            L.marker([deal.lat, deal.lng]).addTo(map)
+            L.marker([deal.lat, deal.lng]).addTo(map1)
                 .bindPopup(`
                 <a href="${deal.url}" style="text-decoration: none;">
                     <b>${deal.establishment.shortname}</b> - <d style="font-size: smaller;">${deal.deal_details.deal_name}</d>

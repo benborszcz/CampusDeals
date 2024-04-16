@@ -103,6 +103,37 @@ function loadDeal(dealId) {
             const dealTimeDetails = document.getElementById('deal-time-details');
             dealTimeDetails.textContent = `${data.deal_details.days_active.join(", ")}, ${convertMilitaryToStandardTime(data.deal_details.start_time)} - ${convertMilitaryToStandardTime(data.deal_details.end_time)}`;
 
+
+            var mapContainer = L.DomUtil.get('map2');
+            if (mapContainer != null) {
+                mapContainer._leaflet_id = null;  // Reset the id to make sure Leaflet allows a new map to be initialized
+            }
+
+            var map = L.map('map2', {
+                center: [data.establishment.latitude, data.establishment.longitude],
+                zoom: 18,
+                maxZoom: 19, // Global maximum zoom level for the map
+                minZoom: 10
+            });
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19,
+                minZoom: 10
+            }).addTo(map);
+    
+    
+            // Add markers and popups with URLs
+            L.marker([data.establishment.latitude, data.establishment.longitude]).addTo(map)
+                .bindPopup(`
+                    <div style="text-decoration: none;">
+                        <strong>${data.establishment.shortname}</strong> - <span style="font-size: smaller;">${data.deal_details.deal_name}</span>
+                        <br>
+                        <div>
+                            <span style="font-size: x-small;">${data.deal_details.deal_description}</span>
+                        </div>
+                    </div>
+                `, { maxWidth: 200 });
+
             // Populate tags
             const tagsContainer = document.getElementById('tags-container');
             tagsContainer.innerHTML = '';
@@ -122,62 +153,14 @@ function loadDeal(dealId) {
                 itemDetail.textContent = `${item.item} - ${item.pricing.discount === 'N/A' ? item.pricing.price : item.pricing.discount}`;
                 dealItemsDetails.appendChild(itemDetail);
             });
-            
+
             document.getElementById('created-at').textContent = toRelativeTime(data.created_at);
 
-            // Initialize the map with the deal location
-            // initializeMap(data.establishment.latitude, data.establishment.longitude);
-
-            // Other existing code for populating tags, created at, etc.
             // Show the deal-details container
             document.getElementById('deal-details-container').style.display = 'block';
 
             // Hide the comments container
             document.getElementById('comments-container').style.display = 'none';
-        })
-        .catch(error => {
-            console.error('Error fetching deal details:', error);
-        });
-}
-
-function loadDealOld(dealId) {
-    // Make an AJAX request to fetch deal details
-    fetch('/deal_details_dashboard/' + dealId)
-        .then(response => response.json())
-        .then(data => {
-            selectCard(document.getElementById('deal-card-' + dealId));
-            // Populate deal details
-            document.getElementById('deal-title').textContent = data.title;
-            document.getElementById('establishment-name').textContent = data.establishment.name;
-            document.getElementById('deal-description').textContent = data.description;
-            document.getElementById('deal-type').textContent = data.deal_details.deal_type;
-            document.getElementById('start-time').textContent = data.deal_details.start_time;
-            document.getElementById('end-time').textContent = data.deal_details.end_time;
-            document.getElementById('days-active').textContent = data.deal_details.days_active.join(", ");
-            document.getElementById('exclusions').textContent = data.deal_details.exclusions;
-            document.getElementById('created-at').textContent = data.created_at;
-
-            // Populate deal items
-            const dealItemsList = document.getElementById('deal-items-list');
-            dealItemsList.innerHTML = '';
-            data.deal_details.deal_items.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item';
-                li.textContent = `${item.item} - ${item.item_type} - Price: ${item.pricing.price} Discount: ${item.pricing.discount}`;
-                dealItemsList.appendChild(li);
-            });
-
-            // Populate tags
-            const tagsContainer = document.getElementById('tags-container');
-            tagsContainer.innerHTML = '';
-            if (data.tags) {
-                data.tags.forEach(tag => {  // Adjusted here
-                    const span = document.createElement('span');
-                    span.className = 'badge badge-secondary';
-                    span.textContent = tag;
-                    tagsContainer.appendChild(span);
-                });
-            }
         })
         .catch(error => {
             console.error('Error fetching deal details:', error);

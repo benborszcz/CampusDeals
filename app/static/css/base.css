@@ -154,8 +154,8 @@ form.form-inline.mb-4 {
     border-color: #000000;
 }
 
-#map { 
-    height: 400px; 
+#map, #map1, #map2 { 
+    height: 380px; 
     border-radius: 10px 10px 0px 0px;
 }
 
