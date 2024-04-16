@@ -452,6 +452,14 @@ def downvote_comment(deal_id, comment_id):
     comment_ref.update({"downvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
 
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    query = request.args.get('query', '')
+    suggestions = autocomplete_deals(query)
+    return jsonify(suggestions)
+
 @app.route('/newsletter', methods=['GET'])
 def newsletter():
     return render_template('newsletter.html')
+
