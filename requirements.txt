@@ -8,4 +8,5 @@ WTForms
 pytest
 flask-login
 authlib>=1.0
-
+profanity
+pandas
