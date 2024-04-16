@@ -129,6 +129,7 @@ def index_deal(deal):
     Index a new deal into Elasticsearch.
     """
     # Assuming deal is a dictionary that matches the Elasticsearch data structure
+    print(json.dumps(deal, indent=2))
     response = es.index(index="deals", id=deal['deal_id'], body=deal)
     return response
 
