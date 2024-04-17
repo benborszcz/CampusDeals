@@ -4,10 +4,11 @@ from flask_login import LoginManager
 login_manager = LoginManager()
 
 class User(UserMixin):
-    def __init__(self, user_id, username = None, email = None):
+    def __init__(self, user_id, username = None, email = None, profile_picture_url = None):
         self.id = user_id
         self.email = email
         self.username = username if username else email
+        self.profile_picture_url = profile_picture_url if profile_picture_url else 'static/images/default_profile.png'
 
     @classmethod
     def create_or_update_from_auth0(cls, userinfo):

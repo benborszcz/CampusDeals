@@ -519,10 +519,6 @@ def update_profile():
         hashed_new_password = generate_password_hash(new_password, method='pbkdf2:sha256')
         user_ref.update({'password': hashed_new_password})
 
-    #UPLOADS_FOLDER = os.path.join(os.path.dirname(__file__), 'static/uploads')
-    #app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
-    #os.makedirs(app.config['UPLOADS_FOLDER'], exist_ok=True)
-
     # Check for the file upload
     file = request.files.get('profile_picture')
     if file and file.filename:
@@ -531,12 +527,6 @@ def update_profile():
             flash('Only JPG and PNG files are allowed for the profile picture.', 'error')
             return render_template('edit_profile.html')
 
-        # Save the file and construct the file path
-        #file_path = os.path.join(app.config['UPLOADS_FOLDER'], f"{current_user.id}.jpg")
-        #file.save(file_path)
-        # Convert file path to URL format
-        #profile_picture_url = url_for('static', filename=f"uploads/{current_user.id}.jpg")
-
         filename = f"{current_user.id}.{file.filename.split('.')[-1]}"
 
         bucket = storage.bucket(name='campusdeals-686be.appspot.com')
@@ -544,13 +534,13 @@ def update_profile():
 
         blob.content_disposition = 'inline'
         blob.upload_from_file(file, content_type=file.mimetype)
-        #blob.metadata = {'contentDisposition': 'inline'}
-        #blob.patch()
 
         firebase_style_url = f"https://firebasestorage.googleapis.com/v0/b/{bucket.name}/o/{blob.name.replace('/', '%2F')}?alt=media"
         
         # Update the user's profile picture URL in the database
         user_ref.update({'profile_picture_url': firebase_style_url})
+        print(current_user.profile_picture_url)
+
         updated_user_data = user_ref.get().to_dict()
         print('profile_picture_url:', updated_user_data.get('profile_picture_url'))
 
