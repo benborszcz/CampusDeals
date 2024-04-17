@@ -260,17 +260,15 @@ form.form-inline.mb-4 {
     height: 100%;
 }
 
-.map-container {
-    height: 100%;
+#dashboard-map-container {
+    height: 100% !important;
     border-radius: 10px;
 }
 
-.container.mt-3, .card-body {
-    .map-container {
-        height: 380px !important;
-        padding-top: 10px;
-        margin-bottom: 10px;
-    }
+.map-container {
+    height: 380px !important;
+    padding-top: 10px;
+    margin-bottom: 10px;
 }
 
 .map-button-container {
