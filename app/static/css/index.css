@@ -1,0 +1,20 @@
+.scroll-container {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Keep all cards in a single line */
+    padding: 10px 0; /* Add some padding on top and bottom */
+}
+
+.deal-card {
+    display: inline-block;
+    width: 350px; /* Adjust the width as needed */
+    margin-right: 20px; /* Increase spacing between cards */
+    vertical-align: top; /* Align cards at the top */
+    background: #f8f9fa; /* Light background for the card */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Soft shadow for 3D effect */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Hide overflow */
+}
+
+.card-body {
+    padding: 15px; /* More padding inside the card */
+}

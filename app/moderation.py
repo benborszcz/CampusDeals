@@ -90,17 +90,8 @@ class Moderator:
 
         details['deals_f2'] = deals_f2
 
-        # Create a list of establishments in text
-        deals_establishment_collection = [str(item['establishment']['name']).lower().replace("'","").replace("bar","").replace("tavern","").replace("the","").replace("restaurant","").replace(" ","").strip() for item in deals_f2]
-        estab_sim_list = self.check_duplication_by_embeddings(str(deal_in['establishment']['name']).lower().replace("'","").replace("bar","").replace("tavern","").replace("the","").replace("restaurant","").replace(" ","").strip(), deals_establishment_collection)
-
-        details['estab_sim_list'] = estab_sim_list
-
         # Filter deals that are at the same establishment
-        deals_f3 = []
-        for i, estab in enumerate(estab_sim_list):
-            if estab['similarity'] > 0.6:
-                deals_f3.append(deals_f2[i])
+        deals_f3 = [item for item in deals_f2 if item['establishment']['name'] == deal_in['establishment']['name']]
         
         details['deals_f3'] = deals_f3
 
