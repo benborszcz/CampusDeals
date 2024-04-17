@@ -537,10 +537,6 @@ def update_profile():
         # Convert file path to URL format
         profile_picture_url = url_for('static', filename=f"uploads/{current_user.id}.jpg")
         
-        # Log the file path and URL for debugging
-        #print(f"Saved profile picture to: {file_path}")
-        #print(f"Profile picture URL: {profile_picture_url}")
-        
         # Update the user's profile picture URL in the database
         user_ref.update({'profile_picture_url': profile_picture_url})
 
