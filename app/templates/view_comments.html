@@ -82,6 +82,11 @@
 
                             {% endif %}
                         </div>
+                        {% if comment[0].get('profile_picture') %}
+                            <img src="{{ comment[0].get('profile_picture') }}" alt="User profile picture" class="profile-pic-small">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/default_profile.png') }}" alt="Default profile picture" class="profile-pic-small">
+                        {% endif %}
                         <p><strong>{{ comment[0].get('username', 'Unknown User') }}</strong> said:</p>
                         <p>{{ comment[0].get('text', '') }}</p>
                         <small class="text-muted">Posted on {{ comment[0].get('time', 'Unknown Time') }}</small>
@@ -119,6 +124,11 @@
 
                                             {% endif %}
                                         </div>
+                                        {% if comment[0].get('profile_picture') %}
+                                            <img src="{{ comment[0].get('profile_picture') }}" alt="User profile picture" class="profile-pic-small">
+                                        {% else %}
+                                            <img src="{{ url_for('static', filename='images/default_profile.png') }}" alt="Default profile picture" class="profile-pic-small">
+                                        {% endif %}
                                         <p><strong>{{ subcomment.get('username', 'Unknown User') }}</strong> said:</p>
                                         <p>{{ subcomment.get('text', '') }}</p>
                                         <small class="text-muted">Posted on {{ subcomment.get('time', 'Unknown Time') }}</small>

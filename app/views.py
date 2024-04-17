@@ -352,7 +352,8 @@ def view_and_add_comments(deal_id):
             'text': new_comment_text,
             'time': datetime.now().isoformat(),
             'upvotes': 0,
-            'downvotes': 0
+            'downvotes': 0,
+            'profile_picture': current_user.profile_picture_url 
         }
 
         # Add new comment document to comments collection
