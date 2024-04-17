@@ -265,7 +265,7 @@ form.form-inline.mb-4 {
     border-radius: 10px;
 }
 
-.card-body {
+.container.mt-3, .card-body {
     .map-container {
         height: 380px !important;
         padding-top: 10px;
