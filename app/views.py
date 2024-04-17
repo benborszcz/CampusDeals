@@ -1,11 +1,11 @@
 from itertools import groupby
 from operator import itemgetter
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
-from . import app
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, get_flashed_messages
+from . import app, db
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
-from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
+from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty, get_active_deals, get_time_until_deals_end, get_time_until_deals_start, autocomplete_deals
 import config
 from firebase_admin import firestore, storage
 from datetime import datetime
@@ -32,6 +32,84 @@ class CommentForm(FlaskForm):
 def index():
     """
     Home page that could show popular deals or a search bar.
+    """
+    # load all deals from firestore
+    deals = db.collection(config.DEAL_COLLECTION).stream()
+    deal_list = [deal.to_dict() for deal in deals]
+
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
+
+    # link deals to establishments
+    for deal in deal_list:
+        for establishment in establishment_list:
+            if deal['establishment']['name'] == establishment['name'] or deal['establishment']['name'] in establishment['shortname']:
+                deal['establishment'] = establishment
+
+    # index all deals in elasticsearch
+    if check_index(deal_list):
+        reset_index(deal_list)
+
+    for deal in deal_list:
+        deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
+        deal['downvotes'] = deal['downvotes'] if 'downvotes' in deal else 0
+        deal['url'] = url_for('deal_details', deal_id=deal['deal_id']) # Assuming url_for is defined elsewhere
+        deal['lat'] = deal['establishment']['latitude']
+        deal['lng'] = deal['establishment']['longitude']
+    deal_list = sorted(deal_list, key=lambda k: k['upvotes'] - k['downvotes'], reverse=True)
+
+    # Function to slightly adjust coordinates
+    def adjust_coords(lat, lng, count):
+        # Define how much to adjust. These values can be very small.
+        lat_adj = -0.00000
+        lng_adj = -0.00007
+        return lat + (lat_adj * count), lng + (lng_adj * count)
+
+    # Group deals by their coordinates
+    sorted_deals = sorted(deal_list, key=itemgetter('lat', 'lng'))
+    for _, group in groupby(sorted_deals, key=itemgetter('lat', 'lng')):
+        duplicates = list(group)
+        if len(duplicates) > 1:
+            for i, deal in enumerate(duplicates):
+                # Adjust coordinates starting from the second item
+                if i > 0:
+                    print(f"Adjusting coordinates for {deal['title']}")
+                    deal['lat'], deal['lng'] = adjust_coords(deal['lat'], deal['lng'], i)
+
+    # Find the time_until_start and for time_until_end for each deal
+    until_starts = get_time_until_deals_start(deal_list)
+    until_ends = get_time_until_deals_end(deal_list)
+    print(len(deal_list), len(until_starts), len(until_ends))
+    for i, deal in enumerate(deal_list):
+        # Convert the timedelta to string for display
+        deal['time_until_start'] = until_starts[i].days * 24 + until_starts[i].seconds // 3600
+        deal['time_until_end'] = until_ends[i].days * 24 + until_ends[i].seconds // 3600
+
+    # Create a list of active deals
+    active_deals = get_active_deals(deal_list)
+
+    # Sort active deals by time until end
+    active_deals = sorted(active_deals, key=lambda k: k['time_until_end'])
+
+    # Create a list of upcoming deals
+    upcoming_deals = [deal for deal in deal_list if deal not in active_deals]
+
+    # Sort upcoming deals by time until start
+    upcoming_deals = sorted(upcoming_deals, key=lambda k: k['time_until_start'])
+
+    for deal in upcoming_deals:
+        print(f"Deal: {deal['title']}, Time until start: {deal['time_until_start']}, Time until end: {deal['time_until_end']}")
+
+    # Create list of Active deals and next 10 upcoming deals
+    map_deals = active_deals + upcoming_deals[:10]
+
+    return render_template('index.html', popular_deals=deal_list[:6], deals_json=json.dumps(map_deals), active_deals=active_deals, upcoming_deals=upcoming_deals, enumerate=enumerate, len=len)
+
+@app.route('/deal_dashboard')
+def deal_dashboard():
+    """
+    Dashboard page that shows all deals in database with filters
     """
     # load all deals from firestore
     deals = db.collection(config.DEAL_COLLECTION).stream()
@@ -79,10 +157,7 @@ def index():
                     print(f"Adjusting coordinates for {deal['title']}")
                     deal['lat'], deal['lng'] = adjust_coords(deal['lat'], deal['lng'], i)
 
-    return render_template('index.html', popular_deals=deal_list, deals_json=json.dumps(deal_list), enumerate=enumerate, len=len)
-
-from flask import request, jsonify
-from . import app, db
+    return render_template('deal_dashboard.html', popular_deals=deal_list, deals_json=json.dumps(deal_list))
 
 @app.route('/submit-deal', methods=['POST', 'GET'])
 def submit_deal():
@@ -155,7 +230,7 @@ def establishments():
     establishments = db.collection('establishments').stream()
     establishment_list = [establishment.to_dict() for establishment in establishments]
     # Convert establishments.hours to normalized time (non-military time)
-
+        
     return render_template('establishments.html', establishments=establishment_list)
 
 @app.route('/search', methods=['GET'])
@@ -167,9 +242,10 @@ def search():
     userLng = request.args.get('userLng')
     if query or days or distance:
         # Assuming search_deals returns a list of Firestore documents
-        hits = search_deals(query, days, distance, userLat, userLng)
+        #hits = search_deals(query, days, distance, userLat, userLng)
+        hits = search_deals(query, days, distance, userLat, userLng)["hits"]["hits"]
         results = []
-        print(hits)
+
         for hit in hits:
             hit['_source']['_score'] = hit['_score']
             results.append(hit['_source'])
@@ -184,9 +260,6 @@ def search():
                 if deal['deal_id'] == result['deal_id']:
                     deal['_score'] = result['_score']
 
-        for result in deal_results:
-            print(f"Deal: {result['title']}, Score: {result['_score']}")
-
         # load all establishments from firestore
         establishments = db.collection('establishments').stream()
         establishment_list = [establishment.to_dict() for establishment in establishments]
@@ -199,7 +272,7 @@ def search():
 
         return render_template('search_results.html', results=deal_results, enumerate=enumerate, len=len)
     return redirect(url_for('index'))
-
+    
 @app.route('/establishment_details/<establishment_name>', methods=['GET'])
 def establishment_details(establishment_name):
     """
@@ -264,6 +337,22 @@ def deal_details(deal_id):
 
     return render_template('deal_details.html', deal=deal_dict, deals_json=json.dumps([deal_dict]))
 
+@app.route('/deal_details_dashboard/<deal_id>', methods=['GET'])
+def deal_details_dashboard(deal_id):
+    # Retrieve the document from the Firestore collection
+    deal = db.collection(config.DEAL_COLLECTION).document(deal_id).get()
+    deal_dict = deal.to_dict()
+
+    # load all establishments from firestore
+    establishments = db.collection('establishments').stream()
+    establishment_list = [establishment.to_dict() for establishment in establishments]
+
+    # link deal to establishment
+    for establishment in establishment_list:
+        if deal_dict['establishment']['name'] == establishment['name'] or deal_dict['establishment']['name'] in establishment['shortname']:
+            deal_dict['establishment'] = establishment
+
+    return jsonify(deal_dict)
 
 @app.route('/deal/<deal_id>/upvote', methods=['POST'])
 @login_required
@@ -328,6 +417,63 @@ def daily_deals():
     # Render the 'daily_deals.html' template
     return render_template('daily_deals.html', daily_deals=daily_deals, enumerate=enumerate, len=len)
 
+@app.route('/view-comments-dashboard/<deal_id>', methods=['GET', 'POST'])
+def view_and_add_comments_dashboard(deal_id):
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
+    deal = deal_ref.get().to_dict()
+    comments_ref = deal_ref.collection("comments").stream()
+    
+    # Handle comment submission
+    comment_form = CommentForm(request.form)
+    if comment_form.validate_on_submit() and current_user.is_authenticated:
+        new_comment_text = comment_form.comment.data
+
+        # Check for profanity using the profanity library
+        if profanity.contains_profanity(new_comment_text):
+            flash('Your comment contains profanity and cannot be posted.', 'danger')
+            return jsonify({'messages': get_flashed_messages(with_categories=True)}), 400
+
+        new_comment = {
+            'comment_id': str(uuid.uuid4()),
+            'user_id': current_user.id,
+            'username': current_user.username,
+            'text': new_comment_text,
+            'time': datetime.now().isoformat(),
+            'upvotes': 0,
+            'downvotes': 0
+        }
+
+        # Add new comment document to comments collection
+        deal_ref.collection("comments").document(new_comment['comment_id']).set(new_comment)
+
+        # Generate a new CSRF token and include it in the JSON response
+        csrf_token = generate_csrf()
+        flash('Comment added successfully!', 'success')
+        return jsonify({'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)}), 201
+
+    # Put comments into array for template
+    comments = []
+    for comment in comments_ref:
+        subcomments = []
+        comment_contents = comment.to_dict()
+        subcomments_ref = deal_ref.collection("comments").document(comment_contents['comment_id']).collection("comments").stream()
+        for subcomment in subcomments_ref:
+            subcomments.append(subcomment.to_dict())
+        commentAsDict = [comment_contents, subcomments]
+        comments.append(commentAsDict)
+
+    for comment in comments:
+        comment[0]['time'] = datetime.strptime(comment[0].get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+        for subcomment in comment[1]:
+            subcomment['time'] = datetime.strptime(subcomment.get('time'), '%Y-%m-%dT%H:%M:%S.%f').strftime('%Y-%m-%d')
+
+    # Sort comments based on votes or other criteria if needed
+    sorted_comments = sorted(comments, key=lambda k: k[0].get('upvotes', 0) - k[0].get('downvotes', 0), reverse=True)
+
+    # Generate a new CSRF token and include it in the JSON response
+    csrf_token = generate_csrf()
+    return jsonify({'title': deal.get('title'), 'user_authenticated': current_user.is_authenticated, 
+                    'comments': sorted_comments, 'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)})
 
 @app.route('/view-comments/<deal_id>', methods=['GET', 'POST'])
 def view_and_add_comments(deal_id):
@@ -415,6 +561,36 @@ def add_subcomments(deal_id, parent_id):
         deal_ref.collection("comments").document(parent_id).collection("comments").document(new_comment['comment_id']).set(new_comment)
         flash('Comment added successfully!', 'success')
         return redirect(url_for('view_and_add_comments', deal_id=deal_id))
+    
+@app.route('/view-comments-dashboard/<deal_id>/<parent_id>', methods=['GET', 'POST'])
+def add_subcomments_dashboard(deal_id, parent_id):
+    comment_form = CommentForm()
+    deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
+
+    # Handle new subcomments
+    if comment_form.validate_on_submit() and current_user.is_authenticated:
+        new_comment_text = comment_form.comment.data
+
+        # Check for profanity using the profanity library
+        if profanity.contains_profanity(new_comment_text):
+            flash('Your comment contains profanity and cannot be posted.', 'danger')
+            return jsonify({'messages': get_flashed_messages(with_categories=True)}), 400
+
+        new_comment = {
+            'comment_id': str(uuid.uuid4()),
+            'user_id': current_user.id,
+            'username': current_user.username,
+            'text': new_comment_text,
+            'time': datetime.now().isoformat(),
+            'upvotes': 0,
+            'downvotes': 0
+        }
+
+        # Add new subcomment document to comments collection under the parent comment document
+        deal_ref.collection("comments").document(parent_id).collection("comments").document(new_comment['comment_id']).set(new_comment)
+        csrf_token = generate_csrf()
+        flash('Comment added successfully!', 'success')
+        return jsonify({'csrf_token': csrf_token, 'messages': get_flashed_messages(with_categories=True)}), 201
 
 @login_required
 @app.route('/deal/<deal_id>/comment/<parent_id>/subcomment/<comment_id>/upvote', methods=['POST'])
@@ -558,6 +734,14 @@ def update_profile():
 def edit_profile():
     return render_template('edit_profile.html', user_id = current_user.id)
 
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    query = request.args.get('query', '')
+    suggestions = autocomplete_deals(query)
+    return jsonify(suggestions)
+
 @app.route('/newsletter', methods=['GET'])
 def newsletter():
     return render_template('newsletter.html')
+

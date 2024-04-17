@@ -16,61 +16,6 @@
 </head>
 
 <body>
-    <div class="white-strip">
-        <img src="{{ url_for('static', filename='images/burger.gif') }}" alt="Burger" class="burger">
-        <img src="{{ url_for('static', filename='images/beer.gif') }}" alt="Beer" class="beer">
-        <img src="{{ url_for('static', filename='images/pizza.gif') }}" alt="Pizza" class="pizza">
-        <img src="{{ url_for('static', filename='images/wine.gif') }}" alt="Wine" class="wine">
-        <img src="{{ url_for('static', filename='images/fries.gif') }}" alt="Fries" class="fries">
-        <img src="{{ url_for('static', filename='images/alc.gif') }}" alt="Alc" class="alc">
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                setTimeout(function() {
-                    document.querySelector('.beer').style.opacity = '1';
-                }, 1250); // 1000 milliseconds = 1 seconds delay
-
-                setTimeout(function() {
-                    document.querySelector('.pizza').style.opacity = '1';
-                }, 2000); // 2000 milliseconds = 2 second delay for taco
-
-                setTimeout(function() {
-                    document.querySelector('.wine').style.opacity = '1';
-                }, 3000);
-                setTimeout(function() {
-                    document.querySelector('.fries').style.opacity = '1';
-                }, 4000);
-                setTimeout(function() {
-                    document.querySelector('.alc').style.opacity = '1';
-                }, 5000);
-            });
-        </script>
-
-        <!-- Inside the <body> section of base.html, before the closing </body> tag -->
-<script>
-  // JavaScript function to scroll back to the top of the page
-  function scrollToTop() {
-      window.scrollTo({
-          top: 0,
-          behavior: 'smooth' // Smooth scroll behavior
-      });
-  }
-
-  // Show or hide the "Back to Top" button based on scroll position
-  window.onscroll = function() {
-      toggleBackToTopButton();
-  };
-
-  function toggleBackToTopButton() {
-      const backToTopButton = document.getElementById('back-to-top-btn');
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-          backToTopButton.style.display = 'block';
-      } else {
-          backToTopButton.style.display = 'none';
-      }
-  }
-</script>
-
-    </div> <!-- White strip above the navbar -->
     <header>
         <!-- Bootstrap Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -90,7 +35,10 @@
                 <ul class="navbar-nav ml-auto">
 
                     <form action="{{ url_for('search') }}" method="get" class="form-inline mb-4">
-                        <input type="text" name="query" class="form-control mr-2 search-input" placeholder="Search for deals...">
+                        <div class="search-input-container">
+                            <input type="text" name="query" class="form-control mr-2 search-input" placeholder="Search for deals...">
+                            <ul id="suggestions"></ul>
+                        </div>
                     </form>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSettings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -119,7 +67,7 @@
             </div>
         </nav>
     </header>
-    <main class="container mt-4">
+    <main class="container mt-3">
         {% block content %}{% endblock %}
     </main>
 
@@ -158,11 +106,34 @@
     </footer>
 
     <!-- Include Bootstrap JS and its dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.9/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Optional: Include custom JS for additional interactivity -->
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+    <script>
+      // Function to scroll to the top of the page smoothly
+      function scrollToTop() {
+          window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+          });
+      }
+
+      // Show or hide the scroll-to-top button based on scroll position
+      window.onscroll = function() {
+          scrollFunction();
+      };
+
+      function scrollFunction() {
+          var scrollToTopBtn = document.getElementById("back-to-top-btn");
+          if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+              scrollToTopBtn.style.display = "block";
+          } else {
+              scrollToTopBtn.style.display = "none";
+          }
+      }
+  </script>
 
     <button onclick="scrollToTop()" id="back-to-top-btn" title="Go to top">&#8593;</button>
 </body>

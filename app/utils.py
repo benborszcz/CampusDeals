@@ -129,6 +129,7 @@ def index_deal(deal):
     Index a new deal into Elasticsearch.
     """
     # Assuming deal is a dictionary that matches the Elasticsearch data structure
+    print(json.dumps(deal, indent=2))
     response = es.index(index="deals", id=deal['deal_id'], body=deal)
     return response
 
@@ -311,3 +312,163 @@ def haversine(lat1, lng1, lat2, lng2):
     c = 2 * asin(sqrt(a)) 
     r = 3956 # Radius of earth in miles
     return c * r
+
+def autocomplete_deals(query):
+    """
+    Simplified search function for autocomplete suggestions.
+    """
+    if not query:
+        return []
+
+    # Simplified Elasticsearch query focusing on deal titles or relevant fields
+    autocomplete_query = {
+        "query": {
+            "multi_match": {
+                "query": query,
+                "fields": ["title^2", "description"],  # Boost title field, include description
+                "type": "bool_prefix"  # Use bool_prefix for autocomplete scenarios
+            }
+        },
+        "_source": ["title"],  # Only return the title field to minimize data transfer
+        "size": 5  # Limit the number of suggestions
+    }
+
+    # Perform the search on the 'deals' index
+    response = es.search(index="deals", body=autocomplete_query)
+
+    # Extract titles from hits
+    suggestions = [hit['_source']['title'] for hit in response['hits']['hits']]
+
+    return suggestions
+
+def _fix_time(time_str):
+    if time_str == "24:00:00":
+        time_str = "00:00:00"
+    return time_str
+
+def get_active_deals(deals_list):
+    """
+    Filter out deals that are currently active.
+    """
+    active_deals = []
+    for deal in deals_list:
+        # Get the current day of the week
+        current_day = datetime.datetime.now().strftime('%A')
+        # Check if the current day is in the deal's days_active list
+        if current_day in deal['deal_details']['days_active']:
+
+            # Get the current time in EST
+            current_time = datetime.datetime.now()
+
+            # Convert start_time and end_time to datetime objects
+            if deal['deal_details']['start_time'] == "24:00:00":
+                deal['deal_details']['start_time'] = "00:00:00"
+            
+            if deal['deal_details']['end_time'] == "24:00:00":
+                deal['deal_details']['end_time'] = "00:00:00"
+
+            start_time = datetime.datetime.strptime(deal['deal_details']['start_time'], '%H:%M:%S')
+            end_time = datetime.datetime.strptime(deal['deal_details']['end_time'], '%H:%M:%S')
+
+            # Set the start_time and end_time to the current date
+            start_time = datetime.datetime.combine(datetime.datetime.now().date(), start_time.time())
+            end_time = datetime.datetime.combine(datetime.datetime.now().date(), end_time.time())
+
+            # Check if end_time is before start_time if so add 24 hours to end_time
+            if end_time < start_time:
+                end_time += datetime.timedelta(days=1)
+
+            # Check if the current time is between start_time and end_time
+            if start_time <= current_time <= end_time:
+                active_deals.append(deal)
+        
+                
+    return active_deals
+
+def get_time_until_deals_start(deals_list):
+    """
+    Calculate the time until the start of each deal based on a list of days when the deal is active.
+    """
+    time_until_deal_start = []
+    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    for deal in deals_list:
+        # Get the current day of the week and time
+        current_time = datetime.datetime.now()
+        current_day = current_time.strftime('%A')
+
+        # Convert start_time and end_time to datetime objects
+        if deal['deal_details']['start_time'] == "24:00:00":
+            deal['deal_details']['start_time'] = "00:00:00"
+
+        # Convert start_time to a datetime object
+        start_time_str = deal['deal_details']['start_time']
+
+        start_time = datetime.datetime.strptime(start_time_str, '%H:%M:%S')
+        start_time = datetime.datetime.combine(current_time.date(), start_time.time())
+
+        # Get the list of active days
+        days_active = deal['deal_details']['days_active']
+
+        # Find the next active day
+        current_day_index = days_of_week.index(current_day)
+        days_until_next_active = min((days_of_week.index(day) - current_day_index) % 7 for day in days_active)
+
+        # If the next active day is today but the time has passed, find the next occurrence
+        if days_until_next_active == 0 and start_time < current_time:
+            next_days = [(days_of_week.index(day) - current_day_index) % 7 + 7 for day in days_active if day != current_day]
+            days_until_next_active = min(next_days) if next_days else 7  # Default to 7 if next_days is empty
+
+        # Calculate the exact start time of the deal
+        deal_start_time = start_time + datetime.timedelta(days=days_until_next_active)
+
+        # Calculate the time until the deal starts
+        time_until_start = deal_start_time - current_time
+        time_until_deal_start.append(time_until_start)
+
+    return time_until_deal_start
+
+
+def get_time_until_deals_end(deal_list):
+    """
+    Calculate the time until the end of each deal. If it is not active, return 0.
+    """
+    time_until_deal_end = []
+    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    for deal in deal_list:
+        # Get the current day of the week and time
+        current_time = datetime.datetime.now()
+        current_day = current_time.strftime('%A')
+
+        # Convert start_time and end_time to datetime objects
+        if deal['deal_details']['end_time'] == "24:00:00":
+            deal['deal_details']['end_time'] = "00:00:00"
+
+        # Convert end_time to a datetime object
+        end_time_str = deal['deal_details']['end_time']
+
+        end_time = datetime.datetime.strptime(end_time_str, '%H:%M:%S')
+        end_time = datetime.datetime.combine(current_time.date(), end_time.time())
+
+        # Get the list of active days
+        days_active = deal['deal_details']['days_active']
+
+        # Find the next active day
+        current_day_index = days_of_week.index(current_day)
+        days_until_next_active = min((days_of_week.index(day) - current_day_index) % 7 for day in days_active)
+
+        # If the next active day is today but the time has passed, find the next occurrence
+        if days_until_next_active == 0 and end_time < current_time:
+            next_days = [(days_of_week.index(day) - current_day_index) % 7 + 7 for day in days_active if day != current_day]
+            days_until_next_active = min(next_days) if next_days else 7  # Default to 7 if next_days is empty
+
+        # Calculate the exact end time of the deal
+        deal_end_time = end_time + datetime.timedelta(days=days_until_next_active)
+
+        # Calculate the time until the deal ends
+        time_until_end = deal_end_time - current_time
+        time_until_deal_end.append(time_until_end)
+
+    return time_until_deal_end
+
