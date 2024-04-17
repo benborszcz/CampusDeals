@@ -139,7 +139,7 @@ form.form-inline.mb-4 {
     flex-grow: 1; /* Take up remaining space */
     background-color: #f5f5f5;
     overflow-y: auto; /* Enable vertical scrolling */
-    padding: 15px 15px 0px 15px; /* Add padding for better spacing */
+    padding: 15px; /* Add padding for better spacing */
 }
 
 #submitButton {
@@ -154,15 +154,26 @@ form.form-inline.mb-4 {
     border-color: #000000;
 }
 
-#map, #map1, #map2 { 
-    height: 380px; 
+#map, #map1, #map2 {
+    height: 100%;
     border-radius: 10px 10px 0px 0px;
 }
 
-.map-container { 
-    padding-top: 10px;
-    margin-bottom: 10px;
+.shadow {
+    height: 100%;
+}
+
+.map-container {
+    height: 100%;
     border-radius: 10px;
+}
+
+.card-body {
+    .map-container {
+        height: 380px !important;
+        padding-top: 10px;
+        margin-bottom: 10px;
+    }
 }
 
 .map-button-container {
