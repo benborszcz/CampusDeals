@@ -539,6 +539,11 @@ def update_profile():
         
         # Update the user's profile picture URL in the database
         user_ref.update({'profile_picture_url': firebase_style_url})
+        current_user.profile_picture_url = firebase_style_url
+
+        new_user_data = user_ref.get().to_dict()
+        current_user.profile_picture_url = new_user_data.get('profile_picture_url') 
+
         print(current_user.profile_picture_url)
 
         updated_user_data = user_ref.get().to_dict()

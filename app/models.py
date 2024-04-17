@@ -47,5 +47,5 @@ def load_user(user_id):
     doc = user_ref.get()
     if doc.exists:
         user_data = doc.to_dict()
-        return User(user_id, user_data.get('username'), user_data.get('email'))
+        return User(user_id, user_data.get('username'), user_data.get('email'), user_data.get('profile_picture_url'))
     return None
