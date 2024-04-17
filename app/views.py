@@ -539,15 +539,20 @@ def update_profile():
 
         filename = f"{current_user.id}.{file.filename.split('.')[-1]}"
 
-        bucket = storage.bucket()
+        bucket = storage.bucket(name='campusdeals-686be.appspot.com')
         blob = bucket.blob(f"profile_picture/{filename}")
 
-        blob.upload_from_file(file)
+        blob.content_disposition = 'inline'
+        blob.upload_from_file(file, content_type=file.mimetype)
+        #blob.metadata = {'contentDisposition': 'inline'}
+        #blob.patch()
 
-        profile_picture_url = blob.public_url
+        firebase_style_url = f"https://firebasestorage.googleapis.com/v0/b/{bucket.name}/o/{blob.name.replace('/', '%2F')}?alt=media"
         
         # Update the user's profile picture URL in the database
-        user_ref.update({'profile_picture_url': profile_picture_url})
+        user_ref.update({'profile_picture_url': firebase_style_url})
+        updated_user_data = user_ref.get().to_dict()
+        print('profile_picture_url:', updated_user_data.get('profile_picture_url'))
 
     flash('Profile updated successfully!')
     return redirect(url_for('profile'))

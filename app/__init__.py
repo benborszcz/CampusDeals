@@ -12,7 +12,7 @@ app.config['SECRET_KEY'] = 'asoifboiasfopbasopdbfou[asbo[d]]'
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate('app/firebase_service_account.json')
 firebase_admin.initialize_app(cred, {
-    'storageBucket': 'pictures.appspot.com' 
+    'storageBucket': 'campusdeals-686be.appspot.com' 
 })
 
 # Initialize Firestore instance

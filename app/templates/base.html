@@ -95,7 +95,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSettings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {% if current_user.is_authenticated %}
-                                <img src = "{{url_for('static', filename='uploads/'+current_user.id+'.jpg') }}" alt = "Default Profile Picture" class = "profile-pic-small">
+                                <img src = "{{current_user.profile_picture_url}}" alt = "Default Profile Picture" class = "profile-pic-small">
                             {% endif %}
                             <div class = "gear-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">

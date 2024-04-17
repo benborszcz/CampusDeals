@@ -11,7 +11,7 @@
         <div class="col-md-3">
             {% if current_user.is_authenticated %}
                 <div class="profile-picture-container">
-                    <img src="{{url_for('static', filename='uploads/'+current_user.id+'.jpg') }}" class="profile-image">
+                    <img src="{{current_user.profile_picture_url}}" class="profile-image">
                 </div>
             {% endif %}
         </div>
