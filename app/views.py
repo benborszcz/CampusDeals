@@ -480,23 +480,23 @@ def update_profile():
 
     user_ref = db.collection('users').document(current_user.id)
 
-   #check for duplicate emails
-   #email_ref = db.collection('users').where('email', '==', new_email).limit(1).get()
-   #if email_ref:
-   #    flash('Email is already in use by another user. Please use a different email.', 'danger')
-   #    return redirect(url_for('edit_profile'))
-   #
-   ##check for duplicate usernames
-   #username_ref = db.collection('users').document(new_username)
-   #if username_ref.get().exists:
-   #    flash('Username already taken by another user. Please choose another.', 'danger')
-   #    return redirect(url_for('edit_profile'))
-    
-    #update user info
-    user_ref.update({
-        'username': new_username,
-        'email': new_email,
-    })
+    # Check for duplicate usernames
+    if new_username and new_username != current_user.username:
+        username_ref = db.collection('users').where('username', '==', new_username).get()
+        if username_ref and any(doc.id != current_user.id for doc in username_ref):
+            flash('Username already taken by another user. Please choose another.', 'error')
+            return render_template('edit_profile.html')
+        else:
+            user_ref.update({'username': new_username})
+
+    # Check for duplicate emails
+    if new_email and new_email != current_user.email:
+        email_ref = db.collection('users').where('email', '==', new_email).get()
+        if email_ref and any(doc.id != current_user.id for doc in email_ref):
+            flash('Email is already in use by another user. Please use a different email.', 'error')
+            return render_template('edit_profile.html')
+        else:
+            user_ref.update({'email': new_email})
 
     # Update the password
     current_password = request.form.get('current_password')
@@ -507,13 +507,13 @@ def update_profile():
         # Verify current password
         user_data = user_ref.get().to_dict()
         if not check_password_hash(user_data['password'], current_password):
-            flash('Current password is incorrect.', 'danger')
-            return redirect(url_for('edit_profile'))
+            flash('Current password is incorrect.', 'error')
+            return render_template('edit_profile.html')
 
         # Check if new passwords match
         if new_password != confirm_new_password:
-            flash('New passwords do not match.', 'danger')
-            return redirect(url_for('edit_profile'))
+            flash('New passwords do not match.', 'error')
+            return render_template('edit_profile.html')
 
         # Update password in database
         hashed_new_password = generate_password_hash(new_password, method='pbkdf2:sha256')

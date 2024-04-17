@@ -22,7 +22,7 @@
                         Sa{% if i < len(deal['deal_details']['days_active']) - 1 %}, {% endif %}
                         {% elif day == 'Sunday' %}
                         Su{% if i < len(deal['deal_details']['days_active']) - 1 %}, {% endif %}
-                        {% endif %
+                        {% endif %}
                     {% endfor %}
                     <d class="text-muted m-0 p-0" style="font-size: small;">
                         | {{ deal['deal_details']['start_time'] }} - {{ deal['deal_details']['end_time'] }}
