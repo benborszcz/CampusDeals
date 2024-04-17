@@ -341,6 +341,11 @@ def autocomplete_deals(query):
 
     return suggestions
 
+def _fix_time(time_str):
+    if time_str == "24:00:00":
+        time_str = "00:00:00"
+    return time_str
+
 def get_active_deals(deals_list):
     """
     Filter out deals that are currently active.
@@ -392,8 +397,13 @@ def get_time_until_deals_start(deals_list):
         current_time = datetime.datetime.now()
         current_day = current_time.strftime('%A')
 
+        # Convert start_time and end_time to datetime objects
+        if deal['deal_details']['start_time'] == "24:00:00":
+            deal['deal_details']['start_time'] = "00:00:00"
+
         # Convert start_time to a datetime object
         start_time_str = deal['deal_details']['start_time']
+
         start_time = datetime.datetime.strptime(start_time_str, '%H:%M:%S')
         start_time = datetime.datetime.combine(current_time.date(), start_time.time())
 
@@ -431,8 +441,13 @@ def get_time_until_deals_end(deal_list):
         current_time = datetime.datetime.now()
         current_day = current_time.strftime('%A')
 
+        # Convert start_time and end_time to datetime objects
+        if deal['deal_details']['end_time'] == "24:00:00":
+            deal['deal_details']['end_time'] = "00:00:00"
+
         # Convert end_time to a datetime object
         end_time_str = deal['deal_details']['end_time']
+
         end_time = datetime.datetime.strptime(end_time_str, '%H:%M:%S')
         end_time = datetime.datetime.combine(current_time.date(), end_time.time())
 
