@@ -7,7 +7,7 @@ from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
 from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty
 import config
-from firebase_admin import firestore
+from firebase_admin import firestore, storage
 from datetime import datetime
 from .auth import login_required
 from flask_login import login_user, logout_user, login_required, current_user
@@ -519,9 +519,9 @@ def update_profile():
         hashed_new_password = generate_password_hash(new_password, method='pbkdf2:sha256')
         user_ref.update({'password': hashed_new_password})
 
-    UPLOADS_FOLDER = os.path.join(os.path.dirname(__file__), 'static/uploads')
-    app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
-    os.makedirs(app.config['UPLOADS_FOLDER'], exist_ok=True)
+    #UPLOADS_FOLDER = os.path.join(os.path.dirname(__file__), 'static/uploads')
+    #app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
+    #os.makedirs(app.config['UPLOADS_FOLDER'], exist_ok=True)
 
     # Check for the file upload
     file = request.files.get('profile_picture')
@@ -532,10 +532,19 @@ def update_profile():
             return render_template('edit_profile.html')
 
         # Save the file and construct the file path
-        file_path = os.path.join(app.config['UPLOADS_FOLDER'], f"{current_user.id}.jpg")
-        file.save(file_path)
+        #file_path = os.path.join(app.config['UPLOADS_FOLDER'], f"{current_user.id}.jpg")
+        #file.save(file_path)
         # Convert file path to URL format
-        profile_picture_url = url_for('static', filename=f"uploads/{current_user.id}.jpg")
+        #profile_picture_url = url_for('static', filename=f"uploads/{current_user.id}.jpg")
+
+        filename = f"{current_user.id}.{file.filename.split('.')[-1]}"
+
+        bucket = storage.bucket()
+        blob = bucket.blob(f"profile_picture/{filename}")
+
+        blob.upload_from_file(file)
+
+        profile_picture_url = blob.public_url
         
         # Update the user's profile picture URL in the database
         user_ref.update({'profile_picture_url': profile_picture_url})
