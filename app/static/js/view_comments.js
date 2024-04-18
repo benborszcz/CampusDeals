@@ -73,6 +73,12 @@ function loadComments(messages, dealId) {
 }
 
 function createCommentElement (cardBody, comment, data, dealId, parentId) {
+    // Profile picture
+    const img = document.createElement('img');
+    img.className = 'profile-pic-small';
+    img.src = comment.profile_picture ? comment.profile_picture : defaultProfilePic;
+    img.alt = comment.profile_picture ? "User profile picture" : "Default profile picture";
+    
     // Username
     const strong = document.createElement('strong');
     strong.textContent = comment.username || 'Unknown User';
@@ -123,6 +129,7 @@ function createCommentElement (cardBody, comment, data, dealId, parentId) {
     data.user_authenticated ? voteDiv.appendChild(downvoteButton) : voteDiv.appendChild(lockedIcon.cloneNode(true));
     
     cardBody.appendChild(voteDiv);
+    cardBody.appendChild(img);
     cardBody.appendChild(p1);
     cardBody.appendChild(p2);
     cardBody.appendChild(small);

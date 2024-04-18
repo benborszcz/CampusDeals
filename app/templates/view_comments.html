@@ -60,11 +60,11 @@
                         <!-- Voting Column -->
                         <div class="col-1 d-flex flex-column align-items-center justify-content-center" style="float:right;">
                             {% if current_user.is_authenticated %}
-                                <button type="button" class="btn btn-link p-0 mb-0" onclick="upvote('{{ deal_id }}', '{{ comment[0]['comment_id'] }}')">
+                                <button type="button" class="btn btn-link p-0 mb-0" onclick="voteComment('{{ deal_id }}', '{{ comment[0]['comment_id'] }}', true, null)">
                                     <b>▲</b>
                                 </button>
                                 <span id="vote-count-{{ comment[0]['comment_id'] }}">{{ comment[0].get('upvotes', 0) - comment[0].get('downvotes', 0) }}</span>
-                                <button type="button" class="btn btn-link p-0 mt-0" onclick="downvote('{{ deal_id }}', '{{ comment[0]['comment_id'] }}')">
+                                <button type="button" class="btn btn-link p-0 mt-0" onclick="voteComment('{{ deal_id }}', '{{ comment[0]['comment_id'] }}', false, null)">
                                     <b>▼</b>
                                 </button>
                             {% else %}
@@ -102,11 +102,11 @@
                                         <!-- Voting Column -->
                                         <div class="col-1 d-flex flex-column align-items-center justify-content-center" style="float:right;">
                                             {% if current_user.is_authenticated %}
-                                                <button type="button" class="btn btn-link p-0 mb-0" onclick="upvoteSubcomment('{{ deal_id }}', '{{ comment[0]['comment_id'] }}', '{{ subcomment['comment_id'] }}')">
+                                                <button type="button" class="btn btn-link p-0 mb-0" onclick="voteComment('{{ deal_id }}', '{{ subcomment['comment_id'] }}', true, '{{ comment[0]['comment_id'] }}')">
                                                     <b>▲</b>
                                                 </button>
                                                 <span id="vote-count-{{ subcomment['comment_id'] }}">{{ subcomment.get('upvotes', 0) - subcomment.get('downvotes', 0) }}</span>
-                                                <button type="button" class="btn btn-link p-0 mt-0" onclick="downvoteSubcomment('{{ deal_id }}', '{{ comment[0]['comment_id'] }}', '{{ subcomment['comment_id'] }}')">
+                                                <button type="button" class="btn btn-link p-0 mt-0" onclick="voteComment('{{ deal_id }}', '{{ subcomment['comment_id'] }}', false, '{{ comment[0]['comment_id'] }}')">
                                                     <b>▼</b>
                                                 </button>
                                             {% else %}

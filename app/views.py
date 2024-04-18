@@ -439,7 +439,8 @@ def view_and_add_comments_dashboard(deal_id):
             'text': new_comment_text,
             'time': datetime.now().isoformat(),
             'upvotes': 0,
-            'downvotes': 0
+            'downvotes': 0,
+            'profile_picture': current_user.profile_picture_url 
         }
 
         # Add new comment document to comments collection
@@ -553,7 +554,8 @@ def add_subcomments(deal_id, parent_id):
             'text': new_comment_text,
             'time': datetime.now().isoformat(),
             'upvotes': 0,
-            'downvotes': 0
+            'downvotes': 0,
+            'profile_picture': current_user.profile_picture_url 
         }
 
         # Add new subcomment document to comments collection under the parent comment document
@@ -582,7 +584,8 @@ def add_subcomments_dashboard(deal_id, parent_id):
             'text': new_comment_text,
             'time': datetime.now().isoformat(),
             'upvotes': 0,
-            'downvotes': 0
+            'downvotes': 0,
+            'profile_picture': current_user.profile_picture_url 
         }
 
         # Add new subcomment document to comments collection under the parent comment document

@@ -263,6 +263,8 @@ form.form-inline.mb-4 {
 #dashboard-map-container {
     height: 100% !important;
     border-radius: 10px;
+    padding-top: 0px;
+    margin-bottom: 0px;
 }
 
 .map-container {
