@@ -467,3 +467,37 @@ form.form-inline.mb-4 {
     opacity: 0.8;
 }
 
+
+
+
+/*CSS for the profile page*/
+.profile-info {
+    display: flex; 
+    align-items: center; 
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-image {
+    width: 200px; 
+    height: 200px; 
+    margin-right: 20px; /* Add space between image and user details */
+    border-radius: 50%;
+    border: 2px solid black;
+}
+
+.profile-pic-small {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.user-details {
+    flex-grow: 1; /* Allow user details to take up remaining space */
+}

@@ -8,7 +8,8 @@ from .models import User, login_manager  # Import User directly from models, not
 import os
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
-from flask import url_for, redirect, session, request
+from flask import url_for, redirect, session, request, Flask
+import shutil
 
 load_dotenv()
 
@@ -64,7 +65,9 @@ def register():
         user_ref.set({
             'username': username,
             'email': email,
-            'password': hashed_password
+            'password': hashed_password,
+            'profile_picture_url': "",
+            'upvoted_deals': []
         })
 
         flash('Account created successfully. You can now log in.', 'success')
