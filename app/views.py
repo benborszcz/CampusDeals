@@ -1,7 +1,7 @@
 from itertools import groupby
 from operator import itemgetter
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
-from . import app
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, get_flashed_messages
+from . import app, db
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
