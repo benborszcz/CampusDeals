@@ -247,11 +247,11 @@
                                 <!-- Voting Column -->
                                 <div class="col-1 d-flex flex-column align-items-center justify-content-top mt-0 mb-0" style="float:right;">
                                     {% if current_user.is_authenticated %}
-                                        <button type="button" class="btn btn-link p-0 mb-0" onclick="upvote('{{ deal['deal_id'] }}')">
+                                        <button type="button" class="btn btn-link p-0 mb-0" onclick="voteDeal('{{ deal['deal_id'] }}', true)">
                                             <b>▲</b>
                                         </button>
                                         <span id="vote-count-{{ deal['deal_id'] }}">{{ deal.get('upvotes', 0) - deal.get('downvotes', 0) }}</span>
-                                        <button type="button" class="btn btn-link p-0 mt-0" onclick="downvote('{{ deal['deal_id']}}')">
+                                        <button type="button" class="btn btn-link p-0 mt-0" onclick="voteDeal('{{ deal['deal_id']}}', false)">
                                             <b>▼</b>
                                         </button>
                                     {% else %}

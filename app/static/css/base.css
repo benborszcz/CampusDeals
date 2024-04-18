@@ -209,15 +209,66 @@ form.form-inline.mb-4 {
     font-weight: bold;
 }
 
-#map {
-    height: 350px;
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Align items vertically */
+}
+
+.flex-container .top-line {
+    height: 70vh !important;
+}
+
+.sidebar {
+    width: 400px; /* Set the width of your sidebar */
+    height: 65vh;
+    background-color: #f5f5f5;
+    overflow-y: auto;
+    flex-shrink: 0; /* Prevent the sidebar from shrinking */
+}
+
+#deal-details-container {
+    display: none;
+}
+
+#deal-details-container, #comments-container {
+    height: 65vh;
+    flex-grow: 1; /* Take up remaining space */
+    background-color: #f5f5f5;
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 15px; /* Add padding for better spacing */
+}
+
+#submitButton {
+    margin-bottom: 16px;
+}
+
+.card {
+    background-color: #f5f5f5;
+}
+.selected-card{
+    background-color: #ffffff;
+    border-color: #000000;
+}
+
+#map, #map1, #map2 {
+    height: 100%;
     border-radius: 10px 10px 0px 0px;
 }
 
+.shadow {
+    height: 100%;
+}
+
+#dashboard-map-container {
+    height: 100% !important;
+    border-radius: 10px;
+}
+
 .map-container {
+    height: 380px !important;
     padding-top: 10px;
     margin-bottom: 10px;
-    border-radius: 10px;
 }
 
 .map-button-container {
@@ -238,7 +289,21 @@ form.form-inline.mb-4 {
     text-align: center;
 }
 
-#suggestions:empty {
+#badge {
+    margin-right: 3px !important;
+}
+
+#priceOrDiscount {
+    color: green;
+}
+
+.search-input-container {
+    position: relative; 
+    width: 100%; 
+    max-width: 400px;
+  }
+  
+  #suggestions:empty {
     display: none;
 }
 

@@ -127,10 +127,8 @@ def deal_dashboard():
                 deal['establishment'] = establishment
 
     # index all deals in elasticsearch
-    if config.ELASTICSEARCH_SERVICE != 'bonsai' or is_elasticsearch_empty():
-        reset_elasticsearch()
-        for deal in deal_list:
-            index_deal(deal)
+    if check_index(deal_list):
+        reset_index(deal_list)
 
     for deal in deal_list:
         deal['upvotes'] = deal['upvotes'] if 'upvotes' in deal else 0
