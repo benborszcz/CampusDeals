@@ -78,12 +78,7 @@ function createCommentElement (cardBody, comment, data, dealId, parentId) {
     img.className = 'profile-pic-small';
     img.src = comment.profile_picture ? comment.profile_picture : defaultProfilePic;
     img.alt = comment.profile_picture ? "User profile picture" : "Default profile picture";
-
-    // {% if comment[0].get('profile_picture') %}
-    //                         <img src="{{ comment[0].get('profile_picture') }}" alt="User profile picture" class="profile-pic-small">
-    //                     {% else %}
-    //                         <img src="{{ url_for('static', filename='images/default_profile.png') }}" alt="Default profile picture" class="profile-pic-small">
-    //                     {% endif %}
+    
     // Username
     const strong = document.createElement('strong');
     strong.textContent = comment.username || 'Unknown User';
