@@ -86,10 +86,16 @@
             <button id="downloadButton">Save Deal Details</button>
             <!-- Google Maps Link -->
         </div>
-        <div class="card-footer text-muted">
-            Posted on {{ deal.created_at }}
-        </div>
+        <div class="card-footer text-muted" id="postTime"></div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var createdAt = '{{ deal.created_at }}'; // This assumes `deal.created_at` is in a format JavaScript can understand
+            var relativeTime = toRelativeTime(createdAt); // Assuming `toRelativeTime` returns a string
+            document.getElementById('postTime').textContent = 'Posted ' + relativeTime;
+        });
+    </script>
 
     <script>
         var deals = {{ deals_json|safe }};
@@ -312,5 +318,6 @@ function toTitleCase(str) {
     });
 </script>
 
+<script src="{{ url_for('static', filename='js/relative_time.js') }}"></script>
 
 {% endblock %}

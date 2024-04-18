@@ -137,6 +137,7 @@
     </div>
 
     <script>
+        var defaultProfilePic = "{{ url_for('static', filename='images/default_profile.png') }}";
         var deals = {{ deals_json|safe }};
         var map = L.map('map1', {
             center: [40.0022, -83.0075],
@@ -168,5 +169,6 @@
 
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     <script src="{{ url_for('static', filename='js/view_comments.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/relative_time.js') }}"></script>
     <script src="{{ url_for('static', filename='js/deal_details.js') }}"></script>
 {% endblock %}
