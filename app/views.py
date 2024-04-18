@@ -7,6 +7,7 @@ from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
 from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty, get_active_deals, get_time_until_deals_end, get_time_until_deals_start, autocomplete_deals
 import config
+from .elastic_utils import check_index, reset_index, search_deals
 from firebase_admin import firestore, storage
 from datetime import datetime
 from .auth import login_required
