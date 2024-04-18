@@ -1,14 +1,14 @@
 from itertools import groupby
 from operator import itemgetter
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, get_flashed_messages
-from . import app, db
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from . import app
 from flask_wtf.csrf import generate_csrf
 from wtforms.validators import Optional, DataRequired
 from .forms import DealSubmissionForm
-from .utils import parse_deal_submission, transform_deal_structure, get_active_deals, get_time_until_deals_end, get_time_until_deals_start
-from .elastic_utils import check_index, reset_index, search_deals
+from .utils import index_deal, search_deals, parse_deal_submission, transform_deal_structure, reset_elasticsearch, is_elasticsearch_empty, get_active_deals, get_time_until_deals_end, get_time_until_deals_start, autocomplete_deals
 import config
-from firebase_admin import firestore
+from .elastic_utils import check_index, reset_index, search_deals
+from firebase_admin import firestore, storage
 from datetime import datetime
 from .auth import login_required
 from flask_login import login_user, logout_user, login_required, current_user
@@ -19,6 +19,9 @@ from profanity import profanity
 from .moderation import Moderator
 import json
 import uuid
+import os
+from app import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 
@@ -201,6 +204,8 @@ def submit_deal():
 
         # Add a new document to the Firestore collection with the specified deal_id
         db.collection(config.DEAL_COLLECTION).document(deal_data['deal_id']).set(deal_data)
+        # Index the new deal in Elasticsearch
+        index_deal(deal_data)
         return redirect(url_for('index'))
 
     return render_template('submit_deal.html', form=form, popup=None)
@@ -353,6 +358,11 @@ def deal_details_dashboard(deal_id):
 def upvote_deal(deal_id):
     deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     deal_ref.update({"upvotes": firestore.Increment(1)})
+
+    user_ref = db.collection('users').document(current_user.id)
+    user_ref.update({
+        'upvoted_deals': firestore.ArrayUnion([deal_id])
+    })
     return jsonify(success=True), 200
 
 @login_required
@@ -360,6 +370,11 @@ def upvote_deal(deal_id):
 def downvote_deal(deal_id):
     deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
     deal_ref.update({"downvotes": firestore.Increment(1)})
+
+    user_ref = db.collection('users').document(current_user.id)
+    user_ref.update({
+        'upvoted_deals': firestore.ArrayRemove([deal_id])
+    })
     return jsonify(success=True), 200
 
 @app.route('/daily-deals')
@@ -482,7 +497,8 @@ def view_and_add_comments(deal_id):
             'text': new_comment_text,
             'time': datetime.now().isoformat(),
             'upvotes': 0,
-            'downvotes': 0
+            'downvotes': 0,
+            'profile_picture': current_user.profile_picture_url 
         }
 
         # Add new comment document to comments collection
@@ -602,6 +618,120 @@ def downvote_comment(deal_id, comment_id):
     comment_ref = db.collection(config.DEAL_COLLECTION).document(deal_id).collection("comments").document(comment_id)
     comment_ref.update({"downvotes": firestore.Increment(1)})
     return jsonify(success=True), 200
+
+@login_required
+@app.route("/profile")
+def profile():
+    user_ref = db.collection('users').document(current_user.id)
+
+    user_doc = user_ref.get()
+
+    if not user_doc.exists:
+        flash("User not found.", "error")
+        return redirect(url_for('index'))
+    
+    # Retrieve the list of upvoted deals
+    user_data = user_doc.to_dict()
+    upvoted_deals = user_data.get('upvoted_deals', [])
+    
+    # Initialize a list to hold the details of the upvoted deals
+    upvoted_deal_details = []
+    
+    # Fetch the details of each upvoted deal
+    for deal_id in upvoted_deals:
+        deal_ref = db.collection(config.DEAL_COLLECTION).document(deal_id)
+        
+        deal_doc = deal_ref.get()
+        
+        if deal_doc.exists:
+            upvoted_deal_details.append(deal_doc.to_dict())
+    
+    return render_template('profile.html', user_id=current_user.id, upvoted_deals=upvoted_deal_details, enumerate=enumerate, len=len)
+
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    # Update the username and email
+    new_username = request.form.get('username')
+    new_email = request.form.get('email')
+
+    user_ref = db.collection('users').document(current_user.id)
+
+    # Check for duplicate usernames
+    if new_username and new_username != current_user.username:
+        username_ref = db.collection('users').where('username', '==', new_username).get()
+        if username_ref and any(doc.id != current_user.id for doc in username_ref):
+            flash('Username already taken by another user. Please choose another.', 'error')
+            return render_template('edit_profile.html')
+        else:
+            user_ref.update({'username': new_username})
+
+    # Check for duplicate emails
+    if new_email and new_email != current_user.email:
+        email_ref = db.collection('users').where('email', '==', new_email).get()
+        if email_ref and any(doc.id != current_user.id for doc in email_ref):
+            flash('Email is already in use by another user. Please use a different email.', 'error')
+            return render_template('edit_profile.html')
+        else:
+            user_ref.update({'email': new_email})
+
+    # Update the password
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    confirm_new_password = request.form.get('confirm_new_password')
+
+    if current_password and new_password and confirm_new_password:
+        # Verify current password
+        user_data = user_ref.get().to_dict()
+        if not check_password_hash(user_data['password'], current_password):
+            flash('Current password is incorrect.', 'error')
+            return render_template('edit_profile.html')
+
+        # Check if new passwords match
+        if new_password != confirm_new_password:
+            flash('New passwords do not match.', 'error')
+            return render_template('edit_profile.html')
+
+        # Update password in database
+        hashed_new_password = generate_password_hash(new_password, method='pbkdf2:sha256')
+        user_ref.update({'password': hashed_new_password})
+
+    # Check for the file upload
+    file = request.files.get('profile_picture')
+    if file and file.filename:
+        # Check for PNGs and JPGs
+        if not (file.filename.lower().endswith('jpg') or file.filename.lower().endswith('png') or file.filename.lower().endswith('jpeg')):
+            flash('Only JPG and PNG files are allowed for the profile picture.', 'error')
+            return render_template('edit_profile.html')
+
+        filename = f"{current_user.id}.{file.filename.split('.')[-1]}"
+
+        bucket = storage.bucket(name='campusdeals-686be.appspot.com')
+        blob = bucket.blob(f"profile_picture/{filename}")
+
+        blob.content_disposition = 'inline'
+        blob.upload_from_file(file, content_type=file.mimetype)
+
+        firebase_style_url = f"https://firebasestorage.googleapis.com/v0/b/{bucket.name}/o/{blob.name.replace('/', '%2F')}?alt=media"
+        
+        # Update the user's profile picture URL in the database
+        user_ref.update({'profile_picture_url': firebase_style_url})
+        current_user.profile_picture_url = firebase_style_url
+
+        new_user_data = user_ref.get().to_dict()
+        current_user.profile_picture_url = new_user_data.get('profile_picture_url') 
+
+        print(current_user.profile_picture_url)
+
+        updated_user_data = user_ref.get().to_dict()
+        print('profile_picture_url:', updated_user_data.get('profile_picture_url'))
+
+    flash('Profile updated successfully!')
+    return redirect(url_for('profile'))
+
+@login_required
+@app.route("/edit_profile")
+def edit_profile():
+    return render_template('edit_profile.html', user_id = current_user.id)
 
 
 @app.route('/autocomplete', methods=['GET'])
